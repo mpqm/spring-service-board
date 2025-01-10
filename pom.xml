@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -59,19 +59,19 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-<!--		&lt;!&ndash; [ JOB ] &ndash;&gt;-->
-<!--		&lt;!&ndash; spring boot quartz : 스케줄러 &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-quartz</artifactId>-->
-<!--		</dependency>-->
+		<!--		&lt;!&ndash; [ JOB ] &ndash;&gt;-->
+		<!--		&lt;!&ndash; spring boot quartz : 스케줄러 &ndash;&gt;-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.springframework.boot</groupId>-->
+		<!--			<artifactId>spring-boot-starter-quartz</artifactId>-->
+		<!--		</dependency>-->
 
-<!--		&lt;!&ndash; [ SECURITY ]&ndash;&gt;-->
-<!--		&lt;!&ndash; spring boot security : 인증/인가(보안) &ndash;&gt;-->
-<!--		<dependency>-->
-<!--		    <groupId>org.springframework.boot</groupId>-->
-<!--		    <artifactId>spring-boot-starter-security</artifactId>-->
-<!--		</dependency>-->
+		<!--		&lt;!&ndash; [ SECURITY ]&ndash;&gt;-->
+		<!--		&lt;!&ndash; spring boot security : 인증/인가(보안) &ndash;&gt;-->
+		<!--		<dependency>-->
+		<!--		    <groupId>org.springframework.boot</groupId>-->
+		<!--		    <artifactId>spring-boot-starter-security</artifactId>-->
+		<!--		</dependency>-->
 		<!-- json simple : JSON 데이터를 쉽게 처리할 수 있도록 돕는 경량 라이브러리로 JSON 객체를 생성하거나 파싱 가능 -->
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
@@ -109,30 +109,30 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>3.0.3</version>
 		</dependency>
-<!--		&lt;!&ndash; jpa &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--		</dependency>-->
+		<!--		&lt;!&ndash; jpa &ndash;&gt;-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.springframework.boot</groupId>-->
+		<!--			<artifactId>spring-boot-starter-data-jpa</artifactId>-->
+		<!--		</dependency>-->
 
 		<!-- [ WEB SOCKET ] -->
 		<!-- spring boot websocket : 웹소켓을 이용한 실시간 양방향 통신 지원 Spring Boot 스타터 / 실시간 송수신 기능-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-websocket</artifactId>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; web socket : 웹소켓을 사용하여 양방향 통신을 구현 Java WebSocket API / 실시간 송수신 가능 &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>javax.websocket</groupId>-->
-<!--			<artifactId>javax.websocket-api</artifactId>-->
-<!--			<version>1.1</version>-->
-<!--		</dependency>-->
-<!--		&lt;!&ndash; tyrus client : WebSocket 서버와 연결하는 클라이언트 역할을 수행 /  &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.glassfish.tyrus.bundles</groupId>-->
-<!--			<artifactId>tyrus-standalone-client</artifactId>-->
-<!--			<version>1.9</version>-->
-<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.springframework.boot</groupId>-->
+		<!--			<artifactId>spring-boot-starter-websocket</artifactId>-->
+		<!--		</dependency>-->
+		<!--		&lt;!&ndash; web socket : 웹소켓을 사용하여 양방향 통신을 구현 Java WebSocket API / 실시간 송수신 가능 &ndash;&gt;-->
+		<!--		<dependency>-->
+		<!--			<groupId>javax.websocket</groupId>-->
+		<!--			<artifactId>javax.websocket-api</artifactId>-->
+		<!--			<version>1.1</version>-->
+		<!--		</dependency>-->
+		<!--		&lt;!&ndash; tyrus client : WebSocket 서버와 연결하는 클라이언트 역할을 수행 /  &ndash;&gt;-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.glassfish.tyrus.bundles</groupId>-->
+		<!--			<artifactId>tyrus-standalone-client</artifactId>-->
+		<!--			<version>1.9</version>-->
+		<!--		</dependency>-->
 
 		<!-- JSP -->
 		<!-- jsp tomcat : Tomcat에서 JSP(Java Server Pages)를 지원하도록 하는 라이브러리 / JSP를 사용해 동적인 HTML 페이지를 렌더링 가능-->

@@ -1,0 +1,14 @@
+services:
+  mariadb:
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    image: mariadb:latest
+    environment:
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb/data/:/var/lib/mysql
+      - ./mariadb/mariadb.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    mem_limit: 2g        # 메모리 제한 (2GB)
+    cpus: 2.0           # CPU 할당 (2 CPU 코어)

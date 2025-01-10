@@ -1,0 +1,11 @@
+# ?? ??
+spring:
+  application:
+    name: board
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+

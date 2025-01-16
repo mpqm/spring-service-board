@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/test/testHeader.css}">
+</head>
+<body>
+<hr>
+<header class="te_header">
+    <!-- 좌측 네비게이션 -->
+    <nav class="te_nav_1">
+        <ul class="te_ul">
+            <li class="te_li">
+                <a class="te_a" th:href="@{/}">Board</a>
+            </li>
+        </ul>
+    </nav>
+    <!-- 우측 네비게이션 -->
+    <nav class="te_nav_2">
+        <ul class="te_ul">
+            <!-- 회원 이름 표시 -->
+            <li class="te_li" th:text="${userName}">회원이름</li>
+            <li class="te_li">
+                <a class="te_a" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="te_li">
+                <a class="te_a" th:href="@{/logout}">로그아웃</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<hr>
+</body>
+</html>

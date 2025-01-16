@@ -11,150 +11,64 @@
 	<groupId>com.service</groupId>
 	<artifactId>board</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<!-- jsp까지 같이 빌드 해야 되기 때문에 war -->
-	<packaging>war</packaging>
 	<name>board</name>
 	<description>board project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-
-		<!-- [ HELP ] -->
-		<!-- lombok : Java에서 반복적인 코드를 줄여주는 라이브러리-->
+		<!-- spring boot thymeleaf -->
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-		<!-- spring boot devtools : 개발 중에 편리한 자동 재시작, 핫스왑 등 개발 편의 기능을 제공하는 라이브러리 / 런타임 환경에서만 동작 -->
+		<!-- spring boot web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- spring boot test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- mybatis -->
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+
+		<!-- spring dev tools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- [ WEB ]-->
-		<!-- servlet api : 서블릿은 서버에서 클라이언트의 요청을 처리하는 Java 클래스로 이 의존성은 servlet을 작성하는데 필요한 기본 api-->
+		<!-- lombok -->
 		<dependency>
-			<groupId>jakarta.servlet</groupId>
-			<artifactId>jakarta.servlet-api</artifactId>
-			<scope>provided</scope>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
 		</dependency>
-		<!-- spring boot web : 웹 애플리케이션을 구축할 때 필요한 기본 의존성 내장된 Tomcat 서버(web)와 RESTful API(mvc) 포함-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<!-- spring boot tomcat : 애플리케이션을 Tomcat 서버에 배포하는 의존성 / provided 스코프로 Tomcat은 이미 외부에서 제공되는 서버라는 의미 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- spring boot aop : AOP (Aspect-Oriented Programming)를 지원하는 라이브러리 / 로그 기록, 트랜잭션 관리 등을 코드의 비즈니스 로직과 분리해 처리 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
-		</dependency>
-
-		<!--		&lt;!&ndash; [ JOB ] &ndash;&gt;-->
-		<!--		&lt;!&ndash; spring boot quartz : 스케줄러 &ndash;&gt;-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-starter-quartz</artifactId>-->
-		<!--		</dependency>-->
-
-		<!--		&lt;!&ndash; [ SECURITY ]&ndash;&gt;-->
-		<!--		&lt;!&ndash; spring boot security : 인증/인가(보안) &ndash;&gt;-->
-		<!--		<dependency>-->
-		<!--		    <groupId>org.springframework.boot</groupId>-->
-		<!--		    <artifactId>spring-boot-starter-security</artifactId>-->
-		<!--		</dependency>-->
-		<!-- json simple : JSON 데이터를 쉽게 처리할 수 있도록 돕는 경량 라이브러리로 JSON 객체를 생성하거나 파싱 가능 -->
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<!-- json jason-databind : JSON을 Java 객체로 변환하거나 그 반대로 변환할 수 있는 라이브러리-->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-
-		<!-- [ TEST ]-->
-		<!-- spring boot test : 테스트를 작성할 수 있도록 도와주는 라이브러리 / JUnit, Hamcrest, Mockito 등을 포함-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- [ ORM ] -->
-		<!-- spring boot jdbc : 데이터베이스 연결을 위한 JDBC 관련 의존성 제공 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
-		<!-- mariadb java client : MariaDB와 연결하기 위한 JDBC 드라이버 / MySQL과 호환되는 MariaDB 데이터베이스와 상호작용가능-->
-		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-		</dependency>
-		<!-- mybatis -->
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>3.0.3</version>
-		</dependency>
-		<!--		&lt;!&ndash; jpa &ndash;&gt;-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-starter-data-jpa</artifactId>-->
-		<!--		</dependency>-->
-
-		<!-- [ WEB SOCKET ] -->
-		<!-- spring boot websocket : 웹소켓을 이용한 실시간 양방향 통신 지원 Spring Boot 스타터 / 실시간 송수신 기능-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-starter-websocket</artifactId>-->
-		<!--		</dependency>-->
-		<!--		&lt;!&ndash; web socket : 웹소켓을 사용하여 양방향 통신을 구현 Java WebSocket API / 실시간 송수신 가능 &ndash;&gt;-->
-		<!--		<dependency>-->
-		<!--			<groupId>javax.websocket</groupId>-->
-		<!--			<artifactId>javax.websocket-api</artifactId>-->
-		<!--			<version>1.1</version>-->
-		<!--		</dependency>-->
-		<!--		&lt;!&ndash; tyrus client : WebSocket 서버와 연결하는 클라이언트 역할을 수행 /  &ndash;&gt;-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.glassfish.tyrus.bundles</groupId>-->
-		<!--			<artifactId>tyrus-standalone-client</artifactId>-->
-		<!--			<version>1.9</version>-->
-		<!--		</dependency>-->
-
-		<!-- JSP -->
-		<!-- jsp tomcat : Tomcat에서 JSP(Java Server Pages)를 지원하도록 하는 라이브러리 / JSP를 사용해 동적인 HTML 페이지를 렌더링 가능-->
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-		</dependency>
-		<!-- jsp jstl : JSP 페이지에서 사용할 수 있는 표준 태그 라이브러리로 JSP에서 반복문, 조건문 등 사용 -->
-		<dependency>
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
-		</dependency>
-
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<!-- spring boot -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<!-- lombok -->
 				<configuration>
 					<excludes>
 						<exclude>

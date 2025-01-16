@@ -19,8 +19,8 @@ target/
 *.iml
 *.ipr
 
-src/infra/mariadb/
-src/infra/.env
+src/devops/mariadb/
+src/devops/.env
 
 
 ### NetBeans ###

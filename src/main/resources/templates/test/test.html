@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" th:href="@{../bootstrap/bootstrap.min.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{../test/test.css}">
+    <script th:src="@{..//test/test.js}"></script>
+</head>
+
+<body>
+<!-- Header 파일 포함 -->
+<th:block th:replace="~{test/testHeader :: header}" />
+
+<main>
+    <!-- 날짜와 시간 -->
+    <div>
+        날짜, 시간:
+        <button onclick="showDateTime()">날짜와 시간 보기</button>
+        <!-- 날짜와 시간이 표시될 요소 -->
+        <p id="currentDateTime"></p>
+    </div>
+    <a class="btn btn-lg btn-secondary" href="/members/new">회원 가입</a>
+    <!-- 1부터 입력 숫자까지 합 -->>
+    <div> 1 부터 입력 숫자까지 합
+        <input type="number" id="numberInput" placeholder="숫자를 입력하세요" onkeypress="triggerButtonClick(event)" />
+        <button id="calculateButton" onclick="printNumbers()">합계 계산</button>
+        <ul id="numbersList"></ul>
+        <p id="sumResult"></p>
+    </div>
+</main>
+
+<!-- Footer 파일 포함 -->
+<th:block th:replace="~{test/testFooter :: footer}" />
+</body>
+</html>

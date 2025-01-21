@@ -1,0 +1,27 @@
+CREATE TABLE TB_LOGIN_HISTORY (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    login_time DATETIME NOT NULL
+);
+
+CREATE TABLE TB_MEMBER (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
+    nick_name VARCHAR(100),
+    is_email_auth boolean,
+    is_in_active boolean,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    profile_image_url VARCHAR(255)
+);
+
+CREATE TABLE TB_EMAIL_AUTH (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(50) NOT NULL,
+    uuid VARCHAR(225) NOT NULL
+);
+
+

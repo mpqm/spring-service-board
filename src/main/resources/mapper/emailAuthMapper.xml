@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.service.board.member.EmailAuthDao">
+    <!-- 이메일 인증 추가 -->
+    <insert id="save">
+            INSERT INTO TB_EMAIL_AUTH (id, uuid)
+        VALUES (#{id}, #{uuid})
+    </insert>
+
+    <select id="findById" parameterType="string" resultType="com.service.board.member.EmailAuthDto">
+        SELECT idx, id, uuid FROM TB_EMAIL_AUTH WHERE id = #{id}
+    </select>
+
+</mapper>

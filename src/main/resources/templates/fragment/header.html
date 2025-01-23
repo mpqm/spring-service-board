@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" th:href="@{../lib/board.css}">
 </head>
 <body>
-<header class="bg-white  align-items-center">
-  <div class="container d-flex justify-content-between align-items-center border-bottom border-black p-3 w-75">
-
-    <a th:href="@{/posts}" class="text-decoration-none text-dark fw-bold fs-4"> 게시판 </a>
+<header>
+  <div class="fixed-top container bg-white d-flex justify-content-between align-items-center border-bottom border-black p-3 w-75">
+    <div class="d-flex align-items-center gap-3">
+      <a th:href="@{/posts}" class="text-decoration-none text-dark fw-bold fs-4"> 게시판 </a>
+    </div>
 
     <div class="d-flex align-items-center gap-3">
-      <p class="mb-0 fw-semibold text-dark" th:text="${session.sessionId}"></p>
-      <a th:href="@{/account}">
-        <img th:src="${session.profileImageUrl}" class="profile-img rounded-circle border" alt="프로필">
-      </a>
+      <div id="alert-container"></div>
+      <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+      <p class="mb-0 fw-semibold text-dark" th:text="${session.nickName}"></p>
+      <img th:src="@{${session.profileImageUrl}}" class="profile-img rounded-circle border" alt="프로필">
+      <a th:href="@{/profile}" class="btn btn-sm btn-outline-primary">프로필</a>
       <a th:href="@{/logout}" class="btn btn-sm btn-outline-danger">로그아웃</a>
     </div>
   </div>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.service.board.member.model.MemberDao">
+
+    <!-- 회원 추가 -->
+    <insert id="save">
+        INSERT INTO TB_MEMBER
+            (id, password, user_name, nick_name, email, phone_number, profile_image_url, is_email_auth, is_in_active)
+        VALUES
+            (#{id}, #{password}, #{userName}, #{nickName}, #{email}, #{phoneNumber}, #{profileImageUrl}, #{isEmailAuth}, #{isInActive})
+    </insert>
+
+    <!-- 회원 조회 (ID) -->
+    <select id="findById" parameterType="string" resultType="com.service.board.member.model.MemberDto">
+        SELECT idx, id, password, user_name, nick_name, email, phone_number, profile_image_url, is_email_auth, is_in_active
+        FROM TB_MEMBER
+        WHERE id = #{id}
+    </select>
+
+    <!-- 회원 조회 (인덱스) -->
+    <select id="findByIdx" parameterType="Long" resultType="com.service.board.member.model.MemberDto">
+        SELECT idx, id, password, user_name, nick_name, email, phone_number, profile_image_url, is_email_auth, is_in_active
+        FROM TB_MEMBER
+        WHERE idx = #{idx}
+    </select>
+
+    <select id="findByEmail" parameterType="String" resultType="com.service.board.member.model.MemberDto">
+        SELECT idx, id, password, user_name, nick_name, email, phone_number, profile_image_url, is_email_auth, is_in_active
+        FROM TB_MEMBER
+        WHERE email = #{email}
+    </select>
+
+    <!-- 회원 업데이트 -->
+    <update id="update">
+        UPDATE TB_MEMBER
+        SET nick_name = #{nickName},
+        profile_image_url = #{profileImageUrl},
+        phone_number = #{phoneNumber}
+        WHERE idx = #{idx}
+    </update>
+
+    <update id="updatePasswordByIdx">
+        UPDATE TB_MEMBER
+        SET password = #{password}
+        WHERE idx = #{idx}
+    </update>
+
+    <update id="updateIsEmailAuthById">
+        UPDATE TB_MEMBER
+        SET is_email_auth = #{isEmailAuth}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateIsInActiveById">
+        UPDATE TB_MEMBER
+        SET is_in_active = #{isInActive}
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>

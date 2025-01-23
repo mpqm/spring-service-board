@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+</head>
+<body>
+<th:block th:insert="~{fragment/header :: HeaderFragment}"></th:block>
+<div class="main-wrap">
+    <!-- 회원 정보 수정 -->
+    <div class="card text-bg-light d-flex w-100 shadow-lg my-3">
+        <div class="card-header d-flex bg-white align-items-center justify-content-between">
+            회원 정보 수정
+        </div>
+        <div class="card-body bg-white">
+            <form id="edit-profile-form">
+                <div class="mb-3">
+                    <label for="nickName" class="form-label">닉네임</label>
+                    <input th:value="${nickName}" type="text" id="nickName" class="form-control" placeholder="사용자 이름 입력" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">전화번호</label>
+                    <input th:value="${phoneNumber}" type="tel" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="전화번호를 입력하세요 (- 포함)" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="profileImage" class="form-label">프로필 이미지 수정</label>
+                    <img id="imagePreview" th:src="${profileImageUrl}" alt="프로필 이미지" class="profile-img rounded-circle border mb-1">
+                    <input th:value="${profileImageUrl}" class="form-control bg-white" type="file" id="profileImage" name="profileImage">
+                </div>
+                <button type="submit" class="btn btn-outline-warning w-100">수정</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PW 변경 -->
+    <div class="card text-bg-light d-flex w-100 shadow-lg mb-3">
+        <div class="card-header d-flex bg-white align-items-center justify-content-between">
+            비밀번호 변경
+        </div>
+        <div class="card-body bg-white">
+            <form id="edit-pw-form">
+                <div class="mb-3">
+                    <label for="oldPassword" class="form-label">현재 비밀번호</label>
+                    <input type="password" id="oldPassword" class="form-control" placeholder="현재 비밀번호 입력" required>
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">새 비밀번호</label>
+                    <input type="password" id="newPassword" class="form-control" placeholder="새 비밀번호 입력" required>
+                </div>
+                <button type="submit" class="btn btn-outline-success w-100">변경</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 회원 탈퇴 -->
+    <div class="card text-bg-light d-flex w-100 shadow-lg mb-3">
+        <div class="card-header d-flex bg-white align-items-center justify-content-between">
+            회원 탈퇴
+        </div>
+        <div class="card-body bg-white">
+            <form id="in-active-form">
+                <p class="text-danger">탈퇴를 진행후 복구를 원하면 회원가입을 다시하세요</p>
+                <button type="submit" class="btn btn-outline-danger w-100">탈퇴</button>
+            </form>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{fragment/footer :: FooterFragment}"></th:block>
+<th:block th:insert="~{fragment/import :: ImportFragment}"></th:block>
+<script th:src="@{../member/profile.js}"></script>
+</body>
+</html>

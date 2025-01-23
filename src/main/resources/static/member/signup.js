@@ -19,6 +19,7 @@ const handleSignup = (event) => {
     // 파일 추가 (파일이 선택되었는지 확인)
     const fileInput = $('#profileImage')[0].files[0];
     if (fileInput) formData.append("file", fileInput);
+
     // AJAX 요청
     $.ajax({
         url: "/signup",
@@ -27,14 +28,16 @@ const handleSignup = (event) => {
         processData: false,
         contentType: false,
         success: (res) => {
-            if(res.success){
-                alert("회원가입 성공!");
-                window.location.href = "/login";
+            if (res.success) {
+                showAlert('success', getMessage(res));
+                setTimeout(() => window.location.href = "/login", 2000);
             } else {
-                alert("회원가입 실패: " + res.message);
+                showAlert('danger', getMessage(res));
             }
         },
-        error: (e) => { alert("회원가입 실패: " + e.responseJSON.message); }
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
+        }
     });
-    return true;
 }

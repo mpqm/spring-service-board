@@ -1,4 +1,4 @@
-package com.service.board.member;
+package com.service.board.member.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +14,11 @@ import java.time.LocalDateTime;
 public class LoginHistoryDto {
 
     private Long idx;
+
     private String id;
+
     private String ipAddress;
+
     private LocalDateTime loginTime;
 
 }

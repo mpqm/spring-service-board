@@ -12,6 +12,7 @@
             <h3 class="text-dark">회원가입</h3>
         </div>
         <div class="card-body bg-white">
+            <div id="alert-container"></div>
             <form id="signup-form" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="id" class="form-label">아이디</label>
@@ -50,6 +51,7 @@
     </div>
 </div>
 <th:block th:insert="~{fragment/footer :: FooterFragment}"></th:block>
+<th:block th:insert="~{fragment/import :: ImportFragment}"></th:block>
 <script th:src="@{../member/signup.js}"></script>
 </body>
 </html>

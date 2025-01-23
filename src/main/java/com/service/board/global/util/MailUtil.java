@@ -30,7 +30,7 @@ public class MailUtil {
         }
 
         // 3. 메시지 생성 및 전송
-        message.setText("http://localhost:9090/verify?id="+id+"&uuid="+uuid);
+        message.setText("http://localhost:9090/emailAuth?id="+id+"&uuid="+uuid);
         emailSender.send(message);
     }
 
@@ -40,11 +40,9 @@ public class MailUtil {
         // 1. 이메일 수신자, 제목 설정
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("ZIPPOP - 아이디 찾기 결과입니다.");
+        message.setSubject("아이디 찾기 결과입니다.");
 
         // 2. 사용자 ID 전송
-        // if : 비활성화 회원
-        // else : 활성화 회원
         StringBuilder text = new StringBuilder("ID: " + userId + "\n");
         if (isInActive) {
             text.append("계정이 비활성화 되어 있어 다시 회원가입을 통해 이메일 인증 후 로그인해주세요.");
@@ -62,7 +60,7 @@ public class MailUtil {
         // 1. 이메일 수신자, 제목 설정
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("ZIPPOP - 임시 비밀번호 발급 안내입니다.");
+        message.setSubject("임시 비밀번호 발급 안내입니다.");
 
         // 2. 임시 패스워드를 전송
         // if : 비활성화 회원은 임시 비밀번호를 가지고 다시 회원가입 요청

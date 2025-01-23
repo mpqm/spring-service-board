@@ -13,17 +13,17 @@ public class BaseException extends Exception {
     private final String message;
     private final String details;
 
-    public BaseException(BaseResMsg baseResMsg) {
-        this.success = baseResMsg.getSuccess();
-        this.code = baseResMsg.getCode();
-        this.message = baseResMsg.getMessage();
+    public BaseException(BaseMsg baseMsg) {
+        this.success = baseMsg.getSuccess();
+        this.code = baseMsg.getCode();
+        this.message = baseMsg.getMessage();
         this.details = null;
     }
 
-    public BaseException(BaseResMsg baseResMsg, String details) {
-        this.success = baseResMsg.getSuccess();
-        this.code = baseResMsg.getCode();
-        this.message = baseResMsg.getMessage();
+    public BaseException(BaseMsg baseMsg, String details) {
+        this.success = baseMsg.getSuccess();
+        this.code = baseMsg.getCode();
+        this.message = baseMsg.getMessage();
         this.details = details;
     }
 }

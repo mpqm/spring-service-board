@@ -4,7 +4,7 @@
 <mapper namespace="com.service.board.member.dao.MemberDao">
 
     <!-- 회원가입 -->
-    <insert id="signupMember" parameterType="com.service.board.member.dto.SignupMemberReq" useGeneratedKeys="true" keyProperty="idx">
+    <insert id="signupMember" parameterType="SignupMemberReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_MEMBER (
             id,
             password,
@@ -33,7 +33,7 @@
     </insert>
 
     <!-- 회원 조회 (인덱스) -->
-    <select id="findMemberByIdx" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+    <select id="findMemberByIdx" parameterType="FindMemberReq" resultType="FindMemberRes">
         SELECT
             idx,
             id,
@@ -52,7 +52,7 @@
     </select>
 
     <!-- 회원 조회 (ID) -->
-    <select id="findMemberById" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+    <select id="findMemberById" parameterType="FindMemberReq" resultType="FindMemberRes">
         SELECT
             idx,
             id,
@@ -71,7 +71,7 @@
     </select>
 
     <!-- 회원 조회 (이메일) -->
-    <select id="findMemberByEmail" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+    <select id="findMemberByEmail" parameterType="FindMemberReq" resultType="FindMemberRes">
         SELECT
             idx,
             id,
@@ -90,7 +90,7 @@
     </select>
 
     <!-- 회원 정보 수정 -->
-    <update id="editMember" parameterType="com.service.board.member.dto.EditMemberReq">
+    <update id="editMember" parameterType="EditMemberReq">
         UPDATE TB_MEMBER
         SET
             nick_name = #{nickName},
@@ -101,7 +101,7 @@
     </update>
 
     <!-- 이메일 인증 여부 수정 -->
-    <update id="editMemberIsEmailAuthById" parameterType="com.service.board.member.dto.EditMemberReq">
+    <update id="editMemberIsEmailAuthById" parameterType="EditMemberReq">
         UPDATE TB_MEMBER
         SET
             is_email_auth = #{isEmailAuth},
@@ -110,7 +110,7 @@
     </update>
 
     <!-- 비밀번호 수정 -->
-    <update id="editMemberPasswordByIdx" parameterType="com.service.board.member.dto.EditMemberReq">
+    <update id="editMemberPasswordByIdx" parameterType="EditMemberReq">
         UPDATE TB_MEMBER
         SET
             password = #{password},
@@ -119,7 +119,7 @@
     </update>
 
     <!-- 계정 비활성화 여부 수정 -->
-    <update id="editMemberIsInActiveByIdx" parameterType="com.service.board.member.dto.EditMemberReq">
+    <update id="editMemberIsInActiveByIdx" parameterType="EditMemberReq">
         UPDATE TB_MEMBER
         SET
             is_in_active = #{isInActive},

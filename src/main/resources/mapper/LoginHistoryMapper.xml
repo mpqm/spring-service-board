@@ -4,7 +4,7 @@
 <mapper namespace="com.service.board.member.dao.LoginHistoryDao">
 
     <!-- 로그인 이력 추가 -->
-    <insert id="createLoginHistory" parameterType="com.service.board.member.dto.CreateLoginHistoryReq" useGeneratedKeys="true" keyProperty="idx">
+    <insert id="createLoginHistory" parameterType="CreateLoginHistoryReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_LOGIN_HISTORY (
             id,
             ip_address,

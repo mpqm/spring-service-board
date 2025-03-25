@@ -4,7 +4,7 @@
 <mapper namespace="com.service.board.member.dao.EmailAuthDao">
 
     <!-- 이메일 인증 추가 -->
-    <insert id="createEmailAuth" parameterType="com.service.board.member.dto.CreateEmailAuthReq" useGeneratedKeys="true" keyProperty="idx">
+    <insert id="createEmailAuth" parameterType="CreateEmailAuthReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_EMAIL_AUTH (
             id,
             uuid,
@@ -17,7 +17,7 @@
     </insert>
 
     <!-- 이메일 인증 조회 -->
-    <select id="getEmailAuth" parameterType="com.service.board.member.dto.GetEmailAuthReq" resultType="com.service.board.member.dto.GetEmailAuthRes">
+    <select id="getEmailAuth" parameterType="GetEmailAuthReq" resultType="GetEmailAuthRes">
         SELECT 
             idx,
             id,
@@ -28,7 +28,7 @@
     </select>
 
     <!-- 이메일 인증 삭제 -->
-    <delete id="deleteEmailAuth" parameterType="com.service.board.member.dto.DeleteEmailAuthReq">
+    <delete id="deleteEmailAuth" parameterType="DeleteEmailAuthReq">
         DELETE FROM TB_EMAIL_AUTH 
         WHERE id = #{id}
     </delete>

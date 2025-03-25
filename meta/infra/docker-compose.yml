@@ -1,0 +1,11 @@
+services:
+  mariadb:
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    image: mariadb:latest
+    environment:
+      - MARIADB_DATABASE=board
+      - MARIADB_ROOT_PASSWORD=qwer1234
+    volumes:
+      - ./mariadb/data/:/var/lib/mysql

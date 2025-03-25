@@ -48,6 +48,7 @@ public enum BaseMsg {
     POSTS_SEARCHED(2007, true, "게시물 목록 조회에 성공했습니다."),
     POST_NOT_FOUND(2008, false, "게시물을 찾을 수 없습니다."),
     POSTS_NOT_FOUND(2009, false, "게시물 목록을 찾을 수 없습니다."),
+    POST_NOT_AUTHORIZED(2009, false, "게시물 작성자가 아닙니다."),
     POST_IMAGE_NOT_CREATED(2010, false, "게시물 이미지 저장에 실패했습니다."),
     POST_IMAGE_NOT_FOUND(2011, false, "게시물 이미지를 찾을 수 없습니다."),
     POST_IMAGE_NOT_DELETED(2012, false, "게시물 이미지 삭제에 실패했습니다."),

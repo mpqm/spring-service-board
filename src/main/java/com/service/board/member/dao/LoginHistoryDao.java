@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface LoginHistoryDao {
 
     // 저장
-    Long createLoginHistory(CreateLoginHistoryReq dto);
+    Long createLoginHistory(CreateLoginHistoryReq createLoginHistoryReq);
 
 }

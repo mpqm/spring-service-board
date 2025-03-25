@@ -6,11 +6,11 @@
     <!-- 이메일 인증 추가 -->
     <insert id="createEmailAuth" parameterType="com.service.board.member.dto.CreateEmailAuthReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_EMAIL_AUTH (
-            member_idx,
+            id,
             uuid,
             created_at
         ) VALUES (
-            #{memberIdx},
+            #{id},
             #{uuid},
             CURRENT_TIMESTAMP
         )
@@ -20,17 +20,17 @@
     <select id="getEmailAuth" parameterType="com.service.board.member.dto.GetEmailAuthReq" resultType="com.service.board.member.dto.GetEmailAuthRes">
         SELECT 
             idx,
-            member_idx as memberIdx,
+            id,
             uuid,
             created_at as createdAt
         FROM TB_EMAIL_AUTH 
-        WHERE member_idx = #{memberIdx} AND uuid = #{uuid}
+        WHERE id = #{id}
     </select>
 
     <!-- 이메일 인증 삭제 -->
     <delete id="deleteEmailAuth" parameterType="com.service.board.member.dto.DeleteEmailAuthReq">
         DELETE FROM TB_EMAIL_AUTH 
-        WHERE member_idx = #{memberIdx} AND uuid = #{uuid}
+        WHERE id = #{id}
     </delete>
 
 </mapper>

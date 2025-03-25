@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+</head>
+<body>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card text-bg-light w-25">
+        <div class="card-header bg-white text-center">
+            <h3 class="text-black">계정 ID/PW 찾기</h3>
+        </div>
+        <div class="card-body bg-white">
+            <div id="alert-container" class="text-center mb-3">
+                <div th:if="${message}" class="alert alert-success d-inline-block w-100" th:text="${message}"></div>
+                <div th:if="${error}" class="alert alert-danger d-inline-block w-100" th:text="${error}"></div>
+            </div>
+            <form id="find-id-form" method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">ID 찾기</label>
+                    <input type="text" id="email" name="email" class="form-control" placeholder="가입시 입력한 이메일을 입력하세요" required>
+                </div>
+                <button type="submit" class="btn btn-outline-dark w-100">ID 찾기</button>
+            </form>
+            <hr>
+            <form id="find-pw-form" method="post">
+                <div class="mb-3">
+                    <label for="id" class="form-label">PW 찾기</label>
+                    <input type="text" id="id" name="id" class="form-control" placeholder="찾은 ID를 입력하세요" required>
+                </div>
+                <button type="submit" class="btn btn-outline-dark w-100">PW 찾기</button>
+            </form>
+            <hr>
+            <a th:href="@{/login}" class="btn btn-outline-dark w-100">뒤로가기</a>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
+<script th:src="@{../member/findIdPw.js}"></script>
+</body>
+</html>

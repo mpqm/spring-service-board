@@ -1,5 +1,6 @@
 package com.service.board.member.dto;
 
+import com.service.board.global.common.ValidGroup;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -27,11 +28,11 @@ public class EditMemberReq {
     // 비밀번호
     private String password;
 
-    @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.")
+    @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.", groups = {ValidGroup.OnEditPw.class})
     @Size(min = 4, message = "비밀번호는 최소 4자 이상이어야 합니다.")
     String oldPassword;
 
-    @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.")
+    @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.", groups = {ValidGroup.OnEditPw.class})
     @Size(min = 4, message = "비밀번호는 최소 4자 이상이어야 합니다.")
     String newPassword;
 

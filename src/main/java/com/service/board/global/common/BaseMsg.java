@@ -12,7 +12,7 @@ public enum BaseMsg {
     INVALID_REQUEST(300, false, "요청값이 정상적이지 않습니다."),
     LOGIN_REQUIRED(400, false, "로그인이 필요합니다."),
     UNAUTHORIZED_ACCESS(401, false, "권한이 없습니다."),
-
+    PW_HASH_FAIL(402, false, "비밀번호 암호화에 실패했습니다."),
 
     MEMBER_LOGIN_SUCCESS(1000, true, "로그인에 성공했습니다."),
     MEMBER_SIGNUP_SUCCESS(1001, true, "이메일 인증을 완료해야 회원가입이 완료됩니다."),
@@ -37,7 +37,7 @@ public enum BaseMsg {
     MEMBER_ALREADY_EXIST(1509, false, "이미 존재하는 계정입니다."),
     MEMBER_INVALID_ACCESS(1510, false, "계정 소유자가 아닙니다."),
     CODE_NOT_FOUND(1510, false, "코드 목록을 불러오지 못했습니다."),
-
+    MEMBER_FIND(15011, true, "회원 정보를 가져왔습니다."),
     POST_CREATED(2000, true, "게시물이 생성되었습니다."),
     POST_NOT_CREATED(2001, false, "게시물 생성에 실패했습니다."),
     POST_UPDATED(2002, true, "게시물이 수정되었습니다."),

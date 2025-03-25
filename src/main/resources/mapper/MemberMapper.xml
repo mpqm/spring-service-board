@@ -48,7 +48,7 @@
             created_at as createdAt,
             updated_at as updatedAt
         FROM TB_MEMBER
-        WHERE idx = #{memberIdx}
+        WHERE idx = #{idx}
     </select>
 
     <!-- 회원 조회 (ID) -->
@@ -93,9 +93,7 @@
     <update id="editMember" parameterType="com.service.board.member.dto.EditMemberReq">
         UPDATE TB_MEMBER
         SET
-            user_name = #{userName},
             nick_name = #{nickName},
-            email = #{email},
             phone_number = #{phoneNumber},
             profile_image_url = #{profileImageUrl},
             updated_at = CURRENT_TIMESTAMP

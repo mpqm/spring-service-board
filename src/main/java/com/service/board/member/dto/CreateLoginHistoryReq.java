@@ -19,7 +19,5 @@ public class CreateLoginHistoryReq {
 
     private String ipAddress;
 
-    private LocalDateTime loginTime;
-
 }
 

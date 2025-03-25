@@ -41,7 +41,7 @@ public class UploadUtil {
         Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
         // 웹에서 접근 가능한 URL 반환
-        return "/uploads/" + newFileName;
+        return "/upload/" + newFileName;
     }
 
     public List<String> uploads(MultipartFile[] files) throws IOException {

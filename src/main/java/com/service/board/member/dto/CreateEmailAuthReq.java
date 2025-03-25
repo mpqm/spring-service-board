@@ -1,15 +1,14 @@
 package com.service.board.member.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CreateEmailAuthReq {
+
+    private Long idx;
 
     // 이메일 인증 아이디
     private String id;

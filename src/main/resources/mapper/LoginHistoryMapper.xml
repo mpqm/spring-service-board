@@ -6,14 +6,12 @@
     <!-- 로그인 이력 추가 -->
     <insert id="createLoginHistory" parameterType="com.service.board.member.dto.CreateLoginHistoryReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_LOGIN_HISTORY (
-            member_idx,
+            id,
             ip_address,
-            user_agent,
-            created_at
+            login_time
         ) VALUES (
-            #{memberIdx},
+            #{id},
             #{ipAddress},
-            #{userAgent},
             CURRENT_TIMESTAMP
         )
     </insert>

@@ -2,6 +2,7 @@ package com.service.board.member.service;
 
 import com.service.board.global.common.BaseExc;
 import com.service.board.global.common.BaseMsg;
+import com.service.board.global.util.CryptoUtil;
 import com.service.board.global.util.MailUtil;
 import com.service.board.member.dao.EmailAuthDao;
 import com.service.board.member.dao.LoginHistoryDao;
@@ -10,8 +11,8 @@ import com.service.board.member.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -26,7 +27,6 @@ public class MemberService {
     private final LoginHistoryDao loginHistoryDao;
     private final EmailAuthDao emailAuthDao;
     private final MailUtil mailUtil;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 로그인
     public void login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
@@ -40,7 +40,7 @@ public class MemberService {
         );
 
         // 비밀번호 일치 여부 확인
-        if(!passwordEncoder.matches(loginMemberReq.getPassword(), findMemberRes.getPassword())) {
+        if(!CryptoUtil.matchPassword(loginMemberReq.getPassword(), findMemberRes.getPassword())) {
             throw new BaseExc(BaseMsg.MEMBER_PW_NOT_MATCH);
         }
 
@@ -67,17 +67,33 @@ public class MemberService {
         CreateLoginHistoryReq loginHistoryDto = CreateLoginHistoryReq.builder()
                 .id(findMemberRes.getId())
                 .ipAddress(request.getRemoteAddr())
-                .loginTime(LocalDateTime.now())
                 .build();
-        Long createLoginHistoryCnt = loginHistoryDao.createLoginHistory(loginHistoryDto);
-        if(createLoginHistoryCnt < 0) {
+        Long loginHistoryRes = loginHistoryDao.createLoginHistory(loginHistoryDto);
+        if(loginHistoryRes <= 0) {
             throw new BaseExc(BaseMsg.MEMBER_CREATE_LOGIN_HISTORY_FAIL);
         }
 
     }
 
+    // 로그아웃
+    public void logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+    }
+
+    public FindMemberRes findMember(Long memberIdx) throws BaseExc {
+        FindMemberReq findMemberReq = FindMemberReq.builder()
+                .idx(memberIdx)
+                .build();
+        FindMemberRes findMemberRes = memberDao.findMemberByIdx(findMemberReq).orElseThrow(
+                () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
+        );
+        return findMemberRes;
+    }
+
     // 회원가입
     public Boolean signup(SignupMemberReq signupMemberReq, String fileName) throws BaseExc {
+
+        String uuid = UUID.randomUUID().toString();
 
         // 계정 존재 여부 확인 및 계정 복구
         FindMemberReq findMemberReq = FindMemberReq.builder()
@@ -85,6 +101,20 @@ public class MemberService {
                 .build();
         Optional<FindMemberRes> findMemberRes = memberDao.findMemberById(findMemberReq);
         if(findMemberRes.isPresent()) {
+            // 이메일 인증 재전송
+            if(!findMemberRes.get().getIsEmailAuth()){
+                CreateEmailAuthReq createEmailAuthReq = CreateEmailAuthReq.builder()
+                        .id(signupMemberReq.getId())
+                        .uuid(uuid)
+                        .build();
+                Long createEmailAuthRes = emailAuthDao.createEmailAuth(createEmailAuthReq);
+                if(createEmailAuthRes < 0) {
+                    throw new BaseExc(BaseMsg.MEMBER_CREATE_EMAIL_AUTH_FAIL);
+                }
+                mailUtil.sendSignupEmail(uuid, findMemberRes.get().getEmail(), findMemberRes.get().getId(), false, false);
+                return true;
+            }
+
             // 계정 비활성화 여부 확인
             if(findMemberRes.get().getIsInActive()) {
                 // 계정 복구
@@ -92,8 +122,8 @@ public class MemberService {
                         .idx(findMemberRes.get().getIdx())
                         .isInActive(false)
                         .build();
-                Integer editMemberCnt = memberDao.editMemberIsInActiveByIdx(editMemberReq);
-                if(editMemberCnt < 0) {
+                Integer editMemberRes = memberDao.editMemberIsInActiveByIdx(editMemberReq);
+                if(editMemberRes < 0) {
                     throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
                 }
                 return false;
@@ -103,16 +133,15 @@ public class MemberService {
         }
 
         // 이메일인증 UUID, 비밀번호 암호화
-        String uuid = UUID.randomUUID().toString();
-        String securedPassword = passwordEncoder.encode(signupMemberReq.getPassword());
+        String securedPassword = CryptoUtil.hashPassword(signupMemberReq.getPassword());
 
         // 이메일 인증 정보 저장
         CreateEmailAuthReq createEmailAuthReq = CreateEmailAuthReq.builder()
                 .id(signupMemberReq.getId())
                 .uuid(uuid)
                 .build();
-        Long createEmailAuthCnt = emailAuthDao.createEmailAuth(createEmailAuthReq);
-        if(createEmailAuthCnt < 0) {
+        Long createEmailAuthRes = emailAuthDao.createEmailAuth(createEmailAuthReq);
+        if(createEmailAuthRes < 0) {
             throw new BaseExc(BaseMsg.MEMBER_CREATE_EMAIL_AUTH_FAIL);
         }
 
@@ -128,11 +157,11 @@ public class MemberService {
         if(signupMemberRes < 0) {
             throw new BaseExc(BaseMsg.MEMBER_SAVE_FAIL);
         }
-
         return true;
     }
 
     // 이메일 인증
+    @Transactional
     public Boolean emailAuth(String id, String uuid) throws BaseExc {
 
         // 이메일 인증 정보 조회
@@ -154,7 +183,7 @@ public class MemberService {
                 .isEmailAuth(true)
                 .build();
         Integer editMemberRes = memberDao.editMemberIsEmailAuthById(editMemberReq);
-        if(editMemberRes < 0) {
+        if(editMemberRes <= 0) {
             throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
         }
 
@@ -163,7 +192,7 @@ public class MemberService {
                 .id(id)
                 .build();
         Integer deleteEmailAuthRes = emailAuthDao.deleteEmailAuth(deleteEmailAuthReq);
-        if(deleteEmailAuthRes < 0) {
+        if(deleteEmailAuthRes <= 0) {
             throw new BaseExc(BaseMsg.MEMBER_DELETE_EMAIL_AUTH_FAIL);
         }
 
@@ -171,7 +200,7 @@ public class MemberService {
     }
 
     // 계정 비활성화
-    public void inActive(Long memberIdx) throws BaseExc {
+    public void editInActive(Long memberIdx) throws BaseExc {
 
         // 계정 정보 조회
         FindMemberReq findMemberReq = FindMemberReq.builder()
@@ -209,11 +238,13 @@ public class MemberService {
         if(!Objects.equals(memberIdx, findMemberRes.getIdx())) {
             throw new BaseExc(BaseMsg.MEMBER_INVALID_ACCESS);
         }
+
         // 계정 정보 변경
         editMemberReq.setIdx(findMemberRes.getIdx());
         editMemberReq.setNickName(editMemberReq.getNickName());
         editMemberReq.setPhoneNumber(editMemberReq.getPhoneNumber());
-        if(fileName != null) editMemberReq.setProfileImageUrl(fileName);
+        if(fileName == null) editMemberReq.setProfileImageUrl(findMemberRes.getProfileImageUrl());
+        else editMemberReq.setProfileImageUrl(fileName);
 
         // 계정 정보 변경
         Integer editMemberRes = memberDao.editMember(editMemberReq);
@@ -234,13 +265,12 @@ public class MemberService {
         );
 
         // 비밀번호 일치 여부 확인
-        if(!passwordEncoder.matches(editMemberReq.getOldPassword(), findMemberRes.getPassword())) {
+        if(!CryptoUtil.matchPassword(editMemberReq.getOldPassword(), findMemberRes.getPassword())) {
             throw new BaseExc(BaseMsg.MEMBER_PW_NOT_MATCH);
         }
 
         // 비밀번호 암호화 변경
-        String securedPassword = passwordEncoder.encode(editMemberReq.getNewPassword());
-        findMemberRes.setPassword(securedPassword);
+        String securedPassword = CryptoUtil.hashPassword(editMemberReq.getNewPassword());
         editMemberReq.setIdx(memberIdx);
         editMemberReq.setPassword(securedPassword);
         Integer editMemberRes = memberDao.editMemberPasswordByIdx(editMemberReq);
@@ -272,10 +302,9 @@ public class MemberService {
                     () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
             );
 
-
             // 임시 비밀번호 생성
             String uuid = UUID.randomUUID().toString();
-            String temporaryPassword = passwordEncoder.encode(uuid);
+            String temporaryPassword = CryptoUtil.hashPassword(uuid);
 
             // 임시 비밀번호 암호화 변경
             EditMemberReq editMemberReq = EditMemberReq.builder()

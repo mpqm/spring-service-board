@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.service.board.member.dao.MemberDao">
+
+    <!-- 회원가입 -->
+    <insert id="signupMember" parameterType="com.service.board.member.dto.SignupMemberReq" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO TB_MEMBER (
+            id,
+            password,
+            user_name,
+            nick_name,
+            email,
+            phone_number,
+            profile_image_url,
+            is_email_auth,
+            is_in_active,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{id},
+            #{password},
+            #{userName},
+            #{nickName},
+            #{email},
+            #{phoneNumber},
+            #{profileImageUrl},
+            #{isEmailAuth},
+            #{isInActive},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 회원 조회 (인덱스) -->
+    <select id="findMemberByIdx" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+        SELECT
+            idx,
+            id,
+            password,
+            user_name as userName,
+            nick_name as nickName,
+            email,
+            phone_number as phoneNumber,
+            profile_image_url as profileImageUrl,
+            is_email_auth as isEmailAuth,
+            is_in_active as isInActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM TB_MEMBER
+        WHERE idx = #{memberIdx}
+    </select>
+
+    <!-- 회원 조회 (ID) -->
+    <select id="findMemberById" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+        SELECT
+            idx,
+            id,
+            password,
+            user_name as userName,
+            nick_name as nickName,
+            email,
+            phone_number as phoneNumber,
+            profile_image_url as profileImageUrl,
+            is_email_auth as isEmailAuth,
+            is_in_active as isInActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM TB_MEMBER
+        WHERE id = #{id}
+    </select>
+
+    <!-- 회원 조회 (이메일) -->
+    <select id="findMemberByEmail" parameterType="com.service.board.member.dto.FindMemberReq" resultType="com.service.board.member.dto.FindMemberRes">
+        SELECT
+            idx,
+            id,
+            password,
+            user_name as userName,
+            nick_name as nickName,
+            email,
+            phone_number as phoneNumber,
+            profile_image_url as profileImageUrl,
+            is_email_auth as isEmailAuth,
+            is_in_active as isInActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM TB_MEMBER
+        WHERE email = #{email}
+    </select>
+
+    <!-- 회원 정보 수정 -->
+    <update id="editMember" parameterType="com.service.board.member.dto.EditMemberReq">
+        UPDATE TB_MEMBER
+        SET
+            user_name = #{userName},
+            nick_name = #{nickName},
+            email = #{email},
+            phone_number = #{phoneNumber},
+            profile_image_url = #{profileImageUrl},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- 이메일 인증 여부 수정 -->
+    <update id="editMemberIsEmailAuthById" parameterType="com.service.board.member.dto.EditMemberReq">
+        UPDATE TB_MEMBER
+        SET
+            is_email_auth = #{isEmailAuth},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 비밀번호 수정 -->
+    <update id="editMemberPasswordByIdx" parameterType="com.service.board.member.dto.EditMemberReq">
+        UPDATE TB_MEMBER
+        SET
+            password = #{password},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- 계정 비활성화 여부 수정 -->
+    <update id="editMemberIsInActiveByIdx" parameterType="com.service.board.member.dto.EditMemberReq">
+        UPDATE TB_MEMBER
+        SET
+            is_in_active = #{isInActive},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>

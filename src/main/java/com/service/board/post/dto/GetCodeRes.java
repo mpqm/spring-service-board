@@ -1,7 +1,9 @@
 package com.service.board.post.dto;
 
+import lombok.Data;
 import java.time.LocalDate;
 
+@Data
 public class GetCodeRes {
 
     // 코드 인덱스

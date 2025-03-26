@@ -18,6 +18,6 @@ public interface PostImageDao {
     List<GetPostImageRes> getPostImages(GetPostImageReq getPostImageReq);
 
     // 게시물 이미지 삭제
-    int deletePostImages(DeletePostImageReq deletePostImageReq);
+    Integer deletePostImages(DeletePostImageReq deletePostImageReq);
 
 }

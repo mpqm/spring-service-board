@@ -70,7 +70,7 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<BaseRes<String>> login(
+    public ResponseEntity<BaseRes<Long>> login(
         @Valid @RequestBody LoginMemberReq dto,
         HttpServletRequest request) throws BaseExc {
 

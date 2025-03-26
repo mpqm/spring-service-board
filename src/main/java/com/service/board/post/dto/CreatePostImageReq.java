@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreatePostImageReq {
 
+    // 게시물 이미지 인덱스
+    private Long idx;
+
     // 게시물 인덱스
     private Long postIdx;
 

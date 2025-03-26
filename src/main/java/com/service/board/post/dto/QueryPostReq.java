@@ -15,6 +15,9 @@ public class QueryPostReq {
 
     // 게시물 인덱스
     private Long idx;
+    
+    // 회원 인덱스
+    private Long memberIdx;
 
     // 제목
     private String title;

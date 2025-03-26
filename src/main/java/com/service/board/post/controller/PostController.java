@@ -28,6 +28,7 @@ public class PostController {
     // 게시물 목록 페이지 이동
     @GetMapping("/")
     public String goPostList(Model model) throws BaseExc {
+        // 코드 목록 가져오기
         List<GetCodeRes> codes = codeDao.getCodes();
         model.addAttribute("codes", codes);
         return "post/list";
@@ -65,6 +66,13 @@ public class PostController {
         List<String> fileNames = uploadUtil.uploads(files);
         postService.createPost(memberIdx, dto, fileNames);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_CREATED));
+    }
+
+    // Summernote 이미지 업로드
+    @PostMapping("/upload-image")
+    public ResponseEntity<BaseRes<String>> uploadImage(@RequestPart("file") MultipartFile file) throws IOException, BaseExc {
+        String fileName = uploadUtil.upload(file);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.IMAGE_UPLOADED, fileName));
     }
 
     // 게시글 수정
@@ -117,6 +125,7 @@ public class PostController {
         QueryPostRes posts = postService.getPosts(postQueryReqDto);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POSTS_SEARCHED, posts));
     }
+
 
 
 }

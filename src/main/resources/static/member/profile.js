@@ -20,9 +20,8 @@ const loadMemberInfo = () => {
                 $('#nickName').val(member.nickName);
                 $('#phoneNumber').val(member.phoneNumber);
                 // 프로필 이미지가 있는 경우에만 미리보기 설정
-                if (member.profileImageUrl) {
-                    $('#imagePreview').attr('src', member.profileImageUrl);
-                }
+                if (member.profileImageUrl) $('#imagePreview').attr('src', member.profileImageUrl);
+
             } else {
                 showAlert('danger', getMessage(res));
             }

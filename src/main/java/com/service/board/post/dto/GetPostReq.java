@@ -10,5 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetPostReq {
+
+    // 게시글 인덱스
     private Long idx;
+
+    // 멤버 인덱스
+    private Long memberIdx;
+
 }

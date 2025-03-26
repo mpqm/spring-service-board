@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.service.board.react.dao.UnlikeDao">
+    <!-- 게시물 싫어요 등록 -->
+    <insert id="createUnlikeByPostIdx" parameterType="CreateReactReq" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO TB_UNLIKE (
+            post_idx,
+            member_idx,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{postIdx},
+            #{memberIdx},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 댓글 싫어요 등록 -->
+    <insert id="createUnlikeByCommentIdx" parameterType="CreateReactReq" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO TB_UNLIKE (
+        comment_idx,
+        member_idx,
+        created_at,
+        updated_at
+        ) VALUES (
+        #{commentIdx},
+        #{memberIdx},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 게시물 싫어요 조회 -->
+    <select id="getUnlikeByPostIdx" parameterType="GetReactReq" resultType="GetReactRes">
+        SELECT 
+            idx,
+            post_idx as postIdx,
+            member_idx as memberIdx,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM TB_UNLIKE
+        WHERE post_idx = #{postIdx}
+        AND member_idx = #{memberIdx}
+        AND comment_idx IS NULL
+    </select>
+
+    <!-- 댓글 싫어요 조회 -->
+    <select id="getUnlikeByCommentIdx" parameterType="GetReactReq" resultType="GetReactRes">
+        SELECT
+        idx,
+        comment_idx as commentIdx,
+        member_idx as memberIdx,
+        created_at as createdAt,
+        updated_at as updatedAt
+        FROM TB_UNLIKE
+        WHERE comment_idx = #{commentIdx}
+        AND member_idx = #{memberIdx}
+        AND post_idx IS NULL
+    </select>
+
+    <!-- 게시물 싫어요 개수 조회 -->
+    <select id="getUnlikeCountByPostIdx" parameterType="CountReactReq" resultType="Long">
+        SELECT COUNT(*)
+        FROM TB_UNLIKE
+        WHERE post_idx = #{postIdx}
+        AND comment_idx IS NULL
+    </select>
+
+    <!-- 댓글 싫어요 개수 조회 -->
+    <select id="getUnlikeCountByCommentIdx" parameterType="CountReactReq" resultType="Long">
+        SELECT COUNT(*)
+        FROM TB_UNLIKE
+        WHERE comment_idx = #{commentIdx}
+        AND post_idx IS NULL
+    </select>
+
+    <!-- 게시물 싫어요 삭제 -->
+    <delete id="deleteUnlikeByPostIdx" parameterType="DeleteReactReq">
+        DELETE FROM TB_UNLIKE
+        WHERE post_idx = #{postIdx}
+        AND member_idx = #{memberIdx}
+        AND comment_idx IS NULL
+    </delete>
+
+    <!-- 댓글 싫어요 삭제 -->
+    <delete id="deleteUnlikeByCommentIdx" parameterType="DeleteReactReq">
+        DELETE FROM TB_UNLIKE
+        WHERE comment_idx = #{commentIdx}
+        AND member_idx = #{memberIdx}
+        AND post_idx IS NULL
+    </delete>
+
+</mapper>

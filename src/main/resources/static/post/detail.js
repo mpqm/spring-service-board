@@ -69,32 +69,26 @@ const loadPostDetail = (postIdx) => {
     $.ajax({
         type: 'GET',
         url: `/post?postIdx=${postIdx}`,
-        success: (data) => {
-            if (!data.success) {
-                alert(data.message || '게시물을 불러올 수 없습니다.');
+        success: (res) => {
+            if (!res.success) {
+                showAlert("danger", getMessage(res));
                 window.location.href = '/';
                 return;
             }
-            
-            displayPostDetail(data.result);
+            displayPostDetail(res.result);
         },
-        error: () => {
-            alert('게시물을 불러올 수 없습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };
 
 // 게시물 상세 정보 표시 함수
 const displayPostDetail = (postDetail) => {
-    if (!postDetail) {
-        return;
-    }
-    
+    if (!postDetail) return;
     const post = postDetail.idx ? postDetail : postDetail.post;
-    
-    if (!post) {
-        return;
-    }
+    if (!post) return;
     
     // 기본 정보 표시
     if (post.categoryName) $('#categoryName').text(post.categoryName);
@@ -139,17 +133,12 @@ const displayPostDetail = (postDetail) => {
     $likeButton.html(`<i class="bi bi-hand-thumbs-up"></i> 좋아요 ${post.likeCount || 0}`);
     $unlikeButton.html(`<i class="bi bi-hand-thumbs-down"></i> 싫어요 ${post.unlikeCount || 0}`);
     
-    if (postDetail.isLiked || post.isLiked) {
-        $likeButton.removeClass('btn-outline-primary').addClass('btn-primary');
-    } else {
-        $likeButton.removeClass('btn-primary').addClass('btn-outline-primary');
-    }
+    if (postDetail.isLiked || post.isLiked) $likeButton.removeClass('btn-outline-primary').addClass('btn-primary');
+    else $likeButton.removeClass('btn-primary').addClass('btn-outline-primary');
+
     
-    if (postDetail.isUnliked || post.isUnliked) {
-        $unlikeButton.removeClass('btn-outline-danger').addClass('btn-danger');
-    } else {
-        $unlikeButton.removeClass('btn-danger').addClass('btn-outline-danger');
-    }
+    if (postDetail.isUnliked || post.isUnliked) $unlikeButton.removeClass('btn-outline-danger').addClass('btn-danger');
+    else $unlikeButton.removeClass('btn-danger').addClass('btn-outline-danger');
     
     // 수정/삭제 버튼 항상 표시
     $('#editButton').show();
@@ -158,20 +147,19 @@ const displayPostDetail = (postDetail) => {
 
 // 게시물 반응 (좋아요/싫어요) 함수
 const reactToPost = (type, postIdx) => {
-    const url = type === 'like' ? '/react-like' : '/react-unlike';
-    
     $.ajax({
         type: 'GET',
-        url: `${url}?postIdx=${postIdx}`,
-        success: (data) => {
-            if (data.success) {
+        url: `/react-like?postIdx=${postIdx}`,
+        success: (res) => {
+            if (res.success) {
                 loadPostDetail(postIdx);
             } else {
-                alert(data.message || '요청 처리 중 오류가 발생했습니다.');
+                showAlert('danger', getMessage(res));
             }
         },
-        error: () => {
-            alert('요청 처리 중 오류가 발생했습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };
@@ -192,16 +180,17 @@ const deletePost = (postIdx) => {
     $.ajax({
         type: 'DELETE',
         url: `/post?postIdx=${postIdx}`,
-        success: (data) => {
-            if (data.success) {
-                alert('게시물이 삭제되었습니다.');
+        success: (res) => {
+            if (res.success) {
+                showAlert('success', '게시물이 삭제되었습니다.');
                 window.location.href = '/';
             } else {
-                alert(data.message || '게시물 삭제 중 오류가 발생했습니다.');
+                showAlert('danger', res.message || '게시물 삭제 중 오류가 발생했습니다.');
             }
         },
-        error: () => {
-            alert('게시물 삭제 중 오류가 발생했습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };
@@ -216,16 +205,17 @@ const submitComment = (postIdx, content) => {
             postIdx: postIdx,
             content: content
         }),
-        success: (data) => {
-            if (data.success) {
+        success: (res) => {
+            if (res.success) {
                 $('#commentContent').val('');
                 loadComments(postIdx);
             } else {
-                alert(data.message || '댓글 작성 중 오류가 발생했습니다.');
+                showAlert('danger', getMessage(res));
             }
         },
-        error: () => {
-            alert('댓글 작성 중 오류가 발생했습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };
@@ -235,16 +225,17 @@ const loadComments = (postIdx, page = 1) => {
     $.ajax({
         type: 'GET',
         url: `/comment-list?postIdx=${postIdx}&page=${page}`,
-        success: (data) => {
-            if (data.success) {
-                displayComments(data.result.data, postIdx);
-                displayPagination(data.result, postIdx);
+        success: (res) => {
+            if (res.success) {
+                displayComments(res.result.data, postIdx);
+                displayPagination(res.result, postIdx);
             } else {
-                console.error('댓글을 불러올 수 없습니다.');
+                showAlert('danger', getMessage(res));
             }
         },
-        error: () => {
-            console.error('댓글을 불러올 수 없습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };

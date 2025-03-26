@@ -147,9 +147,11 @@ const displayPostDetail = (postDetail) => {
 
 // 게시물 반응 (좋아요/싫어요) 함수
 const reactToPost = (type, postIdx) => {
+    const url = type === 'like' ? '/react-like' : '/react-unlike';
+
     $.ajax({
         type: 'GET',
-        url: `/react-like?postIdx=${postIdx}`,
+        url: `${url}?postIdx=${postIdx}`,
         success: (res) => {
             if (res.success) {
                 loadPostDetail(postIdx);
@@ -182,10 +184,11 @@ const deletePost = (postIdx) => {
         url: `/post?postIdx=${postIdx}`,
         success: (res) => {
             if (res.success) {
-                showAlert('success', '게시물이 삭제되었습니다.');
+                sessionStorage.setItem('alertType', 'success');
+                sessionStorage.setItem('alertMessage', getMessage(res));
                 window.location.href = '/';
             } else {
-                showAlert('danger', res.message || '게시물 삭제 중 오류가 발생했습니다.');
+                showAlert('danger', getMessage(res));
             }
         },
         error: (e) => {
@@ -379,15 +382,16 @@ const editComment = (comment, postIdx) => {
                 idx: comment.idx,
                 content: newContent
             }),
-            success: (data) => {
-                if (data.success) {
+            success: (res) => {
+                if (res.success) {
                     loadComments(postIdx);
                 } else {
-                    alert(data.message || '댓글 수정 중 오류가 발생했습니다.');
+                    showAlert("danger", getMessage(res));
                 }
             },
-            error: () => {
-                alert('댓글 수정 중 오류가 발생했습니다.');
+            error: (e) => {
+                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+                showAlert('danger', getMessage(errorResponse));
             }
         });
     }
@@ -404,15 +408,16 @@ const deleteComment = (commentIdx, postIdx) => {
         $.ajax({
             type: 'DELETE',
             url: `/comment?idx=${commentIdx}`,
-            success: (data) => {
-                if (data.success) {
+            success: (res) => {
+                if (res.success) {
                     loadComments(postIdx);
                 } else {
-                    alert(data.message || '댓글 삭제 중 오류가 발생했습니다.');
+                    showAlert("danger", getMessage(res));
                 }
             },
-            error: () => {
-                alert('댓글 삭제 중 오류가 발생했습니다.');
+            error: (e) => {
+                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+                showAlert('danger', getMessage(errorResponse));
             }
         });
     }
@@ -433,15 +438,16 @@ const reactToComment = (type, commentIdx) => {
     $.ajax({
         type: 'GET',
         url: `${url}?commentIdx=${commentIdx}`,
-        success: (data) => {
-            if (data.success) {
+        success: (res) => {
+            if (res.success) {
                 loadComments(postIdx);
             } else {
-                alert(data.message || '요청 처리 중 오류가 발생했습니다.');
+                alert("danger", getMessage(res) || '요청 처리 중 오류가 발생했습니다.');
             }
         },
-        error: () => {
-            alert('요청 처리 중 오류가 발생했습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 }; 

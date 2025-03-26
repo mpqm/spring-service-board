@@ -36,6 +36,9 @@ $(document).ready(() => {
     // 갤러리 이미지 미리보기 이벤트 바인딩
     $('#postImage').on('change', handleImagePreview);
     
+    // 취소 버튼 이벤트 바인딩
+    $('#cancelBtn').on('click', cancelBtn);
+    
     // 폼 제출 이벤트
     $('#post-create-form').on('submit', (e) => {
         e.preventDefault();
@@ -90,8 +93,9 @@ $(document).ready(() => {
                     showAlert('danger', getMessage(res));
                 }
             },
-            error: () => {
-                alert('게시물 저장 중 오류가 발생했습니다.');
+            error: (e) => {
+                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+                showAlert('danger', getMessage(errorResponse));
             }
         });
     });

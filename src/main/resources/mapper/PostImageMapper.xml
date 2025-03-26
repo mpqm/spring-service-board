@@ -7,11 +7,11 @@
         INSERT INTO TB_POST_IMAGE (
             post_idx,
             image_url,
-            created_at,
+            created_at
         ) VALUES (
             #{postIdx},
             #{imageUrl},
-            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
         )
     </insert>
 
@@ -21,16 +21,16 @@
             idx,
             post_idx as postIdx,
             image_url as imageUrl,
-            created_at as createdAt,
+            created_at as createdAt
         FROM TB_POST_IMAGE
         WHERE post_idx = #{postIdx}
         ORDER BY idx ASC
     </select>
 
     <!-- 게시물 이미지 삭제 -->
-    <delete id="deletePostImage" parameterType="DeletePostImageReq">
+    <delete id="deletePostImages" parameterType="DeletePostImageReq">
         DELETE FROM TB_POST_IMAGE
-        WHERE idx = #{idx}
+        WHERE post_idx = #{postIdx}
     </delete>
 
 </mapper> 

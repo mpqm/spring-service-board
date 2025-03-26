@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +28,7 @@ public class MemberService {
     private final MailUtil mailUtil;
 
     // 로그인
-    public void login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
+    public Long login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
 
         // 계정 존재 여부 확인
         FindMemberReq findMemberReq = FindMemberReq.builder()
@@ -72,6 +71,8 @@ public class MemberService {
         if(loginHistoryRes <= 0) {
             throw new BaseExc(BaseMsg.MEMBER_CREATE_LOGIN_HISTORY_FAIL);
         }
+
+        return findMemberRes.getIdx();
 
     }
 

@@ -1,3 +1,7 @@
+create database board;
+use board;
+
+
 CREATE TABLE TB_LOGIN_HISTORY (
     idx BIGINT AUTO_INCREMENT PRIMARY KEY,
     id VARCHAR(50) NOT NULL,
@@ -36,7 +40,6 @@ CREATE TABLE TB_CODE (
 
 
 INSERT INTO TB_CODE (group_name, code_name) VALUES
-('POST_CATEGORY', '전체게시물'),
 ('POST_CATEGORY', '공지사항'),
 ('POST_CATEGORY', '질문과답변'),
 ('POST_CATEGORY', '자유게시판'),
@@ -47,7 +50,6 @@ INSERT INTO TB_CODE (group_name, code_name) VALUES
 ('POST_ORDER', '좋아요순'),
 ('POST_ORDER', '싫어요순'),
 ('POST_ORDER', '댓글수순'),
-('POST_SEARCH', '전체'),
 ('POST_SEARCH', '제목'),
 ('POST_SEARCH', '작성자'),
 ('POST_SEARCH', '내용'),
@@ -62,7 +64,7 @@ CREATE TABLE TB_POST (
     category_idx BIGINT NOT NULL,
     range_idx BIGINT NOT NULL,
     title VARCHAR(200) NOT NULL,
-    content TEXT NOT NULL,
+    content LONGTEXT NOT NULL,
     view_count BIGINT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -102,6 +104,6 @@ CREATE TABLE TB_COMMENT(
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx)
+    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx),
     FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx)
 );

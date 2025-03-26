@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta th:if="${memberIdx != null}" name="memberIdx" th:content="${memberIdx}">
+    <title>게시물 상세</title>
+</head>
+<body>
+<th:block th:insert="~{common/header :: HeaderFragment}"></th:block>
+<div class="main-wrap">
+    <div class="d-flex w-100 mb-3 flex-column border border-dark p-3">
+        <!-- 게시물 상세 정보 -->
+        <div class="post-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span id="categoryName" class="badge bg-dark text-white me-2"></span>
+                    <h2 id="postTitle" class="d-inline"></h2>
+                </div>
+                <div>
+                    <span id="createdAt"></span>
+                </div>
+
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <div>
+                    <span id="author"></span>
+                </div>
+                <div>
+                    <i class="bi bi-eye-fill"></i> <span id="viewCount" class="me-3"> 0 </span>
+                    <i class="bi bi-hand-thumbs-up-fill"></i> <span id="likeCount" class="me-3"> 0 </span>
+                    <i class="bi bi-hand-thumbs-down-fill"></i> <span id="unlikeCount" class="me-3"> 0 </span>
+                    <i class="bi bi-chat-left-dots-fill"></i> <span id="commentCount"> 0 </span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- 게시물 내용 -->
+        <div class="post-content mt-3">
+            <div id="content"></div>
+        </div>
+
+        <hr>
+
+        <!-- 이미지 갤러리 -->
+        <div id="imageGallery" class="mt-3">
+            <!-- 이미지가 여기에 동적으로 추가됨 -->
+        </div>
+
+        <hr>
+
+        <!-- 반응 버튼 -->
+        <div class="d-flex justify-content-center my-3">
+            <a th:href="@{/}" class="btn btn-outline-dark me-2">
+                <i class="bi bi-list"></i> 목록
+            </a>
+            <button id="editButton" class="btn btn-outline-dark me-2">
+                <i class="bi bi-pencil"></i> 수정
+            </button>
+            <button id="deleteButton" class="btn btn-outline-dark me-2">
+                <i class="bi bi-trash"></i> 삭제
+            </button>
+            <button id="likeButton" class="btn btn-outline-dark me-2">
+                <i class="bi bi-hand-thumbs-up"></i> 좋아요
+            </button>
+            <button id="unlikeButton" class="btn btn-outline-dark">
+                <i class="bi bi-hand-thumbs-down"></i> 싫어요
+            </button>
+
+        </div>
+
+        <!-- 작성자만 볼 수 있는 버튼 -->
+        <div id="authorActions" class="d-flex justify-content-end my-3" style="display: none !important;">
+
+        </div>
+
+        <hr>
+
+        <!-- 댓글 섹션 - 아직 구현되지 않아 숨김 처리 -->
+        <div class="comments-section mt-4">
+            <h4 class="mb-3">댓글</h4>
+
+            <!-- 로그인한 사용자만 볼 수 있는 댓글 작성 폼 -->
+            <div id="commentForm" class="mb-4">
+                <textarea id="commentContent" class="form-control mb-2" rows="3" placeholder="댓글을 입력하세요"></textarea>
+                <button id="submitComment" class="btn btn-primary">댓글 작성</button>
+            </div>
+
+            <!-- 댓글 목록 -->
+            <div id="commentsList" class="mt-4">
+                <!-- 댓글이 여기에 동적으로 추가됨 -->
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
+<script th:src="@{/post/detail.js}"></script>
+</body>
+</html> 

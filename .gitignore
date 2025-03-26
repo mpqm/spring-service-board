@@ -1,6 +1,6 @@
 meta/infra/mariadb/
 src/main/resources/.env
-src/main/resources/uploads/
+src/main/resources/upload/
 
 HELP.md
 target/

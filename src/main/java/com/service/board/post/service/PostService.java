@@ -3,8 +3,6 @@ package com.service.board.post.service;
 import com.service.board.global.common.BaseExc;
 import com.service.board.global.common.BaseMsg;
 import com.service.board.member.dao.MemberDao;
-import com.service.board.member.dto.FindMemberReq;
-import com.service.board.member.dto.FindMemberRes;
 import com.service.board.post.dao.PostDao;
 import com.service.board.post.dao.PostImageDao;
 import com.service.board.post.dto.*;
@@ -12,9 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ public class PostService {
     private final PostImageDao postImageDao;
 
     // 게시물 등록
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void createPost(Long memberIdx, CreatePostReq createPostReq, List<String> fileNames) throws BaseExc {
 
         // 게시물 저장
@@ -35,15 +35,16 @@ public class PostService {
         if (createPostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_CREATED);
 
         // 이미지 파일 정보 저장
-        for (String fileName : fileNames) {
-            CreatePostImageReq createPostImageReq = CreatePostImageReq.builder()
-                    .postIdx(createPostRes)
-                    .imageUrl(fileName)
-                    .build();
-            Long createPostImageRes = postImageDao.createPostImage(createPostImageReq);
-            if (createPostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+        if (fileNames != null && !fileNames.isEmpty()) {
+            for (String fileName : fileNames) {
+                CreatePostImageReq createPostImageReq = CreatePostImageReq.builder()
+                        .postIdx(createPostReq.getIdx()) // createPostRes 대신 createPostReq.getIdx() 사용
+                        .imageUrl(fileName)
+                        .build();
+                Long createPostImageRes = postImageDao.createPostImage(createPostImageReq);
+                if (createPostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+            }
         }
-
     }
 
     @Transactional
@@ -58,28 +59,63 @@ public class PostService {
         );
 
         // 게시물 작성자 확인
-        if(Objects.equals(getPostRes.getMemberIdx(), memberIdx)) {
+        if(!Objects.equals(getPostRes.getMemberIdx(), memberIdx)) {
             throw new BaseExc(BaseMsg.POST_NOT_AUTHORIZED);
         }
 
-        // 댓글 수정
+        // 게시물 수정
         updatePostReq.setMemberIdx(memberIdx);
         updatePostReq.setIdx(postIdx);
         Integer updatePostRes = postDao.updatePost(updatePostReq);
         if(updatePostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_UPDATED);
 
+        // 새 이미지 파일이 있는 경우, 새 이미지 추가
+        if (fileNames != null && !fileNames.isEmpty()) {
+            DeletePostImageReq deletePostImageReq = DeletePostImageReq.builder()
+                    .postIdx(postIdx)
+                    .build();
+            Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
+            if(deletePostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_DELETED);
+            for (String fileName : fileNames) {
+                CreatePostImageReq createPostImageReq = CreatePostImageReq.builder()
+                        .postIdx(postIdx)
+                        .imageUrl(fileName)
+                        .build();
+                Long createPostImageRes = postImageDao.createPostImage(createPostImageReq);
+                if (createPostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+            }
+        }
     }
 
     @Transactional
     public void deletePost(Long memberIdx, Long postIdx) throws BaseExc {
+        // 게시물 조회
+        GetPostReq getPostReq = GetPostReq.builder()
+                .idx(postIdx)
+                .build();
+        GetPostRes getPostRes = postDao.getPost(getPostReq).orElseThrow(
+                () -> new BaseExc(BaseMsg.POST_NOT_FOUND)
+        );
+
+        // 게시물 작성자 확인
+        if(!Objects.equals(getPostRes.getMemberIdx(), memberIdx)) {
+            throw new BaseExc(BaseMsg.  POST_NOT_AUTHORIZED);
+        }
+        
+        // 게시물 이미지 삭제
+        DeletePostImageReq deletePostImageReq = DeletePostImageReq.builder()
+                .postIdx(postIdx)
+                .build();
+        Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
+        if(deletePostImageRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_DELETED);
+        
         // 게시물 삭제
         DeletePostReq deletePostReq = DeletePostReq.builder()
                 .idx(postIdx)
                 .memberIdx(memberIdx)
                 .build();
         Integer deletePostRes = postDao.deletePost(deletePostReq);
-        if(deletePostRes <= 0) throw new BaseExc(BaseMsg.POST_DELETED);
-
+        if(deletePostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_DELETED);
     }
 
     // 게시물 상세 조회
@@ -113,21 +149,23 @@ public class PostService {
 
     // 게시물 목록 조회
     public QueryPostRes getPosts(QueryPostReq queryPostReq) throws BaseExc {
-
-
         // 게시물 목록 조회
         List<GetPostRes> posts = postDao.getPosts(queryPostReq);
 
         // 전체수
         Long totalElements = postDao.countPosts(queryPostReq);
-
+        
+        // 페이지 사이즈가 0일 경우 예외 처리
+        Long pageSize = queryPostReq.getSize() <= 0 ? 10L : queryPostReq.getSize();
+        
         // 페이징 결과 반환
-        Long totalPages = (long) Math.ceil((double) totalElements / queryPostReq.getSize());
+        Long totalPages = (long) Math.ceil((double) totalElements / pageSize);
+
         return QueryPostRes.builder()
                 .data(posts)
                 .totalElements(totalElements)
                 .currentPage(queryPostReq.getPage())
-                .pageSize(queryPostReq.getSize())
+                .pageSize(pageSize)
                 .totalPages(totalPages)
                 .build();
     }

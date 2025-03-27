@@ -3,9 +3,9 @@ $(document).ready(() => {
     loadMemberInfo();
     
     // 이벤트 핸들러 등록
-    $('#editProfileForm').on('submit', handleEditProfile);
-    $('#editPwForm').on('submit', handleEditPassword);
-    $('#inActiveForm').on('submit', handleInActive);
+    $('#editProfileForm').on('submit', handleEditProfileForm);
+    $('#editPwForm').on('submit', handleEditPasswordForm);
+    $('#inActiveForm').on('submit', handleInActiveForm);
     $('#profileImage').on('change', handleProfileImagePreview);
 });
 
@@ -20,8 +20,7 @@ const loadMemberInfo = () => {
                 $('#nickName').val(member.nickName);
                 $('#phoneNumber').val(member.phoneNumber);
                 // 프로필 이미지가 있는 경우에만 미리보기 설정
-                if (member.profileImageUrl) $('#imagePreview').attr('src', member.profileImageUrl);
-
+                if (member.profileImageUrl) $('#profilePreview').attr('src', member.profileImageUrl);
             } else {
                 showAlert('danger', getMessage(res));
             }
@@ -33,36 +32,8 @@ const loadMemberInfo = () => {
     });
 };
 
-// 프로필 이미지 미리보기
-const handleProfileImagePreview = (event) => {
-    const file = event.target.files[0];
-    const preview = $('#imagePreview');
-
-    if (file) {
-        // 파일 크기 체크 (5MB 제한)
-        if (file.size > 5 * 1024 * 1024) {
-            showAlert('danger', '파일 크기는 5MB를 초과할 수 없습니다.');
-            event.target.value = ''; // 파일 선택 초기화
-            return;
-        }
-
-        // 파일 타입 체크
-        if (!file.type.startsWith('image/')) {
-            showAlert('danger', '이미지 파일만 업로드 가능합니다.');
-            event.target.value = ''; // 파일 선택 초기화
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.attr('src', e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
 // 프로필 수정
-const handleEditProfile = (event) => {
+const handleEditProfileForm = (event) => {
     event.preventDefault();
     const profileData = {
         nickName: $.trim($('#nickName').val()),
@@ -95,7 +66,7 @@ const handleEditProfile = (event) => {
 };
 
 // 비밀번호 변경
-const handleEditPassword = (event) => {
+const handleEditPasswordForm = (event) => {
     event.preventDefault();
     const data = {
         oldPassword: $('#oldPassword').val(),
@@ -124,7 +95,7 @@ const handleEditPassword = (event) => {
 };
 
 // 회원 탈퇴
-const handleInActive = (event) => {
+const handleInActiveForm = (event) => {
     event.preventDefault();
     if (confirm('정말로 탈퇴하시겠습니까?')) {
         $.ajax({

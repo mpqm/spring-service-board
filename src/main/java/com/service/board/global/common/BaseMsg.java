@@ -77,7 +77,8 @@ public enum BaseMsg {
     COMMENT_DELETE_FAIL(3005, false, "댓글 삭제에 실패했습니다."),
     COMMENT_NOT_FOUND(3006, false, "존재하지 않는 댓글입니다."),
     COMMENTS_SEARCHED(3007, true, "댓글 목록 조회에 성공했습니다."),
-
+    NESTED_REPLY_NOT_ALLOWED(3008, false, "대댓글은 댓글에 달 수 없습니다."),
+    REPLIES_SEARCHED(3009, true, "대댓글 목록 조회에 성공했습니다."),
     DD(11111111, false, "");
 
     private final Integer code;

@@ -16,7 +16,7 @@
                 <div th:if="${message}" class="alert alert-success d-inline-block w-100" th:text="${message}"></div>
                 <div th:if="${error}" class="alert alert-danger d-inline-block w-100" th:text="${error}"></div>
             </div>
-            <form id="find-id-form" method="post">
+            <form id="findIdForm" method="post">
                 <div class="mb-3">
                     <label for="email" class="form-label">ID 찾기</label>
                     <input type="text" id="email" name="email" class="form-control" placeholder="가입시 입력한 이메일을 입력하세요" required>
@@ -24,7 +24,7 @@
                 <button type="submit" class="btn btn-outline-dark w-100">ID 찾기</button>
             </form>
             <hr>
-            <form id="find-pw-form" method="post">
+            <form id="findPwForm" method="post">
                 <div class="mb-3">
                     <label for="id" class="form-label">PW 찾기</label>
                     <input type="text" id="id" name="id" class="form-control" placeholder="찾은 ID를 입력하세요" required>

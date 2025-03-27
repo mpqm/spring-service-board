@@ -17,16 +17,16 @@
             <form id="editProfileForm">
                 <div class="mb-3">
                     <label for="nickName" class="form-label">닉네임</label>
-                    <input th:value="${nickName}" type="text" id="nickName" class="form-control" placeholder="사용자 이름 입력" required>
+                    <input type="text" id="nickName" class="form-control" placeholder="사용자 이름 입력" required>
                 </div>
                 <div class="mb-3">
                     <label for="phoneNumber" class="form-label">전화번호</label>
-                    <input th:value="${phoneNumber}" type="tel" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="전화번호를 입력하세요 (- 포함)" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="전화번호를 입력하세요 (- 포함)" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required>
                 </div>
                 <div class="mb-3">
                     <label for="profileImage" class="form-label">프로필 이미지 수정</label>
-                    <img id="imagePreview" th:src="${profileImageUrl}" alt="프로필 이미지" class="profile-img rounded-circle border mb-1">
-                    <input th:value="${profileImageUrl}" class="form-control bg-white" type="file" id="profileImage" name="profileImage">
+                    <img id="profilePreview" alt="프로필 이미지" class="profile-img rounded-circle border mb-1">
+                    <input class="form-control bg-white" type="file" id="profileImage" name="profileImage">
                 </div>
                 <button type="submit" class="btn btn-outline-dark w-100">수정</button>
             </form>

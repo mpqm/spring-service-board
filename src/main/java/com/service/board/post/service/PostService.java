@@ -32,7 +32,9 @@ public class PostService {
         // 게시물 저장
         createPostReq.setMemberIdx(memberIdx);
         Long createPostRes = postDao.createPost(createPostReq);
-        if (createPostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_CREATED);
+        if (createPostRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_NOT_CREATED);
+        }
 
         // 이미지 파일 정보 저장
         if (fileNames != null && !fileNames.isEmpty()) {
@@ -42,7 +44,9 @@ public class PostService {
                         .imageUrl(fileName)
                         .build();
                 Long createPostImageRes = postImageDao.createPostImage(createPostImageReq);
-                if (createPostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+                if (createPostImageRes <= 0) {
+                    throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+                }
             }
         }
     }
@@ -67,7 +71,9 @@ public class PostService {
         updatePostReq.setMemberIdx(memberIdx);
         updatePostReq.setIdx(postIdx);
         Integer updatePostRes = postDao.updatePost(updatePostReq);
-        if(updatePostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_UPDATED);
+        if(updatePostRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_NOT_UPDATED);
+        }
 
         // 새 이미지 파일이 있는 경우, 새 이미지 추가
         if (fileNames != null && !fileNames.isEmpty()) {
@@ -75,14 +81,19 @@ public class PostService {
                     .postIdx(postIdx)
                     .build();
             Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
-            if(deletePostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_DELETED);
+            if(deletePostImageRes <= 0) {
+                throw new BaseExc(BaseMsg.POST_IMAGE_NOT_DELETED);
+            }
+
             for (String fileName : fileNames) {
                 CreatePostImageReq createPostImageReq = CreatePostImageReq.builder()
                         .postIdx(postIdx)
                         .imageUrl(fileName)
                         .build();
                 Long createPostImageRes = postImageDao.createPostImage(createPostImageReq);
-                if (createPostImageRes <= 0) throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+                if (createPostImageRes <= 0) {
+                    throw new BaseExc(BaseMsg.POST_IMAGE_NOT_CREATED);
+                }
             }
         }
     }
@@ -107,7 +118,9 @@ public class PostService {
                 .postIdx(postIdx)
                 .build();
         Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
-        if(deletePostImageRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_DELETED);
+        if(deletePostImageRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_NOT_DELETED);
+        }
         
         // 게시물 삭제
         DeletePostReq deletePostReq = DeletePostReq.builder()
@@ -115,7 +128,9 @@ public class PostService {
                 .memberIdx(memberIdx)
                 .build();
         Integer deletePostRes = postDao.deletePost(deletePostReq);
-        if(deletePostRes <= 0) throw new BaseExc(BaseMsg.POST_NOT_DELETED);
+        if(deletePostRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_NOT_DELETED);
+        }
     }
 
     // 게시물 상세 조회
@@ -127,7 +142,9 @@ public class PostService {
                 .idx(postIdx)
                 .build();
         Integer increasePostViewCountRes = postDao.increasePostViewCount(queryPostReq);
-        if(increasePostViewCountRes <= 0 ) throw new BaseExc(BaseMsg.POST_VIEW_NOT_INCREASED);
+        if(increasePostViewCountRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_VIEW_NOT_INCREASED);
+        }
 
         // 게시물 조회
         GetPostReq getPostReq = GetPostReq.builder()
@@ -154,18 +171,15 @@ public class PostService {
 
         // 전체수
         Long totalElements = postDao.countPosts(queryPostReq);
-        
-        // 페이지 사이즈가 0일 경우 예외 처리
-        Long pageSize = queryPostReq.getSize() <= 0 ? 10L : queryPostReq.getSize();
-        
+
         // 페이징 결과 반환
-        Long totalPages = (long) Math.ceil((double) totalElements / pageSize);
+        Long totalPages = (long) Math.ceil((double) totalElements / queryPostReq.getSize());
 
         return QueryPostRes.builder()
                 .data(posts)
                 .totalElements(totalElements)
                 .currentPage(queryPostReq.getPage())
-                .pageSize(pageSize)
+                .pageSize(queryPostReq.getSize())
                 .totalPages(totalPages)
                 .build();
     }

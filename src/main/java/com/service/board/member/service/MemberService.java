@@ -221,7 +221,9 @@ public class MemberService {
                 .isInActive(true)
                 .build();
         Integer editMemberRes =  memberDao.editMemberIsInActiveByIdx(editMemberReq);
-        if(editMemberRes < 0) throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        if(editMemberRes < 0) {
+            throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        }
         
     }
 
@@ -249,7 +251,9 @@ public class MemberService {
 
         // 계정 정보 변경
         Integer editMemberRes = memberDao.editMember(editMemberReq);
-        if(editMemberRes < 0) throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        if(editMemberRes < 0) {
+            throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        }
 
     }
 
@@ -275,29 +279,25 @@ public class MemberService {
         editMemberReq.setIdx(memberIdx);
         editMemberReq.setPassword(securedPassword);
         Integer editMemberRes = memberDao.editMemberPasswordByIdx(editMemberReq);
-        if(editMemberRes < 0) throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        if(editMemberRes < 0) {
+            throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        }
 
     }
 
     // 계정 ID/PW 찾기 true: id, false pw
-    public Boolean findIdPw(String email, String id) throws BaseExc {
+    public Boolean findIdPw(FindMemberReq findMemberReq) throws BaseExc {
 
         // 이메일 존재 여부 확인
-        if(email != null) {
-            FindMemberReq findMemberReq = FindMemberReq.builder()
-                    .email(email)
-                    .build();
+        if(findMemberReq.getEmail() != null) {
             FindMemberRes findMemberRes = memberDao.findMemberByEmail(findMemberReq).orElseThrow(
                     () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
             );
 
             // 이메일 찾기 메일 전송
-            mailUtil.sendFindUserId(email, findMemberRes.getId(), findMemberRes.getIsInActive());
+            mailUtil.sendFindUserId(findMemberReq.getEmail(), findMemberRes.getId(), findMemberRes.getIsInActive());
             return true;
-        } else if (id != null){
-            FindMemberReq findMemberReq = FindMemberReq.builder()
-                    .id(id)
-                    .build();
+        } else if (findMemberReq.getId() != null){
             // 계정 존재 여부 확인
             FindMemberRes findMemberRes = memberDao.findMemberById(findMemberReq).orElseThrow(
                     () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
@@ -313,7 +313,9 @@ public class MemberService {
                     .password(temporaryPassword)
                     .build();
             Integer editMemberRes = memberDao.editMemberPasswordByIdx(editMemberReq);
-            if(editMemberRes < 0) throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+            if(editMemberRes < 0) {
+                throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+            }
 
             // 임시 비밀번호 메일 전송
             mailUtil.sendFindUserPassword(findMemberRes.getEmail(), uuid, findMemberRes.getIsInActive());

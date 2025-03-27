@@ -3,22 +3,6 @@ $(document).ready(() => {
     $('#profileImage').on('change', handleProfileImagePreview);
 });
 
-// 프로필 이미지 미리보기
-const handleProfileImagePreview = (event) => {
-    const file = event.target.files[0];
-    const preview = $('#profilePreview');
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.attr('src', e.target.result).show();
-        };
-        reader.readAsDataURL(file);
-    } else {
-        preview.hide();
-    }
-};
-
 const handleSignup = (event) => {
 
     // 기본 제출 방지, 데이터 셋팅

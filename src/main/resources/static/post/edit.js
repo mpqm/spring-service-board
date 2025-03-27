@@ -4,15 +4,12 @@ let isEdit = false;
 
 $(document).ready(() => {
     // URL에서 게시물 IDX 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    postIdx = urlParams.get('postIdx');
-    
-    // 수정 모드인 경우 기존 데이터 로드
+    postIdx = new URLSearchParams(window.location.search).get('postIdx');
     if (postIdx) {
         isEdit = true;
         loadPostDetail(postIdx);
     }
-    
+
     // Summernote 에디터 초기화
     $('#content').summernote({
         height: 400,
@@ -26,11 +23,7 @@ $(document).ready(() => {
             ['insert', ['link', 'picture']],
             ['view', ['fullscreen', 'codeview', 'help']]
         ],
-        callbacks: {
-            onImageUpload: function(files) {
-                uploadImage(files);
-            }
-        }
+        callbacks: { onImageUpload: function(files) { uploadImage(files); } }
     });
     
     // 갤러리 이미지 미리보기 이벤트 바인딩
@@ -40,66 +33,63 @@ $(document).ready(() => {
     $('#cancelBtn').on('click', cancelBtn);
     
     // 폼 제출 이벤트
-    $('#post-create-form').on('submit', (e) => {
-        e.preventDefault();
-        
-        const title = $('#title').val();
-        const content = $('#content').summernote('code');
-        const categoryIdx = $('#categoryIdx').val();
-        const rangeIdx = $('#rangeIdx').val();
-        
-        if (!title || !content) {
-            alert('제목과 내용을 모두 입력해주세요.');
-            return;
-        }
-        
-        if (!categoryIdx || !rangeIdx) {
-            alert('카테고리와 공개범위를 모두 선택해주세요.');
-            return;
-        }
-        
-        const formData = new FormData();
-        formData.append("dto", new Blob([JSON.stringify({
-            title: title,
-            content: content,
-            categoryIdx: parseInt(categoryIdx),
-            rangeIdx: parseInt(rangeIdx)
-        })], { type: "application/json" }));
-        
-        // 파일 추가 (파일이 선택되었는지 확인)
-        const fileInput = $('#postImage')[0].files;
-        if (fileInput && fileInput.length > 0) {
-            for (let i = 0; i < fileInput.length; i++) {
-                formData.append("file", fileInput[i]);
-            }
-        }
-        
-        const url = isEdit ? `/post?postIdx=${postIdx}` : '/post';
-        const method = isEdit ? 'PUT' : 'POST';
-        
-        $.ajax({
-            type: method,
-            url: url,
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: (res) => {
-                if (res.success) {
-                    sessionStorage.setItem('alertType', 'success');
-                    sessionStorage.setItem('alertMessage', getMessage(res));
-                    if(isEdit) location.href = `/post-detail?postIdx=${postIdx}`;
-                    else location.href = '/';
-                } else {
-                    showAlert('danger', getMessage(res));
-                }
-            },
-            error: (e) => {
-                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-                showAlert('danger', getMessage(errorResponse));
-            }
-        });
-    });
+    $('#postCreateForm').on('submit', handlePostCreateForm);
+
 });
+
+const handlePostCreateForm = (event) => {
+    event.preventDefault();
+    const title = $('#title').val();
+    const content = $('#content').summernote('code');
+    const categoryIdx = parseInt($('#categoryIdx').val());
+    const rangeIdx = parseInt($('#rangeIdx').val());
+
+    if (!title || !content) {
+        showAlert('danger', '제목과 내용을 모두 입력해주세요.');
+        return;
+    }
+
+    if (!categoryIdx || !rangeIdx) {
+        showAlert('danger', '카테고리와 공개범위를 모두 선택해주세요.');
+        return;
+    }
+    const postData = {
+        title: title,
+        content: content,
+        categoryIdx: categoryIdx,
+        rangeIdx: rangeIdx
+    }
+    const formData = new FormData();
+    formData.append("dto", new Blob([JSON.stringify(postData)], { type: "application/json" }));
+    // 파일 추가 (파일이 선택되었는지 확인)
+    const fileInput = $('#postImage')[0].files;
+    if (fileInput && fileInput.length > 0) {
+        for (let i = 0; i < fileInput.length; i++) {
+            formData.append("file", fileInput[i]);
+        }
+    }
+    $.ajax({
+        type: isEdit ? 'PUT' : 'POST',
+        url: isEdit ? `/post?postIdx=${postIdx}` : '/post',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: (res) => {
+            if (res.success) {
+                sessionStorage.setItem('alertType', 'success');
+                sessionStorage.setItem('alertMessage', getMessage(res));
+                if(isEdit) location.href = `/post-detail?postIdx=${postIdx}`;
+                else location.href = '/';
+            } else {
+                showAlert('danger', getMessage(res));
+            }
+        },
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
+        }
+    });
+}
 
 // 게시물 상세 정보 로드 함수
 const loadPostDetail = (postIdx) => {
@@ -129,18 +119,17 @@ const loadPostDetail = (postIdx) => {
                     $('#rangeIdx').val(post.rangeIdx);
                     $('#rangeIdx option[value="' + post.rangeIdx + '"]').prop('selected', true);
                 }
-                
+
                 // 이미지가 있는 경우 표시
-                if (post.postImages && post.postImages.length > 0) {
-                    renderExistingImages(post.postImages);
-                }
+                if (post.postImages && post.postImages.length > 0) renderExistingImages(post.postImages);
             } else {
                 showAlert('danger', getMessage(res));
                 window.location.href = '/';
             }
         },
-        error: () => {
-            showAlert('danger', '게시물을 불러올 수 없습니다.');
+        error: (e) => {
+            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+            showAlert('danger', getMessage(errorResponse));
         }
     });
 };
@@ -151,7 +140,6 @@ const uploadImage = (files) => {
     const reader = new FileReader();
     
     reader.onload = function(e) {
-        // 먼저 에디터에 이미지 삽입
         $('#content').summernote('insertImage', e.target.result);
         
         // 그 다음 서버에 업로드
@@ -169,8 +157,9 @@ const uploadImage = (files) => {
                     showAlert('danger', getMessage(res));
                 }
             },
-            error: () => {
-                showAlert('danger', '이미지 업로드 중 오류가 발생했습니다.');
+            error: (e) => {
+                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+                showAlert('danger', getMessage(errorResponse));
             }
         });
     };

@@ -43,7 +43,7 @@ const getMessage = (response) => {
 };
 
 // 로그아웃 함수
-const logout = () => {
+const handleLogoutForm = () => {
     $.ajax({
         type: 'POST',
         url: '/logout',
@@ -62,3 +62,40 @@ const logout = () => {
     });
 };
 
+// 프로필 이미지 미리보기
+const handleProfileImagePreview = (event) => {
+    const file = event.target.files[0];
+    const preview = $('#profilePreview');
+
+    if (file) {
+        // 파일 크기 체크 (5MB 제한)
+        if (file.size > 5 * 1024 * 1024) {
+            showAlert('danger', '파일 크기는 5MB를 초과할 수 없습니다.');
+            event.target.value = ''; // 파일 선택 초기화
+            return;
+        }
+
+        // 파일 타입 체크
+        if (!file.type.startsWith('image/')) {
+            showAlert('danger', '이미지 파일만 업로드 가능합니다.');
+            event.target.value = ''; // 파일 선택 초기화
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => preview.attr('src', e.target.result).show();
+        reader.readAsDataURL(file);
+    } else {
+        preview.hide();
+    }
+};
+
+// 날짜 포맷팅 함수
+const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}

@@ -19,6 +19,8 @@ public class EditMemberReq {
     // 아이디
     private String id;
 
+    private String email;
+
     // 계정 비활성화 여부
     private Boolean isInActive;
 

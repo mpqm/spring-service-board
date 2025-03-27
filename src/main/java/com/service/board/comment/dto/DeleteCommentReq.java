@@ -1,4 +1,4 @@
-package com.service.board.react.dto;
+package com.service.board.comment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CountReactReq {
+public class DeleteCommentReq {
 
-
-    // 좋아요 게시글 인덱스
-    private Long postIdx;
-
-    // 좋아요 댓글 인덱스
+    // 댓글 인덱스
     private Long commentIdx;
 
-}
+    // 회원 인덱스
+    private Long memberIdx;
+
+} 

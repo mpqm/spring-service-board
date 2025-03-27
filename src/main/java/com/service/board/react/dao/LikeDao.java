@@ -2,6 +2,8 @@ package com.service.board.react.dao;
 import com.service.board.react.dto.*;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Optional;
+
 @Mapper
 public interface LikeDao {
 
@@ -12,10 +14,10 @@ public interface LikeDao {
     Long createLikeByCommentIdx(CreateReactReq createReactReq);
 
     // 게시글 좋아요 조회
-    GetReactRes getLikeByPostIdx(GetReactReq getReactReq);
+    Optional<GetReactRes> getLikeByPostIdx(GetReactReq getReactReq);
 
     // 댓글 좋아요 조회
-    GetReactRes getLikeByCommentIdx(GetReactReq getReactReq);
+    Optional<GetReactRes> getLikeByCommentIdx(GetReactReq getReactReq);
 
     // 게시글 좋아요 카운트
     Long getLikeCountByPostIdx(CountReactReq countReactReq);

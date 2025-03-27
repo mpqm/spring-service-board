@@ -27,7 +27,9 @@ public class PostController {
 
     // 게시물 목록 페이지 이동
     @GetMapping("/")
-    public String goPostList(Model model) throws BaseExc {
+    public String goPostList(
+        Model model) {
+
         // 코드 목록 가져오기
         List<GetCodeRes> codes = codeDao.getCodes();
         model.addAttribute("codes", codes);
@@ -38,7 +40,8 @@ public class PostController {
     @GetMapping("/post-edit")
     public String goPostEdit(
         @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
-        Model model, RedirectAttributes redirectAttributes) throws BaseExc {
+        Model model, RedirectAttributes redirectAttributes) {
+
         if (memberIdx == null) {
             redirectAttributes.addFlashAttribute("error", "로그인한 사용자만 글쓰기가 가능합니다.");
             return "redirect:/";
@@ -51,7 +54,8 @@ public class PostController {
     // 게시물 상세 페이지 이동
     @GetMapping("/post-detail")
     public String goPostDetail(
-        Model model) throws BaseExc {
+        Model model) {
+
         model.addAttribute("codes", codeDao.getCodes());
         return "post/detail";
     }
@@ -60,8 +64,8 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<BaseRes<Void>> createPost(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @RequestPart("dto") CreatePostReq dto,
-        @RequestPart(value = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
+        @RequestPart(name = "dto") CreatePostReq dto,
+        @RequestPart(name = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
 
         List<String> fileNames = uploadUtil.uploads(files);
         postService.createPost(memberIdx, dto, fileNames);
@@ -70,7 +74,9 @@ public class PostController {
 
     // Summernote 이미지 업로드
     @PostMapping("/upload-image")
-    public ResponseEntity<BaseRes<String>> uploadImage(@RequestPart("file") MultipartFile file) throws IOException, BaseExc {
+    public ResponseEntity<BaseRes<String>> uploadImage(
+        @RequestPart(name = "file") MultipartFile file) throws IOException, BaseExc {
+
         String fileName = uploadUtil.upload(file);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.IMAGE_UPLOADED, fileName));
     }
@@ -79,9 +85,9 @@ public class PostController {
     @PutMapping("/post")
     public ResponseEntity<BaseRes<Void>> updatePost(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @RequestParam("postIdx") Long postIdx,
-        @RequestPart("dto") UpdatePostReq dto,
-        @RequestPart(value = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
+        @RequestParam(name = "postIdx") Long postIdx,
+        @RequestPart(name = "dto") UpdatePostReq dto,
+        @RequestPart(name = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
 
         List<String> fileNames = uploadUtil.uploads(files);
         postService.updatePost(memberIdx, postIdx, dto, fileNames);
@@ -93,7 +99,7 @@ public class PostController {
     @DeleteMapping("/post")
     public ResponseEntity<BaseRes<Void>> deletePost(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @RequestParam Long postIdx) throws BaseExc {
+        @RequestParam(name = "postIdx") Long postIdx) throws BaseExc {
 
         postService.deletePost(memberIdx, postIdx);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_DELETED));
@@ -102,7 +108,7 @@ public class PostController {
     // 게시물 상세 조회
     @GetMapping("/post")
     public ResponseEntity<BaseRes<GetPostRes>> getPost(
-        @RequestParam("postIdx") Long postIdx) throws BaseExc {
+        @RequestParam(name = "postIdx") Long postIdx) throws BaseExc {
 
         GetPostRes result = postService.getPost(postIdx);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_SEARCHED, result));
@@ -111,16 +117,7 @@ public class PostController {
     // 게시물 목록 조회
     @GetMapping("/post-list")
     public ResponseEntity<BaseRes<QueryPostRes>> getPosts(
-        QueryPostReq postQueryReqDto) throws BaseExc {
-
-        QueryPostRes posts = postService.getPosts(postQueryReqDto);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.POSTS_SEARCHED, posts));
-    }
-
-    // 게시물 목록 검색 조회
-    @GetMapping("/post-search")
-    public ResponseEntity<BaseRes<QueryPostRes>> searchPosts(
-            QueryPostReq postQueryReqDto) throws BaseExc {
+        @ModelAttribute QueryPostReq postQueryReqDto) throws BaseExc {
 
         QueryPostRes posts = postService.getPosts(postQueryReqDto);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POSTS_SEARCHED, posts));

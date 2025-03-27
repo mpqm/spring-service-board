@@ -1,11 +1,11 @@
 $(document).ready(() => {
-    $('#login-form').on('submit', handleLogin);
+    $('#loginForm').on('submit', handleLoginForm);
 });
 
 // 로그인 처리 함수
-const handleLogin = (event) => {
+const handleLoginForm = (event) => {
     event.preventDefault();
-    const loginData = {
+    const formData = {
         id: $.trim($('#id').val()),
         password: $.trim($('#password').val()),
     };
@@ -13,7 +13,7 @@ const handleLogin = (event) => {
         type: 'POST',
         url: '/login',
         contentType: 'application/json',
-        data: JSON.stringify(loginData),
+        data: JSON.stringify(formData),
         success: (res) => {
             if (res.success) {
                 // 성공 메시지를 sessionStorage에 저장하고 페이지 이동

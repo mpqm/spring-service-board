@@ -1,14 +1,9 @@
 let postIdx;
-let memberIdx;
 
 $(document).ready(() => {
     // URL에서 게시물 IDX 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    postIdx = urlParams.get('postIdx');
-    
-    // 세션 스토리지에서 memberIdx 가져오기
-    memberIdx = sessionStorage.getItem('memberIdx');
-    
+    postIdx = new URLSearchParams(window.location.search).get('postIdx');
+
     // 게시물 상세 정보 로드
     loadPostDetail(postIdx);
     
@@ -19,22 +14,16 @@ $(document).ready(() => {
     $('#loadCommentsBtn').hide();
     
     // 수정 버튼 이벤트
-    $('#editButton').on('click', () => {
-        window.location.href = `/post-edit?postIdx=${postIdx}`;
-    });
+    $('#editButton').on('click', editBtn);
     
     // 삭제 버튼 이벤트
-    $('#deleteButton').on('click', () => {
-        if (confirm('정말로 이 게시물을 삭제하시겠습니까?')) {
-            deletePost(postIdx);
-        }
-    });
+    $('#deleteButton').on('click', handleDeleteBtn);
     
     // 좋아요 버튼 이벤트
     $('#likeButton').on('click', () => {
         reactToPost('like', postIdx);
     });
-    
+
     // 싫어요 버튼 이벤트
     $('#unlikeButton').on('click', () => {
         reactToPost('unlike', postIdx);
@@ -63,6 +52,34 @@ $(document).ready(() => {
     });
     */
 });
+
+// 게시물 수정 함수
+const editBtn = () => {
+    window.location.href = `/post-edit?postIdx=${postIdx}`;
+}
+
+// 게시물 삭제 함수
+const handleDeleteBtn = () => {
+    if (confirm('정말로 이 게시물을 삭제하시겠습니까?')) {
+        $.ajax({
+            type: 'DELETE',
+            url: `/post?postIdx=${postIdx}`,
+            success: (res) => {
+                if (res.success) {
+                    sessionStorage.setItem('alertType', 'success');
+                    sessionStorage.setItem('alertMessage', getMessage(res));
+                    window.location.href = '/';
+                } else {
+                    showAlert('danger', getMessage(res));
+                }
+            },
+            error: (e) => {
+                const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
+                showAlert('danger', getMessage(errorResponse));
+            }
+        });
+    }
+}
 
 // 게시물 상세 정보 로드 함수
 const loadPostDetail = (postIdx) => {
@@ -166,37 +183,6 @@ const reactToPost = (type, postIdx) => {
     });
 };
 
-// 날짜 포맷팅 함수
-const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
-
-// 게시물 삭제 함수
-const deletePost = (postIdx) => {
-    $.ajax({
-        type: 'DELETE',
-        url: `/post?postIdx=${postIdx}`,
-        success: (res) => {
-            if (res.success) {
-                sessionStorage.setItem('alertType', 'success');
-                sessionStorage.setItem('alertMessage', getMessage(res));
-                window.location.href = '/';
-            } else {
-                showAlert('danger', getMessage(res));
-            }
-        },
-        error: (e) => {
-            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-            showAlert('danger', getMessage(errorResponse));
-        }
-    });
-};
 
 // 댓글 작성 함수
 const submitComment = (postIdx, content) => {

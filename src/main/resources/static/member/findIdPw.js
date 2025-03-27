@@ -1,6 +1,6 @@
 $(document).ready(() => {
-    $('#find-id-form').on('submit', handleFindIdForm);
-    $('#find-pw-form').on('submit', handleFindPwForm);
+    $('#findIdForm').on('submit', handleFindIdForm);
+    $('#findPwForm').on('submit', handleFindPwForm);
 });
 
 const handleFindIdForm = (event) => {
@@ -11,8 +11,8 @@ const handleFindIdForm = (event) => {
     $.ajax({
         type: 'POST',
         url: '/find-id-pw',
-        contentType: 'application/x-www-form-urlencoded',  // 변경된 부분
-        data: $.param(formData),  // JSON 대신 URL-encoded 형식으로 변환
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
         success: (res) => {
             // 서버에서 받은 응답의 상태 확인
             if (res.success) showAlert('success', getMessage(res));
@@ -34,8 +34,8 @@ const handleFindPwForm = (event) => {
     $.ajax({
         type: 'POST',
         url: '/find-id-pw',
-        contentType: 'application/x-www-form-urlencoded',  // 변경된 부분
-        data: $.param(formData),  // JSON 대신 URL-encoded 형식으로 변환
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
         success: (res) => {
             
             // 서버에서 받은 응답의 상태 확인

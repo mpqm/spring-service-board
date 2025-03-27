@@ -76,34 +76,17 @@
                     <th scope="col" style="width: 10%" class="rounded-end">작성일</th>
                 </tr>
             </thead>
+            <!-- 자바스크립트로 동적 생성-->
             <tbody id="postTableBody">
-                <!-- 게시글 목록이 있는 경우 -->
-                <tr th:if="${posts != null && !posts.empty}" th:each="post : ${posts}" class="text-center align-middle">
-                    <td th:text="${post.idx}" class="fw-bold"></td>
-                    <td>
-                        <span th:text="${post.categoryName}" class="badge bg-dark text-white rounded-md"></span>
-                    </td>
-                    <td th:text="${post.nickName}" class="text-muted"></td>
-                    <td class="text-start">
-                        <a th:href="@{/post-detail(postIdx=${post.idx})}" th:text="${post.title}" class="text-decoration-none text-dark fw-medium"></a>
-                        <span th:if="${post.commentCount > 0}" class="badge bg-danger rounded-pill ms-1" th:text="${post.commentCount}"></span>
-                    </td>
-                    <td th:text="${post.viewCount}" class="small">0</td>
-                    <td th:text="${post.likeCount}" class="small">0</td>
-                    <td th:text="${post.unlikeCount}" class="small">0</td>
-                    <td th:text="${post.commentCount}" class="small">0</td>
-                    <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}" class="text-muted small">2023-03-23 12:34</td>
-                </tr>
-                <!-- 게시글 목록이 없는 경우 -->
-                <tr th:if="${posts == null || posts.empty}">
-                    <td colspan="9" class="text-center py-5 text-muted">게시글이 없습니다.</td>
-                </tr>
+
             </tbody>
         </table>
     </div>
 
-    <!-- 페이지네이션은 자바스크립트로 동적 생성됩니다 -->
-    <div id="pagination-container" class="d-flex"></div>
+    <!-- 자바스크립트로 동적 생성-->
+    <div id="pagination-container" class="d-flex">
+
+    </div>
 </div>
 <th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
 <script th:src="@{../post/list.js}"></script>

@@ -40,23 +40,23 @@ CREATE TABLE TB_CODE (
 
 
 INSERT INTO TB_CODE (group_name, code_name) VALUES
-('POST_CATEGORY', '공지사항'),
-('POST_CATEGORY', '질문과답변'),
-('POST_CATEGORY', '자유게시판'),
-('POST_CATEGORY', '갤러리'),
-('POST_ORDER', '최신순'),
-('POST_ORDER', '오래된순'),
-('POST_ORDER', '조회수순'),
-('POST_ORDER', '좋아요순'),
-('POST_ORDER', '싫어요순'),
-('POST_ORDER', '댓글수순'),
-('POST_SEARCH', '제목'),
-('POST_SEARCH', '작성자'),
-('POST_SEARCH', '내용'),
-('POST_RANGE', '공개'),
-('POST_RANGE', '비공개'),
-('POST_RANGE', '보호'),
-('POST_RANGE', '익명');
+('CATEGORY', '공지사항'),
+('CATEGORY', '질문과답변'),
+('CATEGORY', '자유게시판'),
+('CATEGORY', '갤러리'),
+('ORDER', '최신순'),
+('ORDER', '오래된순'),
+('ORDER', '조회수순'),
+('ORDER', '좋아요순'),
+('ORDER', '싫어요순'),
+('ORDER', '댓글수순'),
+('SEARCH', '제목'),
+('SEARCH', '작성자'),
+('SEARCH', '내용'),
+('VISIBILITY', '공개'),
+('VISIBILITY', '비공개'),
+('VISIBILITY', '익명'),
+('VISIBILITY', '보호');
 
 CREATE TABLE TB_POST (
     idx BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -66,6 +66,7 @@ CREATE TABLE TB_POST (
     title VARCHAR(200) NOT NULL,
     content LONGTEXT NOT NULL,
     view_count BIGINT DEFAULT 0,
+    password VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx),
@@ -78,23 +79,7 @@ CREATE TABLE TB_POST_IMAGE (
     post_idx BIGINT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx)
-);
-
-CREATE TABLE TB_LIKE (
-    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
-    post_idx BIGINT,
-    comment_idx BIGINT,
-    member_idx BIGINT NOT NULL,
-    FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx)
-);
-
-CREATE TABLE TB_UNLIKE (
-    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
-    post_idx BIGINT,
-    comment_idx BIGINT,
-    member_idx BIGINT NOT NULL,
-    FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx)
+    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx) ON DELETE CASCADE
 );
 
 CREATE TABLE TB_COMMENT(
@@ -105,7 +90,27 @@ CREATE TABLE TB_COMMENT(
     content LONGTEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx),
+    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx) ON DELETE CASCADE,
     FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx),
-    FOREIGN KEY (parent_comment_idx) REFERENCES TB_COMMENT(idx)
+    FOREIGN KEY (parent_comment_idx) REFERENCES TB_COMMENT(idx) ON DELETE CASCADE
+);
+
+CREATE TABLE TB_LIKE (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_idx BIGINT,
+    comment_idx BIGINT,
+    member_idx BIGINT NOT NULL,
+    FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx),
+    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx) ON DELETE CASCADE,
+    FOREIGN KEY (comment_idx) REFERENCES TB_COMMENT(idx) ON DELETE CASCADE
+);
+
+CREATE TABLE TB_UNLIKE (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_idx BIGINT,
+    comment_idx BIGINT,
+    member_idx BIGINT NOT NULL,
+    FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx),
+    FOREIGN KEY (post_idx) REFERENCES TB_POST(idx) ON DELETE CASCADE,
+    FOREIGN KEY (comment_idx) REFERENCES TB_COMMENT(idx) ON DELETE CASCADE
 );

@@ -64,21 +64,12 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<BaseRes<Void>> createPost(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @RequestPart(name = "dto") CreatePostReq dto,
+        @RequestPart(name = "dto") CreatePostReq createPostReq,
         @RequestPart(name = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
 
         List<String> fileNames = uploadUtil.uploads(files);
-        postService.createPost(memberIdx, dto, fileNames);
+        postService.createPost(memberIdx, createPostReq, fileNames);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_CREATED));
-    }
-
-    // Summernote 이미지 업로드
-    @PostMapping("/upload-image")
-    public ResponseEntity<BaseRes<String>> uploadImage(
-        @RequestPart(name = "file") MultipartFile file) throws IOException, BaseExc {
-
-        String fileName = uploadUtil.upload(file);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.IMAGE_UPLOADED, fileName));
     }
 
     // 게시글 수정
@@ -86,12 +77,11 @@ public class PostController {
     public ResponseEntity<BaseRes<Void>> updatePost(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
         @RequestParam(name = "postIdx") Long postIdx,
-        @RequestPart(name = "dto") UpdatePostReq dto,
+        @RequestPart(name = "dto") UpdatePostReq updatePostReq,
         @RequestPart(name = "file", required = false) MultipartFile[] files) throws IOException, BaseExc {
 
         List<String> fileNames = uploadUtil.uploads(files);
-        postService.updatePost(memberIdx, postIdx, dto, fileNames);
-
+        postService.updatePost(memberIdx, postIdx, updatePostReq, fileNames);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_UPDATED));
     }
 
@@ -108,21 +98,40 @@ public class PostController {
     // 게시물 상세 조회
     @GetMapping("/post")
     public ResponseEntity<BaseRes<GetPostRes>> getPost(
+        @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
         @RequestParam(name = "postIdx") Long postIdx) throws BaseExc {
 
-        GetPostRes result = postService.getPost(postIdx);
+        GetPostRes result = postService.getPost(memberIdx, postIdx);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POST_SEARCHED, result));
     }
+
 
     // 게시물 목록 조회
     @GetMapping("/post-list")
     public ResponseEntity<BaseRes<QueryPostRes>> getPosts(
-        @ModelAttribute QueryPostReq postQueryReqDto) throws BaseExc {
+        @ModelAttribute QueryPostReq queryPostReq) throws BaseExc {
 
-        QueryPostRes posts = postService.getPosts(postQueryReqDto);
+        QueryPostRes posts = postService.getPosts(queryPostReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.POSTS_SEARCHED, posts));
     }
 
+    // 보호된 게시물 비밀번호 확인
+    @GetMapping("/post-auth")
+    public ResponseEntity<BaseRes<Boolean>> getPostAuth(
+            @RequestParam(name = "postIdx") Long postIdx,
+            @RequestParam(name="password") String password) throws BaseExc {
 
+        boolean result = postService.getPostAuth(postIdx, password);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.CHECK_PW_SUCCESS, result));
+    }
+
+    // Summernote 이미지 업로드
+    @PostMapping("/upload-image")
+    public ResponseEntity<BaseRes<String>> uploadImage(
+            @RequestPart(name = "file") MultipartFile file) throws IOException, BaseExc {
+
+        String fileName = uploadUtil.upload(file);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.IMAGE_UPLOADED, fileName));
+    }
 
 }

@@ -30,4 +30,7 @@ public class UpdatePostReq {
     // 내용
     private String content;
     
+    // 비밀번호
+    private String password;
+    
 }

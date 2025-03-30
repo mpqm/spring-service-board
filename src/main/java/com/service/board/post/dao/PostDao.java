@@ -29,7 +29,4 @@ public interface PostDao {
     // 게시물 개수 조회수
     Long countPosts(QueryPostReq queryPostReq);
 
-    // 조회수 증가
-    Integer increasePostViewCount(QueryPostReq queryPostReq);
-
 }

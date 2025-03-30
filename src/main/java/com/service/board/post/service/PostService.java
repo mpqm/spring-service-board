@@ -2,7 +2,6 @@ package com.service.board.post.service;
 
 import com.service.board.global.common.BaseExc;
 import com.service.board.global.common.BaseMsg;
-import com.service.board.member.dao.MemberDao;
 import com.service.board.post.dao.PostDao;
 import com.service.board.post.dao.PostImageDao;
 import com.service.board.post.dto.*;
@@ -14,14 +13,12 @@ import org.springframework.transaction.annotation.Propagation;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.ArrayList;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
-    private final MemberDao memberDao;
     private final PostDao postDao;
     private final PostImageDao postImageDao;
 
@@ -80,10 +77,7 @@ public class PostService {
             DeletePostImageReq deletePostImageReq = DeletePostImageReq.builder()
                     .postIdx(postIdx)
                     .build();
-            Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
-            if(deletePostImageRes <= 0) {
-                throw new BaseExc(BaseMsg.POST_IMAGE_NOT_DELETED);
-            }
+            postImageDao.deletePostImages(deletePostImageReq);
 
             for (String fileName : fileNames) {
                 CreatePostImageReq createPostImageReq = CreatePostImageReq.builder()
@@ -110,7 +104,7 @@ public class PostService {
 
         // 게시물 작성자 확인
         if(!Objects.equals(getPostRes.getMemberIdx(), memberIdx)) {
-            throw new BaseExc(BaseMsg.  POST_NOT_AUTHORIZED);
+            throw new BaseExc(BaseMsg.POST_NOT_AUTHORIZED);
         }
         
         // 게시물 이미지 삭제
@@ -118,9 +112,7 @@ public class PostService {
                 .postIdx(postIdx)
                 .build();
         Integer deletePostImageRes = postImageDao.deletePostImages(deletePostImageReq);
-        if(deletePostImageRes <= 0) {
-            throw new BaseExc(BaseMsg.POST_NOT_DELETED);
-        }
+        // 이미지가 없을 수도 있으므로 결과가 0이어도 계속 진행
         
         // 게시물 삭제
         DeletePostReq deletePostReq = DeletePostReq.builder()
@@ -135,24 +127,30 @@ public class PostService {
 
     // 게시물 상세 조회
     @Transactional
-    public GetPostRes getPost(Long postIdx) throws BaseExc {
+    public GetPostRes getPost(Long memberIdx, Long postIdx) throws BaseExc {
         
-        // 조회수 증가
-        QueryPostReq queryPostReq = QueryPostReq.builder()
-                .idx(postIdx)
-                .build();
-        Integer increasePostViewCountRes = postDao.increasePostViewCount(queryPostReq);
-        if(increasePostViewCountRes <= 0) {
-            throw new BaseExc(BaseMsg.POST_VIEW_NOT_INCREASED);
-        }
-
         // 게시물 조회
         GetPostReq getPostReq = GetPostReq.builder()
                 .idx(postIdx)
+                .memberIdx(memberIdx)
                 .build();
         GetPostRes getPostRes = postDao.getPost(getPostReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.POST_NOT_FOUND)
         );
+        
+        // 비공개(rangeIdx=15) 게시글은 작성자만 볼 수 있음
+        if (getPostRes.getRangeIdx() == 15 && !Objects.equals(getPostRes.getMemberIdx(), memberIdx)) {
+            throw new BaseExc(BaseMsg.POST_ACCESS_DENIED);
+        }
+        
+        // 조회수 증가 (보호 게시글도 비밀번호 확인되면 조회수 증가)
+        UpdatePostReq updatePostReq = UpdatePostReq.builder()
+                .idx(postIdx)
+                .build();
+        Integer updatePostRes = postDao.updatePost(updatePostReq);
+        if(updatePostRes <= 0) {
+            throw new BaseExc(BaseMsg.POST_VIEW_NOT_INCREASED);
+        }
 
         // 게시물 이미지 조회
         GetPostImageReq getPostImageReq = GetPostImageReq.builder()
@@ -161,7 +159,6 @@ public class PostService {
         List<GetPostImageRes> getPostImageResList = postImageDao.getPostImages(getPostImageReq);
         getPostRes.setPostImages(getPostImageResList);
         return getPostRes;
-
     }
 
     // 게시물 목록 조회
@@ -182,6 +179,30 @@ public class PostService {
                 .pageSize(queryPostReq.getSize())
                 .totalPages(totalPages)
                 .build();
+    }
+
+    // 보호된 게시글의 비밀번호 확인
+    public boolean getPostAuth(Long postIdx, String password) throws BaseExc {
+        // 게시물 조회
+        GetPostReq getPostReq = GetPostReq.builder()
+                .idx(postIdx)
+                .build();
+        GetPostRes getPostRes = postDao.getPost(getPostReq).orElseThrow(
+                () -> new BaseExc(BaseMsg.POST_NOT_FOUND)
+        );
+
+        // 보호(rangeIdx=17) 게시글이 아니면 예외 발생
+        if (getPostRes.getRangeIdx() != 17) {
+            throw new BaseExc(BaseMsg.POST_NOT_PROTECTED);
+        }
+
+        // 비밀번호가 설정되어 있지 않은 경우
+        if (getPostRes.getPassword() == null || getPostRes.getPassword().trim().isEmpty()) {
+            throw new BaseExc(BaseMsg.POST_PASSWORD_NOT_SET);
+        }
+
+        // 입력한 비밀번호와 저장된 비밀번호 비교
+        return getPostRes.getPassword().equals(password);
     }
 
 }

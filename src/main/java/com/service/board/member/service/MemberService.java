@@ -28,13 +28,13 @@ public class MemberService {
     private final MailUtil mailUtil;
 
     // 로그인
-    public Long login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
+    public void login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
 
         // 계정 존재 여부 확인
         FindMemberReq findMemberReq = FindMemberReq.builder()
                 .id(loginMemberReq.getId())
                 .build();
-        FindMemberRes findMemberRes = memberDao.findMemberById(findMemberReq).orElseThrow(
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
 
@@ -44,13 +44,13 @@ public class MemberService {
         }
 
         // 이메일 인증 여부 확인
-        if(!findMemberRes.getIsEmailAuth()) {
-            throw new BaseExc(BaseMsg.MEMBER_NOT_EMAIL_AUTH);
+        if(!findMemberRes.getIsEmailAuth() && findMemberRes.getIsInActive()) {
+            throw new BaseExc(BaseMsg.MEMBER_NOT_ACTIVE);
         }
 
         // 계정 비활성화 여부 확인
-        if(findMemberRes.getIsInActive()) {
-            throw new BaseExc(BaseMsg.MEMBER_NOT_ACTIVE);
+        if(!findMemberRes.getIsEmailAuth()) {
+            throw new BaseExc(BaseMsg.MEMBER_NOT_EMAIL_AUTH);
         }
 
         // 세션 생성
@@ -72,8 +72,6 @@ public class MemberService {
             throw new BaseExc(BaseMsg.MEMBER_CREATE_LOGIN_HISTORY_FAIL);
         }
 
-        return findMemberRes.getIdx();
-
     }
 
     // 로그아웃
@@ -81,11 +79,12 @@ public class MemberService {
         request.getSession().invalidate();
     }
 
+    // 회원 조회
     public FindMemberRes findMember(Long memberIdx) throws BaseExc {
         FindMemberReq findMemberReq = FindMemberReq.builder()
                 .idx(memberIdx)
                 .build();
-        FindMemberRes findMemberRes = memberDao.findMemberByIdx(findMemberReq).orElseThrow(
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
         return findMemberRes;
@@ -96,14 +95,47 @@ public class MemberService {
 
         String uuid = UUID.randomUUID().toString();
 
-        // 계정 존재 여부 확인 및 계정 복구
+        // 이메일로 계정 조회
         FindMemberReq findMemberReq = FindMemberReq.builder()
-                .id(signupMemberReq.getId())
+                .email(signupMemberReq.getEmail())
                 .build();
-        Optional<FindMemberRes> findMemberRes = memberDao.findMemberById(findMemberReq);
+        Optional<FindMemberRes> findMemberRes = memberDao.findMember(findMemberReq);
+        
+        // 이미 등록된 이메일이 있는 경우
         if(findMemberRes.isPresent()) {
-            // 이메일 인증 재전송
-            if(!findMemberRes.get().getIsEmailAuth()){
+            // 비활성화된 계정이고 ID도 일치하는 경우에만 복구 진행
+            if(findMemberRes.get().getIsInActive() && Objects.equals(findMemberRes.get().getId(), signupMemberReq.getId())) {
+                
+                // 사용자가 새로 입력한 비밀번호로 업데이트
+                String securedPassword = CryptoUtil.hashPassword(signupMemberReq.getPassword());
+                EditMemberReq editMemberReq = EditMemberReq.builder()
+                        .idx(findMemberRes.get().getIdx())
+                        .isEmailAuth(false)
+                        .password(securedPassword)
+                        .build();
+                Integer editMemberRes = memberDao.editMember(editMemberReq);
+                if(editMemberRes < 0) {
+                    throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+                }
+                
+                // 이메일 인증을 위한 UUID 생성 및 저장
+                CreateEmailAuthReq createEmailAuthReq = CreateEmailAuthReq.builder()
+                        .id(signupMemberReq.getId())
+                        .uuid(uuid)
+                        .build();
+                Long createEmailAuthRes = emailAuthDao.createEmailAuth(createEmailAuthReq);
+                if(createEmailAuthRes < 0) {
+                    throw new BaseExc(BaseMsg.MEMBER_CREATE_EMAIL_AUTH_FAIL);
+                }
+                
+                // 이메일 인증 메일 전송 (isInActive=true로 설정하여 계정 복구 안내 메시지 포함)
+                mailUtil.sendSignupEmail(uuid, signupMemberReq.getEmail(), signupMemberReq.getId(), false, true);
+                
+                return false;
+            } 
+            // 이메일 인증이 안된 상태인 경우 이메일 재전송
+            else if(!findMemberRes.get().getIsEmailAuth() && 
+                    Objects.equals(findMemberRes.get().getId(), signupMemberReq.getId())) {
                 CreateEmailAuthReq createEmailAuthReq = CreateEmailAuthReq.builder()
                         .id(signupMemberReq.getId())
                         .uuid(uuid)
@@ -114,23 +146,22 @@ public class MemberService {
                 }
                 mailUtil.sendSignupEmail(uuid, findMemberRes.get().getEmail(), findMemberRes.get().getId(), false, false);
                 return true;
+            } 
+            // 그 외의 경우 이미 존재하는 이메일 오류
+            else {
+                throw new BaseExc(BaseMsg.MEMBER_EMAIL_ALREADY_EXIST);
             }
+        }
 
-            // 계정 비활성화 여부 확인
-            if(findMemberRes.get().getIsInActive()) {
-                // 계정 복구
-                EditMemberReq editMemberReq = EditMemberReq.builder()
-                        .idx(findMemberRes.get().getIdx())
-                        .isInActive(false)
-                        .build();
-                Integer editMemberRes = memberDao.editMemberIsInActiveByIdx(editMemberReq);
-                if(editMemberRes < 0) {
-                    throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
-                }
-                return false;
-            } else {
-                throw new BaseExc(BaseMsg.MEMBER_ALREADY_EXIST);
-            }
+        // ID로 계정 조회
+        findMemberReq = FindMemberReq.builder()
+                .id(signupMemberReq.getId())
+                .build();
+        findMemberRes = memberDao.findMember(findMemberReq);
+        
+        // ID가 이미 존재하는 경우
+        if(findMemberRes.isPresent()) {
+            throw new BaseExc(BaseMsg.MEMBER_ALREADY_EXIST);
         }
 
         // 이메일인증 UUID, 비밀번호 암호화
@@ -163,7 +194,7 @@ public class MemberService {
 
     // 이메일 인증
     @Transactional
-    public Boolean emailAuth(String id, String uuid) throws BaseExc {
+    public Boolean emailAuth(String id, String uuid, Boolean isInActive) throws BaseExc {
 
         // 이메일 인증 정보 조회
         GetEmailAuthReq getEmailAuthReq = GetEmailAuthReq.builder()
@@ -177,15 +208,27 @@ public class MemberService {
         if(!Objects.equals(emailAuthRes.getUuid(), uuid)) {
             return false;
         }
-
-        // 이메일 인증 여부 변경
-        EditMemberReq editMemberReq = EditMemberReq.builder()
-                .id(id)
-                .isEmailAuth(true)
-                .build();
-        Integer editMemberRes = memberDao.editMemberIsEmailAuthById(editMemberReq);
-        if(editMemberRes <= 0) {
-            throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+        if(isInActive){
+            // 이메일 인증 여부 변경
+            EditMemberReq editMemberReq = EditMemberReq.builder()
+                    .id(id)
+                    .isInActive(false)
+                    .isEmailAuth(true)
+                    .build();
+            Integer editMemberRes = memberDao.editMember(editMemberReq);
+            if(editMemberRes <= 0) {
+                throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+            }
+        } else {
+            // 이메일 인증 여부 변경
+            EditMemberReq editMemberReq = EditMemberReq.builder()
+                    .id(id)
+                    .isEmailAuth(true)
+                    .build();
+            Integer editMemberRes = memberDao.editMember(editMemberReq);
+            if(editMemberRes <= 0) {
+                throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
+            }
         }
 
         // 이메일 인증 정보 삭제
@@ -196,18 +239,17 @@ public class MemberService {
         if(deleteEmailAuthRes <= 0) {
             throw new BaseExc(BaseMsg.MEMBER_DELETE_EMAIL_AUTH_FAIL);
         }
-
         return true;
     }
 
     // 계정 비활성화
-    public void editInActive(Long memberIdx) throws BaseExc {
+    public void inActive(Long memberIdx) throws BaseExc {
 
         // 계정 정보 조회
         FindMemberReq findMemberReq = FindMemberReq.builder()
                 .idx(memberIdx)
                 .build();
-        FindMemberRes findMemberRes = memberDao.findMemberByIdx(findMemberReq).orElseThrow(
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
 
@@ -218,9 +260,10 @@ public class MemberService {
         // 계정 비활성화 여부 변경
         EditMemberReq editMemberReq = EditMemberReq.builder()
                 .idx(memberIdx)
+                .isEmailAuth(false)
                 .isInActive(true)
                 .build();
-        Integer editMemberRes =  memberDao.editMemberIsInActiveByIdx(editMemberReq);
+        Integer editMemberRes = memberDao.editMember(editMemberReq);
         if(editMemberRes < 0) {
             throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
         }
@@ -234,7 +277,7 @@ public class MemberService {
         FindMemberReq findMemberReq = FindMemberReq.builder()
                 .idx(memberIdx)
                 .build();
-        FindMemberRes findMemberRes = memberDao.findMemberByIdx(findMemberReq).orElseThrow(
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
 
@@ -265,7 +308,7 @@ public class MemberService {
                 .idx(memberIdx)
                 .build();
 
-        FindMemberRes findMemberRes = memberDao.findMemberByIdx(findMemberReq).orElseThrow(
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
 
@@ -278,7 +321,7 @@ public class MemberService {
         String securedPassword = CryptoUtil.hashPassword(editMemberReq.getNewPassword());
         editMemberReq.setIdx(memberIdx);
         editMemberReq.setPassword(securedPassword);
-        Integer editMemberRes = memberDao.editMemberPasswordByIdx(editMemberReq);
+        Integer editMemberRes = memberDao.editMember(editMemberReq);
         if(editMemberRes < 0) {
             throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
         }
@@ -290,7 +333,7 @@ public class MemberService {
 
         // 이메일 존재 여부 확인
         if(findMemberReq.getEmail() != null) {
-            FindMemberRes findMemberRes = memberDao.findMemberByEmail(findMemberReq).orElseThrow(
+            FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                     () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
             );
 
@@ -299,7 +342,7 @@ public class MemberService {
             return true;
         } else if (findMemberReq.getId() != null){
             // 계정 존재 여부 확인
-            FindMemberRes findMemberRes = memberDao.findMemberById(findMemberReq).orElseThrow(
+            FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
                     () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
             );
 
@@ -312,7 +355,7 @@ public class MemberService {
                     .idx(findMemberRes.getIdx())
                     .password(temporaryPassword)
                     .build();
-            Integer editMemberRes = memberDao.editMemberPasswordByIdx(editMemberReq);
+            Integer editMemberRes = memberDao.editMember(editMemberReq);
             if(editMemberRes < 0) {
                 throw new BaseExc(BaseMsg.MEMBER_UPDATE_FAIL);
             }

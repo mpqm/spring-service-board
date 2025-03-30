@@ -1,7 +1,8 @@
 meta/infra/mariadb/
 src/main/resources/.env
 src/main/resources/upload/
-
+.idea
+.vscode
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

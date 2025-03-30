@@ -58,22 +58,13 @@ public class MemberController {
         return "/member/profile";
     }
 
-    // 계정 정보 조회
-    @GetMapping("/find-member")
-    public ResponseEntity<BaseRes<FindMemberRes>> findMember(
-        @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
-
-        FindMemberRes result = memberService.findMember(memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_FIND, result));
-    }
-
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<BaseRes<Long>> login(
-        @Valid @RequestBody LoginMemberReq dto,
+        @Valid @RequestBody LoginMemberReq loginMemberReq,
         HttpServletRequest request) throws BaseExc {
 
-        memberService.login(request, dto);
+        memberService.login(request, loginMemberReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_LOGIN_SUCCESS));
     }
 
@@ -85,14 +76,23 @@ public class MemberController {
         return "redirect:/login";
     }
 
+    // 계정 정보 조회
+    @GetMapping("/find-member")
+    public ResponseEntity<BaseRes<FindMemberRes>> findMember(
+            @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
+
+        FindMemberRes result = memberService.findMember(memberIdx);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_FIND, result));
+    }
+
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<BaseRes<Void>> signup(
-        @Valid @RequestPart(name = "dto") SignupMemberReq dto,
+        @Valid @RequestPart(name = "dto") SignupMemberReq signupMemberReq,
         @RequestPart(name = "file") MultipartFile file) throws BaseExc, IOException {
 
         String fileName = uploadUtil.upload(file);
-        Boolean result = memberService.signup(dto, fileName);
+        Boolean result = memberService.signup(signupMemberReq, fileName);
         return ResponseEntity.ok(result ? new BaseRes<>(BaseMsg.MEMBER_SIGNUP_SUCCESS) : new BaseRes<>(BaseMsg.MEMBER_ACTIVE_SUCCESS));
     }
 
@@ -101,20 +101,22 @@ public class MemberController {
     public String emailAuth(
         @RequestParam(name = "id") String id,
         @RequestParam(name = "uuid") String uuid,
+        @RequestParam(name = "isInActive") Boolean isInActive,
         RedirectAttributes rda) throws BaseExc {
 
-        Boolean result = memberService.emailAuth(id, uuid);
-        if(result) rda.addFlashAttribute("message", "이메일 인증이 완료되었습니다. 로그인하세요!");
+        Boolean result = memberService.emailAuth(id, uuid, isInActive);
+        if(result && !isInActive) rda.addFlashAttribute("message", "이메일 인증이 완료되었습니다. 로그인하세요");
+        else if(result) rda.addFlashAttribute("message", "계정이 복구되었습니다. 로그인하세요");
         else rda.addFlashAttribute("error", "이메일 인증에 실패했습니다.");
         return "redirect:/login";
     }
 
     // 계정 비활성화
     @GetMapping("/in-active")
-    public ResponseEntity<BaseRes<String>> editInActive(
+    public ResponseEntity<BaseRes<String>> inActive(
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
 
-        memberService.editInActive(memberIdx);
+        memberService.inActive(memberIdx);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_INACTIVE_SUCCESS));
     }
 
@@ -122,11 +124,11 @@ public class MemberController {
     @PostMapping("/edit-profile")
     public ResponseEntity<BaseRes<String>> editProfile(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @Valid @RequestPart(name = "dto") EditMemberReq dto,
+        @Valid @RequestPart(name = "dto") EditMemberReq editMemberReq,
         @RequestPart(name = "file", required = false) MultipartFile file) throws BaseExc, IOException {
 
         String fileName = uploadUtil.upload(file);
-        memberService.editProfile(dto, memberIdx, fileName);
+        memberService.editProfile(editMemberReq, memberIdx, fileName);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_EDIT_PROFILE_SUCCESS));
     }
 
@@ -134,18 +136,18 @@ public class MemberController {
     @PostMapping("/edit-pw")
     public ResponseEntity<BaseRes<String>> editPw(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @Validated(ValidGroup.OnEditPw.class) @RequestBody EditMemberReq dto) throws BaseExc{
+        @Validated(ValidGroup.OnEditPw.class) @RequestBody EditMemberReq editMemberReq) throws BaseExc{
 
-        memberService.editPw(dto, memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_EDIT_PROFILE_SUCCESS));
+        memberService.editPw(editMemberReq, memberIdx);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.MEMBER_EDIT_PASSWORD_SUCCESS));
     }
 
     // 계정 ID/PW 찾기
     @PostMapping("/find-id-pw")
     public ResponseEntity<BaseRes<String>> findIdPw(
-        @RequestBody FindMemberReq dto) throws BaseExc {
+        @RequestBody FindMemberReq findMemberReq) throws BaseExc {
 
-        Boolean result = memberService.findIdPw(dto);
+        Boolean result = memberService.findIdPw(findMemberReq);
         return ResponseEntity.ok( result ? new BaseRes<>(BaseMsg.MEMBER_FIND_ID_SUCCESS) : new BaseRes<>(BaseMsg.MEMBER_FIND_PW_SUCCESS));
     }
 

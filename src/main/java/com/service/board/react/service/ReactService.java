@@ -28,14 +28,14 @@ public class ReactService {
                     .memberIdx(memberIdx)
                     .commentIdx(commentIdx)
                     .build();
-            Optional<GetReactRes> getReactRes = likeDao.getLikeByCommentIdx(getReactReq);
+            Optional<GetReactRes> getReactRes = likeDao.getLike(getReactReq);
             if(getReactRes.isEmpty()) {
                 flag = true;
                 CreateReactReq createReactReq = CreateReactReq.builder()
                         .memberIdx(memberIdx)
                         .commentIdx(commentIdx)
                         .build();
-                Long createLikeCnt = likeDao.createLikeByCommentIdx(createReactReq);
+                Long createLikeCnt = likeDao.createLike(createReactReq);
                 if(createLikeCnt <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
                 }
@@ -45,7 +45,7 @@ public class ReactService {
                         .memberIdx(memberIdx)
                         .commentIdx(commentIdx)
                         .build();
-                Integer deleteLikeCnt = likeDao.deleteLikeByCommentIdx(deleteReactReq);
+                Integer deleteLikeCnt = likeDao.deleteLike(deleteReactReq);
                 if(deleteLikeCnt <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_DECREASED);
                 }
@@ -55,14 +55,14 @@ public class ReactService {
                     .memberIdx(memberIdx)
                     .postIdx(postIdx)
                     .build();
-            Optional<GetReactRes> getReactRes = likeDao.getLikeByPostIdx(getReactReq);
+            Optional<GetReactRes> getReactRes = likeDao.getLike(getReactReq);
             if(getReactRes.isEmpty()) {
                 flag = true;
                 CreateReactReq createReactReq = CreateReactReq.builder()
                         .memberIdx(memberIdx)
                         .postIdx(postIdx)
                         .build();
-                Long createLikeCnt = likeDao.createLikeByPostIdx(createReactReq);
+                Long createLikeCnt = likeDao.createLike(createReactReq);
                 if(createLikeCnt <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
                 }
@@ -72,7 +72,7 @@ public class ReactService {
                         .memberIdx(memberIdx)
                         .postIdx(postIdx)
                         .build();
-                Integer deleteLikeCnt = likeDao.deleteLikeByPostIdx(deleteReactReq);
+                Integer deleteLikeCnt = likeDao.deleteLike(deleteReactReq);
                 if(deleteLikeCnt <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_DECREASED);
                 }
@@ -88,14 +88,14 @@ public class ReactService {
                     .memberIdx(memberIdx)
                     .commentIdx(commentIdx)
                     .build();
-            Optional<GetReactRes> getReactRes = unlikeDao.getUnlikeByCommentIdx(getReactReq);
+            Optional<GetReactRes> getReactRes = unlikeDao.getUnlike(getReactReq);
             if(getReactRes.isEmpty()) {
                 flag = true;
                 CreateReactReq createReactReq = CreateReactReq.builder()
                         .memberIdx(memberIdx)
                         .commentIdx(commentIdx)
                         .build();
-                Long createReactRes = unlikeDao.createUnlikeByCommentIdx(createReactReq);
+                Long createReactRes = unlikeDao.createUnlike(createReactReq);
                 if(createReactRes <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
                 }
@@ -105,7 +105,7 @@ public class ReactService {
                         .memberIdx(memberIdx)
                         .commentIdx(commentIdx)
                         .build();
-                Integer deleteReactRes = unlikeDao.deleteUnlikeByCommentIdx(deleteReactReq);
+                Integer deleteReactRes = unlikeDao.deleteUnlike(deleteReactReq);
                 if(deleteReactRes <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_DECREASED);
                 }
@@ -115,14 +115,14 @@ public class ReactService {
                     .memberIdx(memberIdx)
                     .postIdx(postIdx)
                     .build();
-            Optional<GetReactRes> getReactRes = unlikeDao.getUnlikeByPostIdx(getReactReq);
+            Optional<GetReactRes> getReactRes = unlikeDao.getUnlike(getReactReq);
             if(getReactRes.isEmpty()) {
                 flag = true;
                 CreateReactReq createReactReq = CreateReactReq.builder()
                         .memberIdx(memberIdx)
                         .postIdx(postIdx)
                         .build();
-                Long createReactRes = unlikeDao.createUnlikeByPostIdx(createReactReq);
+                Long createReactRes = unlikeDao.createUnlike(createReactReq);
                 if(createReactRes <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
                 }
@@ -132,7 +132,7 @@ public class ReactService {
                         .memberIdx(memberIdx)
                         .postIdx(postIdx)
                         .build();
-                Integer deleteReactRes = unlikeDao.deleteUnlikeByPostIdx(deleteReactReq);
+                Integer deleteReactRes = unlikeDao.deleteUnlike(deleteReactReq);
                 if(deleteReactRes <= 0) {
                     throw new BaseExc(BaseMsg.LIKE_DECREASED);
                 }

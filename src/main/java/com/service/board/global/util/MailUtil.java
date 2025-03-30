@@ -21,11 +21,11 @@ public class MailUtil {
         message.setTo(email);
 
         // 이메일 분류
-        if(isEmailAuth && isInActive) message.setSubject("비활성화 계정 복구 이메일");
+        if(!isEmailAuth && isInActive) message.setSubject("비활성화 계정 복구 이메일");
         else message.setSubject("가입하신걸 환영합니다.");
 
         // 메시지 생성 및 전송
-        message.setText("http://localhost:9090/email-auth?id="+id+"&uuid="+uuid);
+        message.setText("http://localhost:9090/email-auth?id="+id+"&uuid="+uuid+"&isInActive="+isInActive);
         emailSender.send(message);
 
     }

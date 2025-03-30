@@ -11,6 +11,7 @@
             range_idx,
             title,
             content,
+            password,
             view_count,
             created_at,
             updated_at
@@ -20,6 +21,7 @@
             #{rangeIdx},
             #{title},
             #{content},
+            #{password},
             0,
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP
@@ -38,77 +40,59 @@
             p.view_count as viewCount,
             p.created_at as createdAt,
             p.updated_at as updatedAt,
-            m.nick_name as nickName,
+            CASE 
+                WHEN p.range_idx = 16 THEN '익명' 
+                ELSE m.nick_name 
+            END as nickName,
             m.profile_image_url as profileImageUrl,
             c.code_name as categoryName,
             (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
             (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
-            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_LIKE 
-                WHERE post_idx = p.idx 
-                AND member_idx = #{memberIdx}
-                AND comment_idx IS NULL
-            ) THEN true ELSE false END as isLiked,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_UNLIKE 
-                WHERE post_idx = p.idx 
-                AND member_idx = #{memberIdx}
-                AND comment_idx IS NULL
-            ) THEN true ELSE false END as isUnliked
+            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount
         FROM TB_POST p
         LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
         LEFT JOIN TB_CODE c ON p.category_idx = c.idx
-        <where>
-            <if test="categoryIdx != null">
-                AND p.category_idx = #{categoryIdx}
-            </if>
-            <if test="keyword != null and keyword != ''">
-                <choose>
-                    <when test="searchIdx == 12 or searchIdx == '12'">
-                        AND (
-                            p.title LIKE CONCAT('%', #{keyword}, '%')
-                            OR p.content LIKE CONCAT('%', #{keyword}, '%')
-                            OR m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                        )
-                    </when>
-                    <when test="searchIdx == 13 or searchIdx == '13'">
-                        AND p.title LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <when test="searchIdx == 14 or searchIdx == '14'">
-                        AND m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <when test="searchIdx == 15 or searchIdx == '15'">
-                        AND p.content LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <otherwise>
-                        AND (
-                            p.title LIKE CONCAT('%', #{keyword}, '%')
-                            OR p.content LIKE CONCAT('%', #{keyword}, '%')
-                            OR m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                        )
-                    </otherwise>
-                </choose>
-            </if>
-        </where>
+        WHERE p.range_idx != 15
+        <if test="categoryIdx != null">
+            AND p.category_idx = #{categoryIdx}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchIdx == 11 or searchIdx == '11'">
+                    AND p.title LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchIdx == 12 or searchIdx == '12'">
+                    AND m.nick_name LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchIdx == 13 or searchIdx == '13'">
+                    AND p.content LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <otherwise>
+                    AND (
+                        p.title LIKE CONCAT('%', #{keyword}, '%')
+                        OR p.content LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
         <choose>
-            <when test="orderIdx == 6 or orderIdx == '6'">
+            <when test="orderIdx == 5 or orderIdx == '5'">
                 ORDER BY p.created_at DESC
             </when>
-            <when test="orderIdx == 7 or orderIdx == '7'">
+            <when test="orderIdx == 6 or orderIdx == '6'">
                 ORDER BY p.created_at ASC
             </when>
-            <when test="orderIdx == 8 or orderIdx == '8'">
+            <when test="orderIdx == 7 or orderIdx == '7'">
                 ORDER BY p.view_count DESC
             </when>
+            <when test="orderIdx == 8 or orderIdx == '8'">
+                ORDER BY likeCount DESC
+            </when>
             <when test="orderIdx == 9 or orderIdx == '9'">
-                ORDER BY (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) DESC
+                ORDER BY unlikeCount DESC
             </when>
             <when test="orderIdx == 10 or orderIdx == '10'">
-                ORDER BY (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) DESC
-            </when>
-            <when test="orderIdx == 11 or orderIdx == '11'">
-                ORDER BY (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) DESC
+                ORDER BY commentCount DESC
             </when>
             <otherwise>
                 ORDER BY p.created_at DESC
@@ -120,31 +104,42 @@
     <!-- 게시물 상세 조회 -->
     <select id="getPost" resultType="GetPostRes">
         SELECT 
-            p.*,
-            m.nick_name as nickName,
+            p.idx,
+            p.member_idx as memberIdx,
+            p.category_idx as categoryIdx,
+            p.range_idx as rangeIdx,
+            p.title,
+            p.content,
+            p.password,
+            p.view_count as viewCount,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt,
+            CASE 
+                WHEN p.range_idx = 16 THEN '익명'
+                ELSE m.nick_name
+            END as nickName,
             m.profile_image_url as profileImageUrl,
             c1.code_name as categoryName,
             c2.code_name as rangeName,
             (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
             (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
             (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_LIKE 
-                WHERE post_idx = p.idx 
-                AND member_idx = #{memberIdx}
-                AND comment_idx IS NULL
-            ) THEN true ELSE false END as isLiked,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_UNLIKE 
-                WHERE post_idx = p.idx 
-                AND member_idx = #{memberIdx}
-                AND comment_idx IS NULL
-            ) THEN true ELSE false END as isUnliked
+            <choose>
+                <when test="memberIdx != null">
+                    CASE WHEN EXISTS ( SELECT 1 FROM TB_LIKE WHERE post_idx = p.idx AND member_idx = #{memberIdx} AND comment_idx IS NULL ) THEN true ELSE false END as isLiked,
+                    CASE WHEN EXISTS ( SELECT 1 FROM TB_UNLIKE WHERE post_idx = p.idx AND member_idx = #{memberIdx} AND comment_idx IS NULL ) THEN true ELSE false END as isUnliked
+                </when>
+                <otherwise>
+                    false as isLiked,
+                    false as isUnliked
+                </otherwise>
+            </choose>
         FROM TB_POST p
         LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
         LEFT JOIN TB_CODE c1 ON p.category_idx = c1.idx
         LEFT JOIN TB_CODE c2 ON p.range_idx = c2.idx
         WHERE p.idx = #{idx}
+        <!-- 비공개(rangeIdx=15) 게시글은 작성자만 볼 수 있도록 처리는 서비스 로직에서 수행 -->
     </select>
 
     <!-- 게시물 개수 조회 -->
@@ -152,65 +147,74 @@
         SELECT COUNT(*)
         FROM TB_POST p
         LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
-        <where>
-            <if test="categoryIdx != null">
-                AND p.category_idx = #{categoryIdx}
-            </if>
-            <if test="keyword != null and keyword != ''">
-                <choose>
-                    <when test="searchIdx == 12 or searchIdx == '12'">
-                        AND (
-                            p.title LIKE CONCAT('%', #{keyword}, '%')
-                            OR p.content LIKE CONCAT('%', #{keyword}, '%')
-                            OR m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                        )
-                    </when>
-                    <when test="searchIdx == 13 or searchIdx == '13'">
-                        AND p.title LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <when test="searchIdx == 14 or searchIdx == '14'">
-                        AND m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <when test="searchIdx == 15 or searchIdx == '15'">
-                        AND p.content LIKE CONCAT('%', #{keyword}, '%')
-                    </when>
-                    <otherwise>
-                        AND (
-                            p.title LIKE CONCAT('%', #{keyword}, '%')
-                            OR p.content LIKE CONCAT('%', #{keyword}, '%')
-                            OR m.nick_name LIKE CONCAT('%', #{keyword}, '%')
-                        )
-                    </otherwise>
-                </choose>
-            </if>
-        </where>
+        WHERE p.range_idx != 15
+        <if test="categoryIdx != null">
+            AND p.category_idx = #{categoryIdx}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchIdx == 11 or searchIdx == '11'">
+                    AND p.title LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchIdx == 12 or searchIdx == '12'">
+                    AND m.nick_name LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchIdx == 13 or searchIdx == '13'">
+                    AND p.content LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <otherwise>
+                    AND (
+                        p.title LIKE CONCAT('%', #{keyword}, '%')
+                        OR p.content LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
     </select>
 
-    <!-- 조회수 증가 -->
-    <update id="increasePostViewCount" parameterType="QueryPostReq">
-        UPDATE TB_POST
-        SET view_count = view_count + 1
-        WHERE idx = #{idx}
-    </update>
-
-    <!-- 게시물 수정 -->
-    <update id="updatePost" parameterType="UpdatePostReq">
-        UPDATE TB_POST
-        SET 
-            category_idx = #{categoryIdx},
-            range_idx = #{rangeIdx},
-            title = #{title},
-            content = #{content},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE idx = #{idx}
+<update id="updatePost" parameterType="map">
+    UPDATE TB_POST
+    SET 
+        view_count = view_count + 1
+        <if test="memberIdx != null">
+            , category_idx = #{categoryIdx}
+            , range_idx = #{rangeIdx}
+            , title = #{title}
+            , content = #{content}
+            <if test="password != null">
+            , password = #{password}
+            </if>
+            , updated_at = CURRENT_TIMESTAMP
+        </if>
+    WHERE idx = #{idx}
+    <if test="memberIdx != null">
         AND member_idx = #{memberIdx}
-    </update>
+    </if>
+</update>
 
     <!-- 게시물 삭제 -->
     <delete id="deletePost" parameterType="com.service.board.post.dto.DeletePostReq">
         DELETE FROM TB_POST
         WHERE idx = #{idx}
         AND member_idx = #{memberIdx}
+    </delete>
+    
+    <!-- 게시물과 관련된 좋아요 삭제 -->
+    <delete id="deleteLikesByPostIdx">
+        DELETE FROM TB_LIKE
+        WHERE post_idx = #{postIdx}
+    </delete>
+    
+    <!-- 게시물과 관련된 싫어요 삭제 -->
+    <delete id="deleteUnlikesByPostIdx">
+        DELETE FROM TB_UNLIKE
+        WHERE post_idx = #{postIdx}
+    </delete>
+    
+    <!-- 게시물과 관련된 댓글 삭제 -->
+    <delete id="deleteCommentsByPostIdx">
+        DELETE FROM TB_COMMENT
+        WHERE post_idx = #{postIdx}
     </delete>
 
 </mapper>

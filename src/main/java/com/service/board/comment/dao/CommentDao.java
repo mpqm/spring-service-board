@@ -14,23 +14,20 @@ public interface CommentDao {
     
     // 댓글 조회
     Optional<GetCommentRes> getComment(GetCommentReq getCommentReq);
-    
+
+    Optional<GetReplyRes> getReply(GetCommentReq getCommentReq);
+
     // 게시물별 댓글 목록 조회 (페이지네이션)
     List<GetCommentRes> getComments(QueryCommentReq queryCommentReq);
 
     // 대댓글 목록 조회
-    List<GetReplyRes> getReplies(QueryReplyReq queryReplyReq);
-
-    // 대댓글 조회
-    Optional<GetReplyRes> getReply(GetReplyReq getReplyReq);
+    List<GetCommentRes> getReplies(QueryReplyReq queryReplyReq);
 
     // 댓글 수정
     Integer updateComment(UpdateCommentReq updateCommentReq);
     
     // 댓글 삭제
     Integer deleteComment(DeleteCommentReq deleteCommentReq);
-
-
 
     // 대댓글 개수 조회
     Long countReply(CountReplyReq countReplyReq);

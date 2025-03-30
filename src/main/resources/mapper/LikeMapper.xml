@@ -2,72 +2,85 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.service.board.react.dao.LikeDao">
-    <!-- 게시글 좋아요 등록 -->
-    <insert id="createLikeByPostIdx" parameterType="CreateReactReq" useGeneratedKeys="true" keyProperty="idx">
+    <!-- 게시물/댓글 좋아요 등록 -->
+    <insert id="createLike" parameterType="CreateReactReq" useGeneratedKeys="true" keyProperty="idx">
         INSERT INTO TB_LIKE (
             member_idx,
-            post_idx
+            <choose>
+                <when test="postIdx != null">
+                    post_idx
+                </when>
+                <otherwise>
+                    comment_idx
+                </otherwise>
+            </choose>
         ) VALUES (
             #{memberIdx},
-            #{postIdx}
+            <choose>
+                <when test="postIdx != null">
+                    #{postIdx}
+                </when>
+                <otherwise>
+                    #{commentIdx}
+                </otherwise>
+            </choose>
         )
     </insert>
 
-    <!-- 댓글 좋아요 등록 -->
-    <insert id="createLikeByCommentIdx" parameterType="CreateReactReq" useGeneratedKeys="true" keyProperty="idx">
-        INSERT INTO TB_LIKE (
-            member_idx,
-            comment_idx
-        ) VALUES (
-            #{memberIdx},
-            #{commentIdx}
-        )
-    </insert>
-
-    <!-- 게시글 좋아요 조회 -->
-    <select id="getLikeByPostIdx" parameterType="GetReactReq" resultType="GetReactRes">
+    <!-- 게시물/댓글 좋아요 조회 -->
+    <select id="getLike" parameterType="GetReactReq" resultType="GetReactRes">
         SELECT 
             idx,
             member_idx as memberIdx,
-            post_idx as postIdx
+            <choose>
+                <when test="postIdx != null">
+                    post_idx as postIdx,
+                    NULL as commentIdx
+                </when>
+                <otherwise>
+                    NULL as postIdx,
+                    comment_idx as commentIdx
+                </otherwise>
+            </choose>
         FROM TB_LIKE
-        WHERE member_idx = #{memberIdx} AND post_idx = #{postIdx}
+        WHERE member_idx = #{memberIdx}
+        <choose>
+            <when test="postIdx != null">
+                AND post_idx = #{postIdx}
+            </when>
+            <otherwise>
+                AND comment_idx = #{commentIdx}
+            </otherwise>
+        </choose>
     </select>
 
-    <!-- 댓글 좋아요 조회 -->
-    <select id="getLikeByCommentIdx" parameterType="GetReactReq" resultType="GetReactRes">
-        SELECT
-            idx,
-            member_idx as memberIdx,
-            comment_idx as commentIdx
-        FROM TB_LIKE
-        WHERE member_idx = #{memberIdx} AND comment_idx = #{commentIdx}
-    </select>
-
-    <!-- 게시글 좋아요 삭제 -->
-    <delete id="deleteLikeByPostIdx" parameterType="DeleteReactReq">
-        DELETE FROM TB_LIKE
-        WHERE member_idx = #{memberIdx} AND post_idx = #{postIdx}
-    </delete>
-
-    <!-- 댓글 좋아요 삭제 -->
-    <delete id="deleteLikeByCommentIdx" parameterType="DeleteReactReq">
-        DELETE FROM TB_LIKE
-        WHERE member_idx = #{memberIdx} AND comment_idx = #{commentIdx}
-    </delete>
-
-    <!-- 게시글 좋아요 수 조회 -->
-    <select id="getLikeCountByPostIdx" resultType="Long" parameterType="CountReactReq">
+    <!-- 게시물/댓글 좋아요 개수 조회 -->
+    <select id="countLike" parameterType="CountReactReq" resultType="Long">
         SELECT COUNT(*)
         FROM TB_LIKE
-        WHERE post_idx = #{postIdx}
+        <where>
+            <choose>
+                <when test="postIdx != null">
+                    post_idx = #{postIdx}
+                </when>
+                <otherwise>
+                    comment_idx = #{commentIdx}
+                </otherwise>
+            </choose>
+        </where>
     </select>
 
-    <!-- 댓글 좋아요 수 조회 -->
-    <select id="getLikeCountByCommentIdx" resultType="Long" parameterType="CountReactReq">
-        SELECT COUNT(*)
-        FROM TB_LIKE
-        WHERE comment_idx = #{commentIdx}
-    </select>
-
+    <!-- 게시물/댓글 좋아요 삭제 -->
+    <delete id="deleteLike" parameterType="DeleteReactReq">
+        DELETE FROM TB_LIKE
+        WHERE member_idx = #{memberIdx}
+        <choose>
+            <when test="postIdx != null">
+                AND post_idx = #{postIdx}
+            </when>
+            <otherwise>
+                AND comment_idx = #{commentIdx}
+            </otherwise>
+        </choose>
+    </delete>
 </mapper>

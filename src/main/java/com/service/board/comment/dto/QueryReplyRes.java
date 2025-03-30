@@ -27,6 +27,6 @@ public class QueryReplyRes {
     private Long totalPages;
 
     // 댓글 목록
-    private List<GetReplyRes> data;
+    private List<GetCommentRes> data;
 
 }

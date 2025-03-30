@@ -108,3 +108,34 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.mxh-150 {
+    max-height: 150px;
+}
+
+/* 게시글 제목 스타일 */
+#postTitle {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.25rem 0;
+    line-height: 1.4;
+}
+
+/* 제목과 카테고리를 포함하는 컨테이너 */
+.title-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+
+/* 카테고리 배지 스타일 */
+#categoryName {
+    display: inline-block;
+    margin-right: 0.5rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+}

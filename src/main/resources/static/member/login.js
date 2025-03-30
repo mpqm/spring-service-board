@@ -1,11 +1,11 @@
 $(document).ready(() => {
-    $('#loginForm').on('submit', handleLoginForm);
+    $('#loginForm').on('submit', handleLogin);
 });
 
-// 로그인 처리 함수
-const handleLoginForm = (event) => {
+// 로그인
+const handleLogin = (event) => {
     event.preventDefault();
-    const formData = {
+    const loginData = {
         id: $.trim($('#id').val()),
         password: $.trim($('#password').val()),
     };
@@ -13,20 +13,15 @@ const handleLoginForm = (event) => {
         type: 'POST',
         url: '/login',
         contentType: 'application/json',
-        data: JSON.stringify(formData),
+        data: JSON.stringify(loginData),
         success: (res) => {
             if (res.success) {
-                // 성공 메시지를 sessionStorage에 저장하고 페이지 이동
-                sessionStorage.setItem('alertType', 'success');
-                sessionStorage.setItem('alertMessage', "게시판에 오신걸 환영합니다.");
-                window.location.href = "/";
+                setSessionAlert('success', "게시판에 오신걸 환영합니다.");
+                location.href = "/";
             } else {
-                showAlert('danger', getMessage(res));
+                setSessionAlert('danger', res);
             }
         },
-        error: (e) => {
-            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-            showAlert('danger', getMessage(errorResponse));
-        }
+        error: (e) => setInstantAlert('danger', e.responseJSON)
     });
 };

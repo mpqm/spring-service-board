@@ -11,19 +11,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QueryCommentReq {
 
+    private Long memberIdx;
+
     // 게시물 인덱스
     private Long postIdx;
 
     // 페이지 번호
-    private Long page;
+    @Builder.Default
+    private Long page = 1L;
 
     // 페이지 크기
-    private Long size;
+    @Builder.Default
+    private Long size = 10L;
 
-    // 정렬 기준
+    // 정렬 기준 (문자열)
     private String sortBy;
-
-    private Boolean parentCommentOnly;
+    
+    // 정렬 코드 인덱스
+    private Long orderIdx;
 
     // 오프셋 값 계산 (집계용)
     public Long getOffset() {

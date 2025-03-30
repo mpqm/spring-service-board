@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateCommentReq {
 
+    private Long idx;
+
     // 게시물 인덱스
     private Long postIdx;
 

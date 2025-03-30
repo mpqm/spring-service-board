@@ -21,118 +21,136 @@
         )
     </insert>
 
-    <!-- 댓글 조회 -->
+    <!-- 댓글, 대댓글 조회 -->
     <select id="getComment" resultType="com.service.board.comment.dto.GetCommentRes">
         SELECT
         c.*,
-        m.nick_name as nickname,
+        m.nick_name as nickName,
         m.profile_image_url as profileImageUrl
         FROM TB_COMMENT c
         LEFT JOIN TB_MEMBER m ON c.member_idx = m.idx
         WHERE c.idx = #{idx}
     </select>
 
-    <!-- 게시물별 댓글 목록 조회 (페이지네이션) -->
-    <select id="getComments" resultType="com.service.board.comment.dto.GetCommentRes">
+    <!-- 단일 대댓글 조회 -->
+    <select id="getReply" resultType="com.service.board.comment.dto.GetCommentRes">
         SELECT
         c.*,
         m.nick_name as nickName,
-        m.profile_image_url as profileImageUrl,
-        (SELECT COUNT(*) FROM TB_LIKE WHERE comment_idx = c.idx) as likeCount,
-        (SELECT COUNT(*) FROM TB_UNLIKE WHERE comment_idx = c.idx) as unlikeCount,
-        CASE WHEN EXISTS (
-        SELECT 1 FROM TB_LIKE
-        WHERE comment_idx = c.idx
-        AND member_idx = #{memberIdx}
-        ) THEN true ELSE false END as isLiked,
-        CASE WHEN EXISTS (
-        SELECT 1 FROM TB_UNLIKE
-        WHERE comment_idx = c.idx
-        AND member_idx = #{memberIdx}
-        ) THEN true ELSE false END as isUnliked
+        m.profile_image_url as profileImageUrl
         FROM TB_COMMENT c
         LEFT JOIN TB_MEMBER m ON c.member_idx = m.idx
-        WHERE c.post_idx = #{postIdx}
-        <if test="parentCommentOnly != null and parentCommentOnly == true">
-            AND c.parent_comment_idx IS NULL
-        </if>
-        ORDER BY c.created_at DESC
+        WHERE c.idx = #{idx} AND c.parent_comment_idx IS NOT NULL
+    </select>
+
+    <!-- 게시물별 댓글 목록 조회 (페이지네이션) -->
+    <select id="getComments" resultType="com.service.board.comment.dto.GetCommentRes">
+        SELECT
+        c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at,
+        m.nick_name as nickName,
+        m.profile_image_url as profileImageUrl,
+        COUNT(DISTINCT l.idx) as likeCount,
+        COUNT(DISTINCT u.idx) as unlikeCount,
+        MAX(CASE WHEN l.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isLiked,
+        MAX(CASE WHEN u.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isUnliked
+        FROM TB_COMMENT c
+        LEFT JOIN TB_MEMBER m ON c.member_idx = m.idx
+        LEFT JOIN TB_LIKE l ON c.idx = l.comment_idx
+        LEFT JOIN TB_UNLIKE u ON c.idx = u.comment_idx
+        WHERE c.post_idx = #{postIdx} AND c.parent_comment_idx IS NULL
+        GROUP BY c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at, m.nick_name, m.profile_image_url
+        <choose>
+            <!-- 최신순 (idx=5) -->
+            <when test="orderIdx == 5 or orderIdx == '5'">
+                ORDER BY c.created_at DESC
+            </when>
+            <!-- 오래된순 (idx=6) -->
+            <when test="orderIdx == 6 or orderIdx == '6'">
+                ORDER BY c.created_at ASC
+            </when>
+            <!-- 좋아요순 (idx=8) -->
+            <when test="orderIdx == 8 or orderIdx == '8'">
+                ORDER BY COUNT(DISTINCT l.idx) DESC, c.created_at DESC
+            </when>
+            <!-- 싫어요순 (idx=9) -->
+            <when test="orderIdx == 9 or orderIdx == '9'">
+                ORDER BY COUNT(DISTINCT u.idx) DESC, c.created_at DESC
+            </when>
+            <!-- 대댓글순 (idx=10) -->
+            <when test="orderIdx == 10 or orderIdx == '10'">
+                ORDER BY (SELECT COUNT(*) FROM TB_COMMENT WHERE parent_comment_idx = c.idx) DESC, c.created_at DESC
+            </when>
+            <!-- 기본: 최신순 -->
+            <otherwise>
+                ORDER BY c.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 대댓글 목록 조회 (페이지네이션) -->
+    <select id="getReplies" resultType="com.service.board.comment.dto.GetCommentRes">
+        SELECT
+        c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at,
+        m.nick_name as nickName,
+        m.profile_image_url as profileImageUrl,
+        COUNT(DISTINCT l.idx) as likeCount,
+        COUNT(DISTINCT u.idx) as unlikeCount,
+        MAX(CASE WHEN l.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isLiked,
+        MAX(CASE WHEN u.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isUnliked
+        FROM TB_COMMENT c
+        LEFT JOIN TB_MEMBER m ON c.member_idx = m.idx
+        LEFT JOIN TB_LIKE l ON c.idx = l.comment_idx
+        LEFT JOIN TB_UNLIKE u ON c.idx = u.comment_idx
+        WHERE c.parent_comment_idx = #{parentCommentIdx}
+        GROUP BY c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at, m.nick_name, m.profile_image_url
+        <choose>
+            <!-- 최신순 (idx=5) -->
+            <when test="orderIdx == 5 or orderIdx == '5'">
+                ORDER BY c.created_at DESC
+            </when>
+            <!-- 오래된순 (idx=6) -->
+            <when test="orderIdx == 6 or orderIdx == '6'">
+                ORDER BY c.created_at ASC
+            </when>
+            <!-- 좋아요순 (idx=8) -->
+            <when test="orderIdx == 8 or orderIdx == '8'">
+                ORDER BY COUNT(DISTINCT l.idx) DESC, c.created_at DESC
+            </when>
+            <!-- 싫어요순 (idx=9) -->
+            <when test="orderIdx == 9 or orderIdx == '9'">
+                ORDER BY COUNT(DISTINCT u.idx) DESC, c.created_at DESC
+            </when>
+            <!-- 기본: 오래된순 (일반적으로 대댓글은 대화 흐름을 위해 오래된순으로 보는 것이 자연스러움) -->
+            <otherwise>
+                ORDER BY c.created_at ASC
+            </otherwise>
+        </choose>
         LIMIT #{offset}, #{size}
     </select>
 
     <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="com.service.board.comment.dto.UpdateCommentReq">
-        UPDATE TB_COMMENT
-        SET content = #{content}, updated_at = CURRENT_TIMESTAMP
+        UPDATE TB_COMMENT SET content = #{content}, updated_at = CURRENT_TIMESTAMP
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </update>
 
     <!-- 댓글 삭제 -->
     <delete id="deleteComment">
         DELETE FROM TB_COMMENT
-        WHERE idx = #{commentIdx}
-        AND member_idx = #{memberIdx}
+        WHERE idx = #{commentIdx} AND member_idx = #{memberIdx}
     </delete>
 
     <!-- 게시물별 댓글 개수 조회 -->
     <select id="countComments" resultType="Long">
-        SELECT COUNT(*)
-        FROM TB_COMMENT
-        WHERE post_idx = #{postIdx}
+        SELECT COUNT(*) FROM TB_COMMENT
+        WHERE post_idx = #{postIdx} AND parent_comment_idx IS NULL
     </select>
-    
-    <!-- 대댓글 목록 조회 -->
-    <select id="getReplies" parameterType="com.service.board.comment.dto.QueryReplyReq" resultType="com.service.board.comment.dto.GetReplyRes">
-        SELECT 
-            c.*,
-            m.nick_name as nickName,
-            m.profile_image_url as profileImageUrl,
-            (SELECT COUNT(*) FROM TB_LIKE WHERE comment_idx = c.idx) as likeCount,
-            (SELECT COUNT(*) FROM TB_UNLIKE WHERE comment_idx = c.idx) as unlikeCount,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_LIKE
-                WHERE comment_idx = c.idx
-                AND member_idx = #{memberIdx}
-            ) THEN true ELSE false END as isLiked,
-            CASE WHEN EXISTS (
-                SELECT 1 FROM TB_UNLIKE
-                WHERE comment_idx = c.idx
-                AND member_idx = #{memberIdx}
-            ) THEN true ELSE false END as isUnliked
-        FROM 
-            TB_COMMENT c
-        LEFT JOIN 
-            TB_MEMBER m ON c.member_idx = m.idx
-        WHERE 
-            c.parent_comment_idx = #{parentCommentIdx}
-        ORDER BY 
-            c.created_at ASC
-        LIMIT #{offset}, #{size}
-    </select>
-    
-    <!-- 대댓글 존재 여부 확인 -->
-    <select id="getReply" parameterType="com.service.board.comment.dto.GetReplyReq" resultType="com.service.board.comment.dto.GetReplyRes">
-        SELECT 
-            c.*,
-            m.nick_name as nickname,
-            m.profile_image_url as profileImageUrl
-        FROM 
-            TB_COMMENT c
-        LEFT JOIN 
-            TB_MEMBER m ON c.member_idx = m.idx
-        WHERE 
-            c.parent_comment_idx = #{commentIdx}
-        LIMIT 1
-    </select>
-    
+
     <!-- 대댓글 개수 조회 -->
     <select id="countReply" parameterType="com.service.board.comment.dto.CountReplyReq" resultType="Long">
-        SELECT 
-            COUNT(*)
-        FROM 
-            TB_COMMENT
-        WHERE 
-            parent_comment_idx = #{parentCommentIdx}
+        SELECT COUNT(*) FROM TB_COMMENT
+        WHERE parent_comment_idx = #{parentCommentIdx}
     </select>
 
 </mapper>

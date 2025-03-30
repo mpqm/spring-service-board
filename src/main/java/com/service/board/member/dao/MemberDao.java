@@ -14,19 +14,9 @@ public interface MemberDao {
     Long signupMember(SignupMemberReq signupMemberReq);
 
     // 조회
-    Optional<FindMemberRes> findMemberByIdx(FindMemberReq findMemberReq);
-
-    Optional<FindMemberRes> findMemberById(FindMemberReq findMemberReq);
-
-    Optional<FindMemberRes> findMemberByEmail(FindMemberReq findMemberReq);
+    Optional<FindMemberRes> findMember(FindMemberReq findMemberReq);
 
     // 수정
     Integer editMember(EditMemberReq editMemberReq);
-
-    Integer editMemberIsEmailAuthById(EditMemberReq editMemberIsEmailAuthByIdReq);
-
-    Integer editMemberPasswordByIdx(EditMemberReq editMemberReq);
-
-    Integer editMemberIsInActiveByIdx(EditMemberReq editMemberReq);
 
 }

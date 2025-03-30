@@ -7,28 +7,16 @@ import java.util.Optional;
 @Mapper
 public interface LikeDao {
 
-    // 게시글 좋아요 증가
-    Long createLikeByPostIdx(CreateReactReq createReactReq);
+    // 좋아요 등록
+    Long createLike(CreateReactReq createReactReq);
 
-    // 댓글 좋아요 증가
-    Long createLikeByCommentIdx(CreateReactReq createReactReq);
+    // 좋아요 조회
+    Optional<GetReactRes> getLike(GetReactReq getReactReq);
 
-    // 게시글 좋아요 조회
-    Optional<GetReactRes> getLikeByPostIdx(GetReactReq getReactReq);
+    // 좋아요 삭제
+    Integer deleteLike(DeleteReactReq deleteReactReq);
 
-    // 댓글 좋아요 조회
-    Optional<GetReactRes> getLikeByCommentIdx(GetReactReq getReactReq);
-
-    // 게시글 좋아요 카운트
-    Long getLikeCountByPostIdx(CountReactReq countReactReq);
-
-    // 댓글 좋아요 카운트
-    Long getLikeCountByCommentIdx(CountReactReq countReactReq);
-
-    // 게시글 좋아요 삭제
-    Integer deleteLikeByPostIdx(DeleteReactReq deleteReactReq);
-
-    // 댓글 좋아요 삭제
-    Integer deleteLikeByCommentIdx(DeleteReactReq deleteReactReq);
+    // 좋아요 카운트
+    Long countLike(CountReactReq countReactReq);
 
 }

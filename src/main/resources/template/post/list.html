@@ -15,7 +15,7 @@
                 카테고리
             </button>
             <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
-                <li th:each="code : ${codes}" th:if="${code.groupName == 'POST_CATEGORY'}">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'CATEGORY'}">
                     <a class="dropdown-item" href="#" th:attr="data-category-idx=${code.idx}" th:text="${code.codeName}"></a>
                 </li>
             </ul>
@@ -26,7 +26,7 @@
                 정렬순서
             </button>
             <ul class="dropdown-menu w-100" aria-labelledby="sortDropdown">
-                <li th:each="code : ${codes}" th:if="${code.groupName == 'POST_ORDER'}">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'ORDER'}">
                     <a class="dropdown-item" href="#" th:attr="data-order-idx=${code.idx}" th:text="${code.codeName}"></a>
                 </li>
             </ul>
@@ -37,7 +37,7 @@
                 검색조건
             </button>
             <ul class="dropdown-menu w-100" aria-labelledby="searchTypeDropdown">
-                <li th:each="code : ${codes}" th:if="${code.groupName == 'POST_SEARCH'}">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'SEARCH'}">
                     <a class="dropdown-item" href="#" th:attr="data-search-idx=${code.idx}" th:text="${code.codeName}"></a>
                 </li>
             </ul>
@@ -64,7 +64,7 @@
     <div class="d-flex w-100 mt-3">
         <table class="table table-hover border border-1 border-dark">
             <thead class="bg-light rounded-top">
-                <tr class="text-center">
+                <tr class="text-center text-dark bg-white">
                     <th scope="col" style="width: 5%">번호</th>
                     <th scope="col" style="width: 10%">카테고리</th>
                     <th scope="col" style="width: 10%">작성자</th>
@@ -89,6 +89,6 @@
     </div>
 </div>
 <th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
-<script th:src="@{../post/list.js}"></script>
+<script th:src="@{/post/list.js}"></script>
 </body>
 </html>

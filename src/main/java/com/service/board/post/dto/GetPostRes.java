@@ -54,6 +54,12 @@ public class GetPostRes {
     // 댓글 수 (집계용)
     private Long commentCount;
 
+    // 좋아요 여부
+    private Boolean isLiked;
+
+    // 싫어요 여부
+    private Boolean isUnliked;
+
     // 생성일시
     private LocalDateTime createdAt;
 
@@ -62,5 +68,8 @@ public class GetPostRes {
 
     // 게시물 이미지 목록
     private List<GetPostImageRes> postImages;
+
+    // 비밀번호 (보안상 API 응답에는 포함하지 않음)
+    private String password;
 
 }

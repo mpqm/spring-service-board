@@ -12,5 +12,4 @@ public interface CodeDao {
     // 코드 목록 조회
     List<GetCodeRes> getCodes();
 
-
 }

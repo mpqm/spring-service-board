@@ -7,6 +7,7 @@ import com.service.board.global.common.BaseMsg;
 import com.service.board.global.common.BaseRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,28 +16,28 @@ public class CommentController {
     
     private final CommentService commentService;
     
-    // C 댓글 생성
+    // 댓글 생성
     @PostMapping("/comment")
     public ResponseEntity<BaseRes<Void>> createComment(
-        @SessionAttribute(name = "memberIdx") Long memberIdx,
-        @RequestBody CreateCommentReq dto) throws BaseExc {
+        @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
+        @RequestBody CreateCommentReq createCommentReq) throws BaseExc {
 
-        commentService.createComment(memberIdx, dto);
+        commentService.createComment(memberIdx, createCommentReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.COMMENT_CREATED));
     }
 
-    // U 댓글 수정
-    @PutMapping("/comment/{commentIdx}")
+    // 댓글 수정
+    @PutMapping("/comment")
     public ResponseEntity<BaseRes<Void>> updateComment(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
         @RequestParam(name = "commentIdx") Long commentIdx,
-        @RequestBody UpdateCommentReq dto) throws BaseExc {
+        @RequestBody UpdateCommentReq updateCommentReq) throws BaseExc {
 
-        commentService.updateComment(memberIdx, commentIdx, dto);
+        commentService.updateComment(memberIdx, commentIdx, updateCommentReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.COMMENT_UPDATED));
     }
 
-    // D 댓글 삭제
+    // 댓글 삭제
     @DeleteMapping("/comment")
     public ResponseEntity<BaseRes<Void>> deleteComment(
         @SessionAttribute(name = "memberIdx") Long memberIdx,
@@ -46,22 +47,23 @@ public class CommentController {
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.COMMENT_DELETED));
     }
 
-    // R 댓글 목록 조회
+    // 댓글 목록 조회
     @GetMapping("/comment-list")
     public ResponseEntity<BaseRes<QueryCommentRes>> getComments(
         @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
-        @ModelAttribute QueryCommentReq dto) throws BaseExc {
+        @ModelAttribute QueryCommentReq queryCommentReq) throws BaseExc {
 
-        QueryCommentRes result = commentService.getComments(memberIdx, dto);
+        QueryCommentRes result = commentService.getComments(memberIdx, queryCommentReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.COMMENTS_SEARCHED, result));
     }
 
+    // 대댓글 목록 조회
     @GetMapping("/reply-list")
     public ResponseEntity<BaseRes<QueryReplyRes>> getReplies(
         @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
-        @ModelAttribute QueryReplyReq dto) throws BaseExc {
+        @ModelAttribute QueryReplyReq queryReplyReq) throws BaseExc {
 
-        QueryReplyRes result = commentService.getReplies(memberIdx, dto);
+        QueryReplyRes result = commentService.getReplies(memberIdx, queryReplyReq);
         return ResponseEntity.ok(new BaseRes<>(BaseMsg.REPLIES_SEARCHED, result));
     }
 

@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta th:if="${memberIdx != null}" name="memberIdx" th:content="${memberIdx}">
     <title>게시물 상세</title>
+    <style>
+
+    </style>
 </head>
 <body>
 <th:block th:insert="~{common/header :: HeaderFragment}"></th:block>
 <div class="main-wrap">
-    <div class="d-flex w-100 mb-3 flex-column border border-dark p-3">
+    <div id="postContent" class="card text-bg-light bg-white d-flex w-100 mb-3 border border-dark p-3">
         <!-- 게시물 상세 정보 -->
         <div class="post-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <span id="categoryName" class="badge bg-dark text-white me-2"></span>
+            <div class="d-flex justify-content-between align-items-start flex-wrap">
+                <div class="title-container">
+                    <span id="categoryName" class="badge bg-dark text-white"></span>
                     <h2 id="postTitle" class="d-inline"></h2>
                 </div>
-                <div>
+                <div class="ms-auto mt-2">
                     <span id="createdAt"></span>
                 </div>
-
             </div>
             <div class="d-flex justify-content-between mt-2">
                 <div>
@@ -63,39 +64,49 @@
                 <i class="bi bi-trash"></i> 삭제
             </button>
             <button id="likeButton" class="btn btn-outline-dark me-2">
-                <i class="bi bi-hand-thumbs-up"></i> 좋아요
+                <i class="bi bi-hand-thumbs-up"></i> 좋아요 <span>0</span>
             </button>
             <button id="unlikeButton" class="btn btn-outline-dark">
-                <i class="bi bi-hand-thumbs-down"></i> 싫어요
+                <i class="bi bi-hand-thumbs-down"></i> 싫어요 <span>0</span>
             </button>
-
-        </div>
-
-        <!-- 작성자만 볼 수 있는 버튼 -->
-        <div id="authorActions" class="d-flex justify-content-end my-3" style="display: none !important;">
-
         </div>
 
         <hr>
 
-        <!-- 댓글 섹션 - 아직 구현되지 않아 숨김 처리 -->
-        <div class="comments-section mt-4">
-            <h4 class="mb-3">댓글</h4>
+        <!-- 댓글 섹션 -->
+        <th:block th:insert="~{comment/comment :: commentSection}"></th:block>
+        
+        <!-- 댓글 관련 모달 -->
+        <th:block th:insert="~{comment/comment :: replyModal}"></th:block>
+        <th:block th:insert="~{comment/comment :: editCommentModal}"></th:block>
+    </div>
 
-            <!-- 로그인한 사용자만 볼 수 있는 댓글 작성 폼 -->
-            <div id="commentForm" class="mb-4">
-                <textarea id="commentContent" class="form-control mb-2" rows="3" placeholder="댓글을 입력하세요"></textarea>
-                <button id="submitComment" class="btn btn-primary">댓글 작성</button>
-            </div>
-
-            <!-- 댓글 목록 -->
-            <div id="commentsList" class="mt-4">
-                <!-- 댓글이 여기에 동적으로 추가됨 -->
+    <!-- 비밀번호 확인 모달 -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordModalLabel">보호된 게시글</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>이 게시글은 비밀번호로 보호되어 있습니다.</p>
+                    <div class="mb-3">
+                        <label for="postPassword" class="form-label">비밀번호</label>
+                        <input type="password" class="form-control" id="postPassword" placeholder="비밀번호를 입력하세요">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="passwordConfirmBtn">확인</button>
+                </div>
             </div>
         </div>
     </div>
+    
 </div>
 <th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
 <script th:src="@{/post/detail.js}"></script>
+<script th:src="@{/comment/comment.js}"></script>
 </body>
 </html> 

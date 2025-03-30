@@ -1,51 +1,42 @@
 $(document).ready(() => {
-    $('#findIdForm').on('submit', handleFindIdForm);
-    $('#findPwForm').on('submit', handleFindPwForm);
+    $('#findIdForm').on('submit', handleFindId);
+    $('#findPwForm').on('submit', handleFindPw);
 });
 
-const handleFindIdForm = (event) => {
+// 아이디 찾기
+const handleFindId = (event) => {
     event.preventDefault();
-    const formData = {
+    const findIdData = {
         email: $.trim($('#email').val()),
     };
     $.ajax({
         type: 'POST',
         url: '/find-id-pw',
         contentType: 'application/json',
-        data: JSON.stringify(formData),
+        data: JSON.stringify(findIdData),
         success: (res) => {
-            // 서버에서 받은 응답의 상태 확인
-            if (res.success) showAlert('success', getMessage(res));
-            else showAlert('danger', getErrorMessage(res));
-            
+            if (res.success) setInstantAlert('success', res);
+            else setInstantAlert('danger', res);
         },
-        error: (e) => {
-            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-            showAlert('danger', getErrorMessage(errorResponse));
-        }
+        error: (e) => setInstantAlert('danger', e.responseJSON )
     });
 }
 
-const handleFindPwForm = (event) => {
+// 비밀번호 찾기
+const handleFindPw = (event) => {
     event.preventDefault();
-    const formData = {
+    const findPwData = {
         id: $.trim($('#id').val()),
     };
     $.ajax({
         type: 'POST',
         url: '/find-id-pw',
         contentType: 'application/json',
-        data: JSON.stringify(formData),
+        data: JSON.stringify(findPwData),
         success: (res) => {
-            
-            // 서버에서 받은 응답의 상태 확인
-            if (res.success) showAlert('success', getMessage(res));
-            else showAlert('danger', getErrorMessage(res));
-        
+            if (res.success) setInstantAlert('success', res);
+            else setInstantAlert('danger', res);
         },
-        error: (e) => {
-            const errorResponse = e.responseJSON || { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-            showAlert('danger', getErrorMessage(errorResponse));
-        }
+        error: (e) => setInstantAlert('danger', e.responseJSON)
     });
 }

@@ -67,12 +67,7 @@ const loadPostDetail = (postIdx) => {
                 $('#content').summernote('code', post.content || '');
                 $('#categoryIdx').val(post.categoryIdx);
                 $('#rangeIdx').val(post.rangeIdx);
-                if (post.rangeIdx == 17) {
-                    $('#passwordField').show();
-                    // 비밀번호는 표시하지 않고 사용자가 다시 입력하게 함
-                }
-                // if (post.categoryIdx) $('#categoryIdx option[value="' + post.categoryIdx + '"]').prop('selected', true);
-                // if (post.rangeIdx) $('#rangeIdx option[value="' + post.rangeIdx + '"]').prop('selected', true);
+                if (post.rangeIdx == 17) $('#passwordField').show();
                 if (post.postImages && post.postImages.length > 0) {
                     const oldImageGallery = $('<div class="d-flex flex-wrap gap-2"></div>');
                     post.postImages.forEach(image => {
@@ -81,7 +76,9 @@ const loadPostDetail = (postIdx) => {
                     });
                     $('#existingImages').append(oldImageGallery);
                 }
-            } else setInstantAlert('danger', res);
+            } else {
+                setInstantAlert('danger', res);
+            }
         },
         error: (e) => setInstantAlert('danger', e.responseJSON)
     });

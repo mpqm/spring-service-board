@@ -1,28 +1,45 @@
 package com.service.board.activity.controller;
 
-import com.service.board.global.common.BaseExc;
-import com.service.board.global.common.BaseMsg;
-import com.service.board.global.common.BaseRes;
-import com.service.board.activity.dto.GetActivityCommentRes;
-import com.service.board.activity.dto.GetActivityPostRes;
-import com.service.board.activity.dto.GetActivityReactRes;
-import com.service.board.activity.service.ActivityService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.util.List;
+import com.service.board.activity.dto.GetActivityCommentRes;
+import com.service.board.activity.dto.GetActivityPostRes;
+import com.service.board.activity.dto.GetActivityReactRes;
+import com.service.board.activity.service.ActivityService;
+import com.service.board.global.common.BaseExc;
+import com.service.board.global.common.BaseMsg;
+import com.service.board.global.common.BaseRes;
 
-@RestController
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.stereotype.Controller;
+
+@Controller
 @RequiredArgsConstructor
 public class ActivityController {
 
     private final ActivityService activityService;
 
+    // 활동 페이지 이동
+    @GetMapping("/activity")
+    public String goActivityPage(
+        @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
+        RedirectAttributes redirectAttributes) {
+
+        if (memberIdx == null) {
+            redirectAttributes.addFlashAttribute("error", "로그인한 사용자만 접근 가능합니다.");
+            return "redirect:/";
+        }
+        return "activity/activity";
+    }
+
     // 회원이 작성한 게시물 목록 조회
-    @GetMapping("activity-posts")
+    @GetMapping("/activity-posts")
     public ResponseEntity<BaseRes<List<GetActivityPostRes>>> getActivityPosts(
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
@@ -31,7 +48,7 @@ public class ActivityController {
     }
 
     // 회원이 작성한 댓글 목록 조회
-    @GetMapping("activity-comments")
+    @GetMapping("/activity-comments")
     public ResponseEntity<BaseRes<List<GetActivityCommentRes>>> getActivityComments(
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
@@ -40,7 +57,7 @@ public class ActivityController {
     }
 
     // 회원이 좋아요한 게시물 및 댓글 목록 조회
-    @GetMapping("activity-likes")
+    @GetMapping("/activity-likes")
     public ResponseEntity<BaseRes<List<GetActivityReactRes>>> getActivityLikes(
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
@@ -49,7 +66,7 @@ public class ActivityController {
     }
 
     // 회원이 싫어요한 게시물 및 댓글 목록 조회
-    @GetMapping("/unlikes")
+    @GetMapping("/activity-unlikes")
     public ResponseEntity<BaseRes<List<GetActivityReactRes>>> getActivityUnlikes(
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         

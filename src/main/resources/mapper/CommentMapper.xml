@@ -49,14 +49,16 @@
         c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at,
         m.nick_name as nickName,
         m.profile_image_url as profileImageUrl,
-        COUNT(DISTINCT l.idx) as likeCount,
-        COUNT(DISTINCT u.idx) as unlikeCount,
+        COALESCE(COUNT(l.idx), 0) as likeCount,
+        COALESCE(COUNT(u.idx), 0) as unlikeCount,
         MAX(CASE WHEN l.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isLiked,
-        MAX(CASE WHEN u.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isUnliked
+        MAX(CASE WHEN u.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isUnliked,
+        COALESCE(COUNT(r.idx), 0) as replyCount
         FROM TB_COMMENT c
         LEFT JOIN TB_MEMBER m ON c.member_idx = m.idx
         LEFT JOIN TB_LIKE l ON c.idx = l.comment_idx
         LEFT JOIN TB_UNLIKE u ON c.idx = u.comment_idx
+        LEFT JOIN TB_COMMENT r ON c.idx = r.parent_comment_idx
         WHERE c.post_idx = #{postIdx} AND c.parent_comment_idx IS NULL
         GROUP BY c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at, m.nick_name, m.profile_image_url
         <choose>
@@ -70,15 +72,15 @@
             </when>
             <!-- 좋아요순 (idx=8) -->
             <when test="orderIdx == 8 or orderIdx == '8'">
-                ORDER BY COUNT(DISTINCT l.idx) DESC, c.created_at DESC
+                ORDER BY COUNT(l.idx) DESC, c.created_at DESC
             </when>
             <!-- 싫어요순 (idx=9) -->
             <when test="orderIdx == 9 or orderIdx == '9'">
-                ORDER BY COUNT(DISTINCT u.idx) DESC, c.created_at DESC
+                ORDER BY COUNT(u.idx) DESC, c.created_at DESC
             </when>
             <!-- 대댓글순 (idx=10) -->
             <when test="orderIdx == 10 or orderIdx == '10'">
-                ORDER BY (SELECT COUNT(*) FROM TB_COMMENT WHERE parent_comment_idx = c.idx) DESC, c.created_at DESC
+                ORDER BY COUNT(r.idx) DESC, c.created_at DESC
             </when>
             <!-- 기본: 최신순 -->
             <otherwise>
@@ -94,8 +96,8 @@
         c.idx, c.post_idx, c.parent_comment_idx, c.member_idx, c.content, c.created_at, c.updated_at,
         m.nick_name as nickName,
         m.profile_image_url as profileImageUrl,
-        COUNT(DISTINCT l.idx) as likeCount,
-        COUNT(DISTINCT u.idx) as unlikeCount,
+        COALESCE(COUNT(DISTINCT l.idx), 0) as likeCount,
+        COALESCE(COUNT(DISTINCT u.idx), 0) as unlikeCount,
         MAX(CASE WHEN l.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isLiked,
         MAX(CASE WHEN u.member_idx = #{memberIdx} THEN 1 ELSE 0 END) as isUnliked
         FROM TB_COMMENT c
@@ -149,7 +151,8 @@
 
     <!-- 대댓글 개수 조회 -->
     <select id="countReply" parameterType="com.service.board.comment.dto.CountReplyReq" resultType="Long">
-        SELECT COUNT(*) FROM TB_COMMENT
+        SELECT COUNT(*)
+        FROM TB_COMMENT
         WHERE parent_comment_idx = #{parentCommentIdx}
     </select>
 

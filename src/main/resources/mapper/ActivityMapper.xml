@@ -3,48 +3,55 @@
 
 <mapper namespace="com.service.board.activity.dao.ActivityDao">
     <!-- 회원이 작성한 게시물 목록 조회 -->
-    <select id="getActivityPosts" parameterType="GetActivityPostsReq" resultType="GetActivityPostRes">
+    <select id="getActivityPosts" parameterType="com.service.board.activity.dto.GetActivityPostReq" resultType="com.service.board.activity.dto.GetActivityPostRes">
         SELECT 
-            p.idx as postIdx,
             p.category_idx as categoryIdx,
             c1.code_name as categoryName,
             p.range_idx as rangeIdx,
             c2.code_name as rangeName,
+            p.idx as postIdx,
             p.title,
             p.content,
             p.view_count as viewCount,
-            (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
-            (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
-            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount,
+            COALESCE(COUNT(l.idx), 0) as likeCount,
+            COALESCE(COUNT(u.idx), 0) as unlikeCount,
+            COALESCE(COUNT(cm.idx), 0) as commentCount,
             p.created_at as createdAt,
             p.updated_at as updatedAt
         FROM TB_POST p
         LEFT JOIN TB_CODE c1 ON p.category_idx = c1.idx
         LEFT JOIN TB_CODE c2 ON p.range_idx = c2.idx
+        LEFT JOIN TB_LIKE l ON p.idx = l.post_idx AND l.comment_idx IS NULL
+        LEFT JOIN TB_UNLIKE u ON p.idx = u.post_idx AND u.comment_idx IS NULL
+        LEFT JOIN TB_COMMENT cm ON p.idx = cm.post_idx
         WHERE p.member_idx = #{memberIdx}
+        GROUP BY p.idx, p.category_idx, c1.code_name, p.range_idx, c2.code_name, p.title, p.content, p.view_count, p.created_at, p.updated_at
         ORDER BY p.created_at DESC
     </select>
 
     <!-- 회원이 작성한 댓글 목록 조회 -->
-    <select id="getActivityComments" parameterType="GetActivityCommentReq" resultType="GetActivityCommentRes">
+    <select id="getActivityComments" parameterType="com.service.board.activity.dto.GetActivityCommentReq" resultType="com.service.board.activity.dto.GetActivityCommentRes">
         SELECT 
-            c.idx as commentIdx,
             c.post_idx as postIdx,
             p.title as postTitle,
+            c.idx as commentIdx,
             c.parent_comment_idx as parentCommentIdx,
             c.content,
-            (SELECT COUNT(*) FROM TB_LIKE WHERE comment_idx = c.idx) as likeCount,
-            (SELECT COUNT(*) FROM TB_UNLIKE WHERE comment_idx = c.idx) as unlikeCount,
+            COALESCE(COUNT(l.idx), 0) as likeCount,
+            COALESCE(COUNT(u.idx), 0) as unlikeCount,
             c.created_at as createdAt,
             c.updated_at as updatedAt
         FROM TB_COMMENT c
         LEFT JOIN TB_POST p ON c.post_idx = p.idx
+        LEFT JOIN TB_LIKE l ON c.idx = l.comment_idx
+        LEFT JOIN TB_UNLIKE u ON c.idx = u.comment_idx
         WHERE c.member_idx = #{memberIdx}
+        GROUP BY c.idx, c.post_idx, p.title, c.parent_comment_idx, c.content, c.created_at, c.updated_at
         ORDER BY c.created_at DESC
     </select>
 
     <!-- 회원이 좋아요한 게시물 및 댓글 목록 조회 -->
-    <select id="getActivityLikes" parameterType="GetActivityReactReq" resultType="GetActivityReactRes">
+    <select id="getActivityLikes" parameterType="com.service.board.activity.dto.GetActivityReactReq" resultType="com.service.board.activity.dto.GetActivityReactRes">
         SELECT 
             l.idx as reactIdx,
             'like' as reactType,
@@ -53,17 +60,16 @@
             p.created_at as postCreatedAt,
             l.comment_idx as commentIdx,
             c.content as commentContent,
-            c.created_at as commentCreatedAt,
-            l.created_at as reactCreatedAt
+            c.created_at as commentCreatedAt
         FROM TB_LIKE l
         LEFT JOIN TB_POST p ON l.post_idx = p.idx
         LEFT JOIN TB_COMMENT c ON l.comment_idx = c.idx
         WHERE l.member_idx = #{memberIdx}
-        ORDER BY l.created_at DESC
+        ORDER BY l.idx DESC
     </select>
 
     <!-- 회원이 싫어요한 게시물 및 댓글 목록 조회 -->
-    <select id="getActivityUnlikes" parameterType="GetActivityReactReq" resultType="GetActivityReactRes">
+    <select id="getActivityUnlikes" parameterType="com.service.board.activity.dto.GetActivityReactReq" resultType="com.service.board.activity.dto.GetActivityReactRes">
         SELECT 
             u.idx as reactIdx,
             'unlike' as reactType,
@@ -72,12 +78,11 @@
             p.created_at as postCreatedAt,
             u.comment_idx as commentIdx,
             c.content as commentContent,
-            c.created_at as commentCreatedAt,
-            u.created_at as reactCreatedAt
+            c.created_at as commentCreatedAt
         FROM TB_UNLIKE u
         LEFT JOIN TB_POST p ON u.post_idx = p.idx
         LEFT JOIN TB_COMMENT c ON u.comment_idx = c.idx
         WHERE u.member_idx = #{memberIdx}
-        ORDER BY u.created_at DESC
+        ORDER BY u.idx DESC
     </select>
 </mapper> 

@@ -28,6 +28,7 @@ public class MemberService {
     private final MailUtil mailUtil;
 
     // 로그인
+    @Transactional
     public void login(HttpServletRequest request, LoginMemberReq loginMemberReq) throws BaseExc {
 
         // 계정 존재 여부 확인
@@ -79,18 +80,18 @@ public class MemberService {
         request.getSession().invalidate();
     }
 
-    // 회원 조회
+    // 계정 정보 조회
     public FindMemberRes findMember(Long memberIdx) throws BaseExc {
         FindMemberReq findMemberReq = FindMemberReq.builder()
                 .idx(memberIdx)
                 .build();
-        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq).orElseThrow(
+        return memberDao.findMember(findMemberReq).orElseThrow(
                 () -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND)
         );
-        return findMemberRes;
     }
 
     // 회원가입
+    @Transactional
     public Boolean signup(SignupMemberReq signupMemberReq, String fileName) throws BaseExc {
 
         String uuid = UUID.randomUUID().toString();
@@ -243,6 +244,7 @@ public class MemberService {
     }
 
     // 계정 비활성화
+    @Transactional
     public void inActive(Long memberIdx) throws BaseExc {
 
         // 계정 정보 조회
@@ -271,6 +273,7 @@ public class MemberService {
     }
 
     // 계정 정보 변경
+    @Transactional
     public void editProfile(EditMemberReq editMemberReq, Long memberIdx, String fileName) throws BaseExc {
 
         // 계정 정보 조회
@@ -301,6 +304,7 @@ public class MemberService {
     }
 
     // 계정 PW 변경
+    @Transactional
     public void editPw(EditMemberReq editMemberReq, Long memberIdx) throws BaseExc {
 
         // 계정 정보 조회
@@ -328,7 +332,7 @@ public class MemberService {
 
     }
 
-    // 계정 ID/PW 찾기 true: id, false pw
+    // 계정 ID/PW 찾기
     public Boolean findIdPw(FindMemberReq findMemberReq) throws BaseExc {
 
         // 이메일 존재 여부 확인

@@ -23,7 +23,7 @@ public class PostService {
     private final PostImageDao postImageDao;
 
     // 게시물 등록
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void createPost(Long memberIdx, CreatePostReq createPostReq, List<String> fileNames) throws BaseExc {
 
         // 게시물 저장
@@ -126,7 +126,6 @@ public class PostService {
     }
 
     // 게시물 상세 조회
-    @Transactional
     public GetPostRes getPost(Long memberIdx, Long postIdx) throws BaseExc {
         
         // 게시물 조회

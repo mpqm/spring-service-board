@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 public class GetActivityPostRes {
     // 회원이 작성한 게시글 조회 응답 DTO
     private Long postIdx;
-    private Long categoryIdx;
+    private Integer categoryIdx;
     private String categoryName;
-    private Long rangeIdx;
+    private Integer rangeIdx;
     private String rangeName;
     private String title;
     private String content;
-    private Long viewCount;
-    private Long likeCount;
-    private Long unlikeCount;
-    private Long commentCount;
+    private Integer viewCount;
+    private Integer likeCount;
+    private Integer unlikeCount;
+    private Integer commentCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 } 

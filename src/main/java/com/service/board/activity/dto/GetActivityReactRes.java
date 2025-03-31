@@ -26,6 +26,4 @@ public class GetActivityReactRes {
     private String commentContent;
     private LocalDateTime commentCreatedAt;
     
-    // 반응 생성일
-    private LocalDateTime reactCreatedAt;
 } 

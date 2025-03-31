@@ -31,8 +31,10 @@ const setSessionAlert = (type, res) => {
 
 // 알림 메시지를 표시하는 함수
 const setInstantAlert = (type, res) => {
+    let message;
     if (res == null) res = { message: '서버와의 통신 중 문제가 발생했습니다.', result: [] };
-    let message = res.message || '알 수 없는 오류가 발생했습니다.';
+    else if(typeof res === "string") message = res || '알 수 없는 오류가 발생했습니다.';
+    else message = res.message || '알 수 없는 오류가 발생했습니다.';
     if (Array.isArray(res.result) && res.result.length > 0) {
         message += '<br>';
         res.result.forEach(err => message += `${err.split(':')[1]?.trim() || err}<br>`);
@@ -94,7 +96,7 @@ const clearScrollPosition = (key) => {
 
 // 날짜 포맷팅 함수
 const formatDate = (date) => {
-    if (!(date instanceof Date) || isNaN(date)) return '';
+    if (!date || !(date instanceof Date) || isNaN(date)) return '-';
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');

@@ -40,9 +40,7 @@
             p.view_count as viewCount,
             p.created_at as createdAt,
             p.updated_at as updatedAt,
-            CASE 
-                WHEN p.range_idx = 16 THEN '익명' 
-                ELSE m.nick_name 
+            CASE WHEN p.range_idx = 16 THEN '익명'  ELSE m.nick_name 
             END as nickName,
             m.profile_image_url as profileImageUrl,
             c.code_name as categoryName,
@@ -68,10 +66,7 @@
                     AND p.content LIKE CONCAT('%', #{keyword}, '%')
                 </when>
                 <otherwise>
-                    AND (
-                        p.title LIKE CONCAT('%', #{keyword}, '%')
-                        OR p.content LIKE CONCAT('%', #{keyword}, '%')
-                    )
+                    AND ( p.title LIKE CONCAT('%', #{keyword}, '%') OR p.content LIKE CONCAT('%', #{keyword}, '%') )
                 </otherwise>
             </choose>
         </if>
@@ -114,8 +109,7 @@
             p.view_count as viewCount,
             p.created_at as createdAt,
             p.updated_at as updatedAt,
-            CASE 
-                WHEN p.range_idx = 16 THEN '익명'
+            CASE  WHEN p.range_idx = 16 THEN '익명'
                 ELSE m.nick_name
             END as nickName,
             m.profile_image_url as profileImageUrl,

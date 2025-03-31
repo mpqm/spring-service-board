@@ -25,7 +25,7 @@ const handleSignup = (event) => {
         contentType: false,
         success: (res) => {
             if (res.success) {
-                setSessionAlert('success', "회원가입이 완료되었습니다.");
+                setSessionAlert('success', res);
                 window.location.href = "/login";
             } else {
                 setInstantAlert('danger', res);

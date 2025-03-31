@@ -18,8 +18,8 @@ public class GetActivityCommentRes {
     private String postTitle;
     private Long parentCommentIdx;
     private String content;
-    private Long likeCount;
-    private Long unlikeCount;
+    private Integer likeCount;
+    private Integer unlikeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 } 

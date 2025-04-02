@@ -1,6 +1,7 @@
 package com.service.board.comment.controller;
 
 import com.service.board.comment.dto.*;
+import com.service.board.comment.dto.UpdateCommentReq;
 import com.service.board.comment.service.CommentService;
 import com.service.board.global.common.BaseExc;
 import com.service.board.global.common.BaseMsg;

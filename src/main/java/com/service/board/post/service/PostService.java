@@ -146,7 +146,9 @@ public class PostService {
         UpdatePostReq updatePostReq = UpdatePostReq.builder()
                 .idx(postIdx)
                 .build();
+        log.info("게시물 조회수 증가 요청: postIdx={}", postIdx);
         Integer updatePostRes = postDao.updatePost(updatePostReq);
+        log.info("게시물 조회수 증가 결과: {}", updatePostRes);
         if(updatePostRes <= 0) {
             throw new BaseExc(BaseMsg.POST_VIEW_NOT_INCREASED);
         }

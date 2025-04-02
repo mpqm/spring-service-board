@@ -8,6 +8,8 @@
 <body>
 <th:block th:insert="~{common/header :: HeaderFragment}"></th:block>
 <div class="main-wrap">
+    <!-- 랭킹 Fragment 추가 -->
+    <th:block th:insert="~{rank/list :: RankFragment}"></th:block>
     <div class="d-flex w-100 flex-wrap">
         <!-- 필터 드롭다운 메뉴 - 더 넓게 설정 -->
         <div class="dropdown me-1 dropdown-container1">
@@ -87,8 +89,11 @@
     <div id="pagination-container" class="d-flex">
 
     </div>
+
+
 </div>
 <th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
 <script th:src="@{/post/list.js}"></script>
+<script th:src="@{/rank/list.js}"></script>
 </body>
 </html>

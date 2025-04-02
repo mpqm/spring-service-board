@@ -25,13 +25,6 @@ public class RankController {
     private final RankService rankService;
     private final RankingScheduler rankingScheduler;
 
-    // 게시물 목록 페이지 이동
-    @GetMapping("/rank")
-    public String goRankList() {
-
-        return "rank/list";
-    }
-
     // 모든 종류의 랭킹을 조회 @return 조회수, 좋아요수, 싫어요수, 댓글수 랭킹이 포함된 응답
     @GetMapping("/rank-list")
     public ResponseEntity<BaseRes<GetRankListRes>> getAllRanks() {

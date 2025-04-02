@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IncreaseViewCountReq {
-    private Long idx;
+public class BatchPostReq {
+
+    private int offset;
+
+    private int limit;
+
 }

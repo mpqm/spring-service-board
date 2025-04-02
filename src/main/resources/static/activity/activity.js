@@ -43,7 +43,9 @@ const displayPosts = (posts, currentPage) => {
                 <td class="small">${post.postIdx}</td>
                 <td><span class="badge bg-dark rounded-pill">${post.categoryName}</span></td>
                 <td><span class="badge bg-dark rounded-pill">${post.rangeName}</span></td>
-                <td class="text-start"><span class="text-decoration-none text-dark">${post.title || '제목 없음'}</span></td>
+                <td class="text-start">
+                    <a href="/post-detail?postIdx=${post.postIdx}" class="text-decoration-none text-dark">${post.title || '제목 없음'}</a>
+                </td>
                 <td class="small">${post.viewCount}</td>
                 <td class="small">${post.likeCount || 0}</td>
                 <td class="small">${post.unlikeCount || 0}</td>
@@ -94,7 +96,7 @@ const displayComments = (comments, currentPage) => {
             <tr class="text-center align-middle cursor-pointer" data-post-idx="${comment.postIdx}">
                 <td class="small">${comment.commentIdx}</td>
                 <td>
-                    <span class="text-start text-truncate-custom">
+                    <span class="text-center text-truncate-custom">
                         <a href="/post-detail?postIdx=${comment.postIdx}" class="fw-bold link-no-style">${truncatedTitle}</a>
                     </span>
                 </td>
@@ -200,15 +202,17 @@ const displayReactions = (reactions, currentPage, type) => {
         const row = `
             <tr>
                 <td>${reaction.reactIdx}</td>
-                <td><span class="badge bg-dark rounded-pill">${category}</span></td>
+                <td class="text-center"><span class="badge bg-dark rounded-pill">${category}</span></td>
                 <td class="text-start">
                     <a href="${link}" class="link-no-style text-dark">${displayContent}</a>
                 </td>
                 <td class="text-muted small text-center">${createdAt}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-danger cancel-reaction-btn" 
+                <td class="text-center items-center">
+                    <button class="btn btn-sm btn-outline-dark cancel-reaction-btn py-0 px-2"
                             data-type="${reaction.reactType}" 
-                            data-idx="${reaction.reactIdx}">
+                            data-idx="${reaction.reactIdx}"
+                            data-post-idx="${reaction.postIdx || ''}"
+                            data-comment-idx="${reaction.commentIdx || ''}">
                         취소
                     </button>
                 </td>
@@ -231,15 +235,29 @@ const displayReactions = (reactions, currentPage, type) => {
 
 // 좋아요/싫어요 취소
 const cancelReaction = (type, reactIdx) => {
-    const endpoint = type === 'likes' ? '/react-like' : '/react-unlike';
+    // 버튼에서 게시글과 댓글 인덱스 정보 가져오기
+    const button = $(`.cancel-reaction-btn[data-idx="${reactIdx}"]`);
+    const postIdx = button.data('post-idx');
+    const commentIdx = button.data('comment-idx');
+    
+    // 요청할 데이터 준비
+    const data = { reactIdx: reactIdx };
+    
+    // 게시글이나 댓글 인덱스가 있으면 추가
+    if (postIdx) data.postIdx = postIdx;
+    if (commentIdx) data.commentIdx = commentIdx;
+    
+    // API 엔드포인트 설정 (API 경로를 정확히 확인하세요)
+    const endpoint = type === 'like' ? '/react-like' : '/react-unlike';
     
     $.ajax({
         url: endpoint,
         type: 'GET',
-        data: { reactIdx: reactIdx },
+        data: data,
         success: (res) => {
             if (res.success) {
-                if (type === 'likes') {
+                // 성공 후 해당 탭 리로드
+                if (type === 'like') {
                     loadActivityLikes(1);
                     setInstantAlert('success', "좋아요가 취소되었습니다.");
                 } else {

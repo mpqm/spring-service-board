@@ -13,19 +13,16 @@
             p.title,
             p.content,
             p.view_count as viewCount,
-            COALESCE(COUNT(l.idx), 0) as likeCount,
-            COALESCE(COUNT(u.idx), 0) as unlikeCount,
-            COALESCE(COUNT(cm.idx), 0) as commentCount,
             p.created_at as createdAt,
-            p.updated_at as updatedAt
+            p.updated_at as updatedAt,
+            (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
+            (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
+            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount
         FROM TB_POST p
         LEFT JOIN TB_CODE c1 ON p.category_idx = c1.idx
         LEFT JOIN TB_CODE c2 ON p.range_idx = c2.idx
-        LEFT JOIN TB_LIKE l ON p.idx = l.post_idx AND l.comment_idx IS NULL
-        LEFT JOIN TB_UNLIKE u ON p.idx = u.post_idx AND u.comment_idx IS NULL
-        LEFT JOIN TB_COMMENT cm ON p.idx = cm.post_idx
+        LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
         WHERE p.member_idx = #{memberIdx}
-        GROUP BY p.idx, p.category_idx, c1.code_name, p.range_idx, c2.code_name, p.title, p.content, p.view_count, p.created_at, p.updated_at
         ORDER BY p.created_at DESC
     </select>
 

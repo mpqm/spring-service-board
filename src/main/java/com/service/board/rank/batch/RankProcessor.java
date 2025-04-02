@@ -90,6 +90,10 @@ public class RankProcessor implements ItemProcessor<List<BatchPostRes>, List<Cre
 
         // 게시물을 기준에 맞게 TreeSet에 추가
         for (BatchPostRes post : batchPostResList) {
+            log.info("게시물 ID: {}, 제목: {}, 조회수: {}, 좋아요: {}, 싫어요: {}, 댓글수: {}", 
+                    post.getIdx(), post.getTitle(), post.getViewCount(), 
+                    post.getLikeCount(), post.getUnlikeCount(), post.getCommentCount());
+                    
             if (post.getViewCount() != null && post.getViewCount() > 0) {
                 viewPosts.add(post);
                 if (viewPosts.size() > rankLimit) viewPosts.remove(viewPosts.last());

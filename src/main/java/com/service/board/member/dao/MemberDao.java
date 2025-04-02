@@ -1,7 +1,9 @@
 package com.service.board.member.dao;
 
 
-import com.service.board.member.dto.*;
+import com.service.board.member.dto.EditMemberReq;
+import com.service.board.member.dto.FindMemberReq;
+import com.service.board.member.dto.FindMemberRes;
 import com.service.board.member.dto.SignupMemberReq;
 import org.apache.ibatis.annotations.Mapper;
 

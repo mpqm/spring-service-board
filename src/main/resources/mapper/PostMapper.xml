@@ -208,7 +208,7 @@
             , updated_at = CURRENT_TIMESTAMP
         </if>
     WHERE idx = #{idx}
-    <if test="memberIdx != null">
+    <if test="memberIdx != null and categoryIdx != null">
         AND member_idx = #{memberIdx}
     </if>
 </update>

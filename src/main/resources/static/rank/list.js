@@ -2,16 +2,15 @@
 $(document).ready(() => {
     loadRankData();
     // 더보기 버튼 클릭 이벤트 등록
-    $('.rank-more-btn').on('click', toggleRankView);
+    $(document).on('click', '.rank-more-btn', toggleRankView);
     // 랭킹 아이템 클릭 시 해당 게시글로 이동
-    $(document).on('click', '.rank-item', movePostDetail);
+    $(document).on('click', '.rank-item', function() {
+        const postIdx = $(this).data('post-idx');
+        if (postIdx) {
+            location.href = `/post-detail?postIdx=${postIdx}`;
+        }
+    });
 });
-
-// 랭킹 아이템 클릭시 해당 게시글로 이동
-const movePostDetail = () => {
-    const postIdx = $(this).data('post-idx');
-    if (postIdx) location.href = `/post-detail?postIdx=${postIdx}`
-};
 
 // 랭킹 데이터 로드
 const loadRankData = () => {
@@ -58,6 +57,8 @@ const renderRankData = (type, data) => {
             $rankItem.addClass('d-none additional-rank');
             $listContainer.append($rankItem);
         });
+        // 총 표시 개수가 5개로 보이도록 rank-count 업데이트
+        $(`.rank-more-btn[data-rank-type="${type}"]`).closest('.card-header').find('.rank-count').text('5');
     } else {
         $(`.rank-more-btn[data-rank-type="${type}"]`).attr('disabled', true);
     }
@@ -67,22 +68,18 @@ const renderRankData = (type, data) => {
 const createRankItem = (item, rank) => {
 
     return $(`
-        <li class="list-group-item p-2 rank-item" data-post-idx="${item.postIdx}">
-            <div class="d-flex align-items-center">
-                <span class="badge bg-dark me-2">${rank}</span>
-                <div class="rank-content">
-                    <span class="rank-title">${truncateText(item.title, 80)}</span>
-                    <div class="rank-info text-muted small">
-                        <span class="badge bg-light text-dark">${item.categoryName || '분류없음'}</span>
-                        <span class="ms-1"><i class="bi bi-person-fill"></i> ${item.nickName || '익명'}</span>
-                        <span class="ms-1">
-                            ${getCountIcon(item)} ${getCountValue(item)}
-                        </span>
-                    </div>
+        <li class="list-group-item list-group-item-action p-2 rank-item cursor-pointer" data-post-idx="${item.postIdx}">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-dark me-2">${rank}</span>
+                    <span class="rank-title">${truncateText(item.title, 15)}</span>
                 </div>
+                <span class="text-end small">
+                    ${getCountValue(item)} ${getCountIcon(item)} 
+                </span>
             </div>
         </li>
-    `);
+    `);    
 };
 
 // 텍스트 길이 제한 함수
@@ -110,18 +107,20 @@ const getCountValue = (item) => {
 };
 
 // 더보기/접기 토글 함수
-const toggleRankView = (event) => {
-    const $btn = $(event.currentTarget);
+const toggleRankView = function(event) {
+    const $btn = $(this);
     const type = $btn.data('rank-type');
     const $container = $(`#${type}RankList`);
     const $additionalItems = $container.find('.additional-rank');
     const $rankCount = $btn.closest('.card-header').find('.rank-count');
     
     if ($additionalItems.hasClass('d-none')) {
+        // 더보기 - 숨겨진 항목 표시
         $additionalItems.removeClass('d-none');
         $btn.text('접기');
         $rankCount.text('10');
     } else {
+        // 접기 - 추가 항목 숨김
         $additionalItems.addClass('d-none');
         $btn.text('더보기');
         $rankCount.text('5');

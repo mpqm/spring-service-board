@@ -97,6 +97,21 @@ const handleSearchTypeDropDown = (event) => {
     queryParams.searchIdx = searchIdx;
 }
 
+// 검색 버튼 이벤트
+const handleSearchBtn = () => {
+    queryParams.keyword = $('#searchKeyword').val().trim();
+    queryParams.page = 1;
+    loadPosts();
+}
+
+// 검색 입력 필드에서 Enter 키 이벤트
+const handleSearchInput = (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        $('#searchBtn').click();
+    }
+}
+
 // 페이지네이션 클릭 이벤트
 const handlePageClick = (event) => {
     event.preventDefault();
@@ -105,18 +120,4 @@ const handlePageClick = (event) => {
         queryParams.page = parseInt(page);
         loadPosts();
     }
-}
-
-const handleSearchInput = (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        $('#searchBtn').click();
-    }
-}
-
-// 검색 버튼 이벤트
-const handleSearchBtn = () => {
-    queryParams.keyword = $('#searchKeyword').val().trim();
-    queryParams.page = 1;
-    loadPosts();
 }

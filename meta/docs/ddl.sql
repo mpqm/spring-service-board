@@ -1,6 +1,5 @@
-create database board;
-use board;
-
+create database board1;
+use board1;
 
 CREATE TABLE TB_LOGIN_HISTORY (
     idx BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -113,4 +112,21 @@ CREATE TABLE TB_UNLIKE (
     FOREIGN KEY (member_idx) REFERENCES TB_MEMBER(idx),
     FOREIGN KEY (post_idx) REFERENCES TB_POST(idx) ON DELETE CASCADE,
     FOREIGN KEY (comment_idx) REFERENCES TB_COMMENT(idx) ON DELETE CASCADE
+);
+
+CREATE TABLE TB_RANK (
+    idx BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ranking INT NOT NULL,
+    flag VARCHAR(1) NOT NULL COMMENT '랭킹 구분 (V: 조회수, L: 좋아요, U: 싫어요, C: 댓글수)',
+    title VARCHAR(255) NOT NULL,
+    post_idx BIGINT NOT NULL,
+    view_count INT DEFAULT 0,
+    like_count INT DEFAULT 0,
+    unlike_count INT DEFAULT 0,
+    comment_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (post_idx) REFERENCES tb_post(idx) ON DELETE CASCADE,
+    INDEX idx_flag (flag),
+    INDEX idx_ranking (ranking)
 );

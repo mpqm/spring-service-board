@@ -43,6 +43,9 @@ const toggleCommentsList = () => {
         $('#commentEditor').show();
         $('#submitComment').show();
         $('#loadCommentsBtn').html('<i class="bi bi-chat-dots-fill"></i> 댓글 접기');
+        
+        // 댓글 보기 버튼을 누를 때 댓글 입력창에 포커스
+        $('#commentEditor').summernote('focus');
     }
 };
         

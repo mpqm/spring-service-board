@@ -68,19 +68,6 @@ const loadPostDetail = (postIdx) => {
     });
 };
 
-// 게시물 반응 (좋아요/싫어요) 함수
-const reactToPost = (url) => {
-    $.ajax({
-        type: 'GET',
-        url: `${url}?postIdx=${postIdx}`,
-        success: (res) => {
-            if (res.success) location.reload();
-            else location.reload();
-        },
-        error: (e) => setInstantAlert('danger', e.responseJSON)
-    });
-}; 
-
 // 게시물 삭제 함수
 const handleDeleteBtn = () => {
     if (!confirm('정말로 이 게시물을 삭제하시겠습니까?')) return;
@@ -99,6 +86,20 @@ const handleDeleteBtn = () => {
         });
 };
 
+// 게시물 반응 (좋아요/싫어요) 함수
+const reactToPost = (url) => {
+    $.ajax({
+        type: 'GET',
+        url: `${url}?postIdx=${postIdx}`,
+        success: (res) => {
+            if (res.success) location.reload();
+            else location.reload();
+        },
+        error: (e) => setInstantAlert('danger', e.responseJSON)
+    });
+};
+
+// 보호 게시글 비밀번호 확인
 const checkPostPassword = () => {
     const password = $('#postPassword').val();
     if (!password) {

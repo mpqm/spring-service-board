@@ -11,50 +11,6 @@ $(document).ready(() => {
     $('#rangeIdx').on('change', showPwField)
 });
 
-// 패스워드 입력 필드
-const showPwField = (event) => {
-    if ($(event.currentTarget).val() == 17) {
-        $('#passwordField').show();
-        $('#password').prop('required', true);
-    } else {
-        $('#passwordField').hide();
-        $('#password').prop('required', false);
-        $('#password').val(''); // 비밀번호 필드 초기화
-    }
-}
-
-// 게시물 생성 함수
-const handleCreatePost = (event) => {
-    event.preventDefault();
-    const postData = {
-        title: $.trim($('#title').val()),
-        content: $.trim($('#content').summernote('code')),
-        categoryIdx: parseInt($('#categoryIdx').val()),
-        rangeIdx: parseInt($('#rangeIdx').val()),
-        password: $.trim($('#password').val())
-    }
-    const formData = new FormData();
-    formData.append("dto", new Blob([JSON.stringify(postData)], { type: "application/json" }));
-    const fileInput = $('#postImage')[0].files;
-    if (fileInput && fileInput.length > 0) for (let i = 0; i < fileInput.length; i++) formData.append("file", fileInput[i]);
-    $.ajax({
-        type: isEdit ? 'PUT' : 'POST',
-        url: isEdit ? `/post?postIdx=${postIdx}` : '/post',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: (res) => {
-            if (res.success) {
-                setSessionAlert('success', res);
-                location.href = isEdit ? `/post-detail?postIdx=${postIdx}` : '/';
-            } else {
-                setInstantAlert('danger', res);
-            }
-        },
-        error: (e) => setInstantAlert('danger', e.responseJSON)
-    });
-}
-
 // 게시물 상세 정보 로드 함수
 const loadPostDetail = (postIdx) => {
     $.ajax({
@@ -95,5 +51,49 @@ const handleImageGalleryPreview = (event) => {
             $container.append($img);
         };
         reader.readAsDataURL(event.target.files[i]);
+    }
+}
+
+// 게시물 생성 함수
+const handleCreatePost = (event) => {
+    event.preventDefault();
+    const postData = {
+        title: $.trim($('#title').val()),
+        content: $.trim($('#content').summernote('code')),
+        categoryIdx: parseInt($('#categoryIdx').val()),
+        rangeIdx: parseInt($('#rangeIdx').val()),
+        password: $.trim($('#password').val())
+    }
+    const formData = new FormData();
+    formData.append("dto", new Blob([JSON.stringify(postData)], { type: "application/json" }));
+    const fileInput = $('#postImage')[0].files;
+    if (fileInput && fileInput.length > 0) for (let i = 0; i < fileInput.length; i++) formData.append("file", fileInput[i]);
+    $.ajax({
+        type: isEdit ? 'PUT' : 'POST',
+        url: isEdit ? `/post?postIdx=${postIdx}` : '/post',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: (res) => {
+            if (res.success) {
+                setSessionAlert('success', res);
+                location.href = isEdit ? `/post-detail?postIdx=${postIdx}` : '/';
+            } else {
+                setInstantAlert('danger', res);
+            }
+        },
+        error: (e) => setInstantAlert('danger', e.responseJSON)
+    });
+}
+
+// 패스워드 입력 필드
+const showPwField = (event) => {
+    if ($(event.currentTarget).val() == 17) {
+        $('#passwordField').show();
+        $('#password').prop('required', true);
+    } else {
+        $('#passwordField').hide();
+        $('#password').prop('required', false);
+        $('#password').val(''); // 비밀번호 필드 초기화
     }
 }

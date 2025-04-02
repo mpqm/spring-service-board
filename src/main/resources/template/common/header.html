@@ -21,7 +21,7 @@
       <div th:if="${session.nickName != null}" class="d-flex align-items-center gap-3">
         <p class="mb-0 fw-semibold text-dark" th:text="${session.nickName}"></p>
         <img th:src="@{${session.profileImageUrl}}" class="profile-img rounded-circle border" alt="프로필">
-        <a th:href="@{/activity}" class="btn btn-sm btn-outline-dark">활동</a>
+        <a th:href="@{/activity}" class="btn btn-sm btn-outline-dark">내활동</a>
         <a th:href="@{/profile}" class="btn btn-sm btn-outline-dark">프로필</a>
         <a th:href="@{/logout}" class="btn btn-sm btn-outline-dark">로그아웃</a>
       </div>

@@ -4,16 +4,10 @@
 <!-- 댓글 섹션 -->
 <div class="comments-section mt-4" th:fragment="commentSection">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">댓글</h4>
-        <div class="d-flex">
-            <button id="submitComment" class="btn btn-outline-dark me-2">
-                <i class="bi bi-pencil"></i> 댓글 작성
-            </button>
-        </div>
+        <!-- 여기 있는 댓글 작성 버튼 제거 -->
     </div>
     
-    <!-- 댓글 에디터 -->
-    <div id="commentEditor" class="mb-3"></div>
+ 
     
     <!-- 댓글 보기/접기 버튼 -->
     <div class="mb-3">
@@ -23,8 +17,11 @@
     </div>
     
     <!-- 정렬 드롭다운 컨테이너 (처음에는 숨김) -->
+        <!-- 댓글 에디터 -->
+    
     <div class="comment-sort-container mb-3" style="display: none;">
-        <div class="d-flex justify-content-end">
+        <div id="commentEditor" class="mb-3"></div>
+        <div class="d-flex justify-content-between mt-3">
             <div class="dropdown">
                 <button class="btn btn-outline-dark dropdown-toggle" type="button" id="commentSortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     정렬순서
@@ -35,6 +32,10 @@
                     </li>
                 </ul>
             </div>
+            <!-- 댓글 작성 버튼을 오른쪽으로 이동 -->
+            <button id="submitComment" class="btn btn-outline-dark">
+                <i class="bi bi-pencil"></i> 댓글 작성
+            </button>
         </div>
     </div>
 

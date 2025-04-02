@@ -95,6 +95,33 @@
         </choose>
         LIMIT #{offset}, #{size}
     </select>
+    
+    <!-- 배치 처리를 위한 게시물 청크 조회 -->
+    <select id="batchPost" resultType="com.service.board.post.dto.BatchPostRes">
+        SELECT 
+            p.idx,
+            p.member_idx as memberIdx,
+            p.category_idx as categoryIdx,
+            c1.code_name as categoryName,
+            p.range_idx as rangeIdx,
+            c2.code_name as rangeName,
+            CASE WHEN p.range_idx = 16 THEN '익명' ELSE m.nick_name END as nickName,
+            p.title,
+            p.content,
+            p.view_count as viewCount,
+            (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
+            (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
+            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt
+        FROM TB_POST p
+        LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
+        LEFT JOIN TB_CODE c1 ON p.category_idx = c1.idx
+        LEFT JOIN TB_CODE c2 ON p.range_idx = c2.idx
+        WHERE p.range_idx != 15
+        ORDER BY p.idx ASC
+        LIMIT #{offset}, #{limit}
+    </select>
 
     <!-- 게시물 상세 조회 -->
     <select id="getPost" resultType="GetPostRes">

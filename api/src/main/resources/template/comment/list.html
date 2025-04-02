@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="CommentFragment">
+<body>
+<!-- 댓글 섹션 -->
+<div class="comments-section mt-4" th:fragment="commentSection">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- 여기 있는 댓글 작성 버튼 제거 -->
+    </div>
+    
+    <!-- 댓글 보기/접기 버튼 -->
+    <div class="mb-3">
+        <button id="loadCommentsBtn" class="btn btn-outline-dark w-100 mt-3">
+            <i class="bi bi-chat-dots"></i> 댓글 보기
+        </button>
+    </div>
+    
+    <!-- 정렬 드롭다운 컨테이너 (처음에는 숨김) -->
+        <!-- 댓글 에디터 -->
+    
+    <div class="comment-sort-container mb-3" style="display: none;">
+        <div id="commentEditor" class="mb-3"></div>
+        <div class="d-flex justify-content-between mt-3">
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" id="commentSortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    정렬순서
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="commentSortDropdown">
+                    <li th:each="code : ${codes}" th:if="${code.groupName == 'ORDER' && code.codeName != '조회수순'}">
+                        <a class="dropdown-item comment-sort-item" href="#" th:attr="data-order-idx=${code.idx}" th:text="${code.codeName}"></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 댓글 작성 버튼을 오른쪽으로 이동 -->
+            <button id="submitComment" class="btn btn-outline-dark">
+                <i class="bi bi-pencil"></i> 댓글 작성
+            </button>
+        </div>
+    </div>
+
+    <!-- 댓글 목록 -->
+    <div id="commentsList" class="mt-4 mb-3">
+        <!-- 댓글이 여기에 동적으로 추가됨 -->
+    </div>
+</div>
+
+<!-- 대댓글 작성 모달 -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true" th:fragment="replyModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">대댓글 작성</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="replyEditor"></div>
+                <input type="hidden" id="parentCommentIdx">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-outline-dark" id="submitReply">작성</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 댓글 수정 모달 -->
+<div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true" th:fragment="editCommentModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentModalLabel">댓글 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="editCommentEditor"></div>
+                <input type="hidden" id="editCommentIdx">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-outline-dark" id="submitEditComment">수정</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/comment/comment.js}"></script>
+</body>
+</html> 

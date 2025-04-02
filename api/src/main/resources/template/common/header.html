@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="HeaderFragment">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<header>
+  <div class="d-flex bg-white justify-content-between align-items-center border-bottom border-dark mx-auto p-3 w-75">
+    <div class="d-flex align-items-center gap-3">
+      <a th:href="@{/}" class="text-decoration-none text-dark fw-bold fs-4"> 게시판 </a>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <div id="alert-container" class="d-flex align-items-center">
+        <div th:if="${message}" class="alert alert-success header-alert" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger header-alert" th:text="${error}"></div>
+      </div>
+
+      <!-- 로그인한 사용자에게 표시 -->
+      <div th:if="${session.nickName != null}" class="d-flex align-items-center gap-3">
+        <p class="mb-0 fw-semibold text-dark" th:text="${session.nickName}"></p>
+        <img th:src="@{${session.profileImageUrl}}" class="profile-img rounded-circle border" alt="프로필">
+        <a th:href="@{/activity}" class="btn btn-sm btn-outline-dark">내활동</a>
+        <a th:href="@{/profile}" class="btn btn-sm btn-outline-dark">프로필</a>
+        <a th:href="@{/logout}" class="btn btn-sm btn-outline-dark">로그아웃</a>
+      </div>
+      
+      <!-- 로그인하지 않은 사용자에게 표시 -->
+      <div th:unless="${session.nickName != null}" class="d-flex align-items-center gap-3">
+        <a th:href="@{/login}" class="btn btn-sm btn-outline-dark">로그인</a>
+        <a th:href="@{/signup}" class="btn btn-sm btn-outline-dark">회원가입</a>
+      </div>
+    </div>
+  </div>
+</header>
+</body>
+</html>

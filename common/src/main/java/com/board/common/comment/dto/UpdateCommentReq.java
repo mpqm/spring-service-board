@@ -1,0 +1,26 @@
+package com.board.common.comment.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class UpdateCommentReq {
+
+    // 댓글 인덱스
+    private Long idx;
+
+    // 게시물 인덱스
+    private Long postIdx;
+
+    // 회원 인덱스
+    private Long memberIdx;
+
+    // 댓글 내용
+    private String content;
+
+} 

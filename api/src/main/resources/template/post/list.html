@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+</head>
+<body>
+<th:block th:insert="~{common/header :: HeaderFragment}"></th:block>
+<div class="main-wrap">
+    <!-- 랭킹 Fragment 추가 -->
+    <th:block th:insert="~{rank/list :: RankFragment}"></th:block>
+    <div class="d-flex w-100 flex-wrap">
+        <!-- 필터 드롭다운 메뉴 - 더 넓게 설정 -->
+        <div class="dropdown me-1 dropdown-container1">
+            <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                카테고리
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'CATEGORY'}">
+                    <a class="dropdown-item" href="#" th:attr="data-category-idx=${code.idx}" th:text="${code.codeName}"></a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="dropdown me-1 dropdown-container1">
+            <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                정렬순서
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="sortDropdown">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'ORDER'}">
+                    <a class="dropdown-item" href="#" th:attr="data-order-idx=${code.idx}" th:text="${code.codeName}"></a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="dropdown me-1 dropdown-container1">
+            <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="searchTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                검색조건
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="searchTypeDropdown">
+                <li th:each="code : ${codes}" th:if="${code.groupName == 'SEARCH'}">
+                    <a class="dropdown-item" href="#" th:attr="data-search-idx=${code.idx}" th:text="${code.codeName}"></a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 검색어 입력란 - 자동으로 남은 공간 채우기 -->
+        <div class="input-group me-1 dropdown-container2">
+            <input type="text" id="searchKeyword" class="form-control" placeholder="검색어를 입력하세요" aria-label="검색">
+            <button id="searchBtn" class="btn btn-outline-dark" type="button">
+                <i class="bi bi-search"></i> 검색
+            </button>
+        </div>
+        <a th:href="@{/}" class="btn btn-outline-dark me-1">
+            <i class="bi bi-arrow-clockwise"></i>
+        </a>
+
+        <!-- 로그인한 사용자에게만 글쓰기 버튼 표시 -->
+        <a th:if="${session.memberIdx != null}" th:href="@{/post-edit}" class="btn btn-outline-dark">
+            <i class="bi bi-pen"></i> 글쓰기
+        </a>
+    </div>
+
+    <!-- 게시글 목록 테이블 추가 -->
+    <div class="d-flex w-100 mt-3">
+        <table class="table table-hover border border-1 border-dark">
+            <thead class="bg-light rounded-top">
+                <tr class="text-center text-dark bg-white">
+                    <th scope="col" style="width: 5%">번호</th>
+                    <th scope="col" style="width: 10%">카테고리</th>
+                    <th scope="col" style="width: 10%">작성자</th>
+                    <th scope="col" style="width: 35%" class="text-start">제목</th>
+                    <th scope="col" style="width: 3%"><i class="bi bi-eye-fill"></i></th>
+                    <th scope="col" style="width: 3%"><i class="bi bi-hand-thumbs-up-fill"></i></th>
+                    <th scope="col" style="width: 3%"><i class="bi bi-hand-thumbs-down-fill"></i></th>
+                    <th scope="col" style="width: 3%"><i class="bi bi-chat-left-dots-fill"></i></th>
+                    <th scope="col" style="width: 15%" class="rounded-end">작성일</th>
+                </tr>
+            </thead>
+            <!-- 자바스크립트로 동적 생성-->
+            <tbody id="postTableBody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 자바스크립트로 동적 생성-->
+    <div id="pagination-container" class="d-flex">
+
+    </div>
+
+
+</div>
+<th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
+<script th:src="@{/post/list.js}"></script>
+<script th:src="@{/rank/list.js}"></script>
+</body>
+</html>

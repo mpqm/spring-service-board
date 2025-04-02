@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.board.common.activity.dao.ActivityDao">
+    <!-- 회원이 작성한 게시물 목록 조회 -->
+    <select id="getActivityPosts" parameterType="com.board.common.activity.dto.GetActivityPostReq" resultType="com.board.common.activity.dto.GetActivityPostRes">
+        SELECT 
+            p.category_idx as categoryIdx,
+            c1.code_name as categoryName,
+            p.range_idx as rangeIdx,
+            c2.code_name as rangeName,
+            p.idx as postIdx,
+            p.title,
+            p.content,
+            p.view_count as viewCount,
+            p.created_at as createdAt,
+            p.updated_at as updatedAt,
+            (SELECT COUNT(*) FROM TB_LIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as likeCount,
+            (SELECT COUNT(*) FROM TB_UNLIKE WHERE post_idx = p.idx AND comment_idx IS NULL) as unlikeCount,
+            (SELECT COUNT(*) FROM TB_COMMENT WHERE post_idx = p.idx) as commentCount
+        FROM TB_POST p
+        LEFT JOIN TB_CODE c1 ON p.category_idx = c1.idx
+        LEFT JOIN TB_CODE c2 ON p.range_idx = c2.idx
+        LEFT JOIN TB_MEMBER m ON p.member_idx = m.idx
+        WHERE p.member_idx = #{memberIdx}
+        ORDER BY p.created_at DESC
+    </select>
+
+    <!-- 회원이 작성한 댓글 목록 조회 -->
+    <select id="getActivityComments" parameterType="com.board.common.activity.dto.GetActivityCommentReq" resultType="com.board.common.activity.dto.GetActivityCommentRes">
+        SELECT 
+            c.post_idx as postIdx,
+            p.title as postTitle,
+            c.idx as commentIdx,
+            c.parent_comment_idx as parentCommentIdx,
+            c.content,
+            COALESCE(COUNT(l.idx), 0) as likeCount,
+            COALESCE(COUNT(u.idx), 0) as unlikeCount,
+            c.created_at as createdAt,
+            c.updated_at as updatedAt
+        FROM TB_COMMENT c
+        LEFT JOIN TB_POST p ON c.post_idx = p.idx
+        LEFT JOIN TB_LIKE l ON c.idx = l.comment_idx
+        LEFT JOIN TB_UNLIKE u ON c.idx = u.comment_idx
+        WHERE c.member_idx = #{memberIdx}
+        GROUP BY c.idx, c.post_idx, p.title, c.parent_comment_idx, c.content, c.created_at, c.updated_at
+        ORDER BY c.created_at DESC
+    </select>
+
+    <!-- 회원이 좋아요한 게시물 및 댓글 목록 조회 -->
+    <select id="getActivityLikes" parameterType="com.board.common.activity.dto.GetActivityReactReq" resultType="com.board.common.activity.dto.GetActivityReactRes">
+        SELECT 
+            l.idx as reactIdx,
+            'like' as reactType,
+            l.post_idx as postIdx,
+            p.title as postTitle,
+            p.created_at as postCreatedAt,
+            l.comment_idx as commentIdx,
+            c.content as commentContent,
+            c.created_at as commentCreatedAt
+        FROM TB_LIKE l
+        LEFT JOIN TB_POST p ON l.post_idx = p.idx
+        LEFT JOIN TB_COMMENT c ON l.comment_idx = c.idx
+        WHERE l.member_idx = #{memberIdx}
+        ORDER BY l.idx DESC
+    </select>
+
+    <!-- 회원이 싫어요한 게시물 및 댓글 목록 조회 -->
+    <select id="getActivityUnlikes" parameterType="com.board.common.activity.dto.GetActivityReactReq" resultType="com.board.common.activity.dto.GetActivityReactRes">
+        SELECT 
+            u.idx as reactIdx,
+            'unlike' as reactType,
+            u.post_idx as postIdx,
+            p.title as postTitle,
+            p.created_at as postCreatedAt,
+            u.comment_idx as commentIdx,
+            c.content as commentContent,
+            c.created_at as commentCreatedAt
+        FROM TB_UNLIKE u
+        LEFT JOIN TB_POST p ON u.post_idx = p.idx
+        LEFT JOIN TB_COMMENT c ON u.comment_idx = c.idx
+        WHERE u.member_idx = #{memberIdx}
+        ORDER BY u.idx DESC
+    </select>
+</mapper> 

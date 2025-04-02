@@ -1,6 +1,7 @@
 meta/infra/mariadb/
-src/main/resources/.env
-src/main/resources/upload/
+api/src/main/resources/.env
+batch/src/main/resources/.env
+api/src/main/resources/upload/
 .idea
 .vscode
 HELP.md

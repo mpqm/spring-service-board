@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="RankFragment">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="w-100 mb-3">
+    <div class="row">
+         <!-- 조회수 랭킹 -->
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-dark">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">조회수 TOP<span class="rank-count">10</span></h6>
+                        <button class="btn btn-sm btn-outline-dark rank-more-btn" data-rank-type="view">더보기</button>
+                    </div>
+                    <div class="card-body p-0 bg-white">
+                        <ul class="list-group list-group-flush rank-list" id="viewRankList">
+                            <!-- 자바스크립트로 동적 생성 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 좋아요 랭킹 -->
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-dark">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">좋아요 TOP<span class="rank-count">10</span></h6>
+                        <button class="btn btn-sm btn-outline-dark rank-more-btn" data-rank-type="like">더보기</button>
+                    </div>
+                    <div class="card-body p-0 bg-white">
+                        <ul class="list-group list-group-flush rank-list" id="likeRankList">
+                            <!-- 자바스크립트로 동적 생성 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 싫어요 랭킹 -->
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-dark">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">싫어요 TOP<span class="rank-count">10</span></h6>
+                        <button class="btn btn-sm btn-outline-dark rank-more-btn" data-rank-type="unlike">더보기</button>
+                    </div>
+                    <div class="card-body p-0 bg-white">
+                        <ul class="list-group list-group-flush rank-list" id="unlikeRankList">
+                            <!-- 자바스크립트로 동적 생성 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 댓글수 랭킹 -->
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 border-dark">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">댓글수 TOP<span class="rank-count">10</span></h6>
+                        <button class="btn btn-sm btn-outline-dark rank-more-btn" data-rank-type="comment">더보기</button>
+                    </div>
+                    <div class="card-body p-0 bg-white">
+                        <ul class="list-group list-group-flush rank-list" id="commentRankList">
+                            <!-- 자바스크립트로 동적 생성 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+</body>
+</html> 

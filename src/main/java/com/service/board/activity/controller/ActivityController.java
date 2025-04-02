@@ -27,7 +27,7 @@ public class ActivityController {
 
     // 활동 페이지 이동
     @GetMapping("/activity")
-    public String goActivityPage(
+    public String goActivity(
         @SessionAttribute(name = "memberIdx", required = false) Long memberIdx,
         RedirectAttributes redirectAttributes) {
 

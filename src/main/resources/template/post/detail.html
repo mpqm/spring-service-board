@@ -74,11 +74,11 @@
         <hr>
 
         <!-- 댓글 섹션 -->
-        <th:block th:insert="~{comment/comment :: commentSection}"></th:block>
+        <th:block th:insert="~{comment/list :: commentSection}"></th:block>
         
         <!-- 댓글 관련 모달 -->
-        <th:block th:insert="~{comment/comment :: replyModal}"></th:block>
-        <th:block th:insert="~{comment/comment :: editCommentModal}"></th:block>
+        <th:block th:insert="~{comment/list :: replyModal}"></th:block>
+        <th:block th:insert="~{comment/list :: editCommentModal}"></th:block>
     </div>
 
     <!-- 비밀번호 확인 모달 -->
@@ -107,6 +107,6 @@
 </div>
 <th:block th:insert="~{common/footer :: FooterFragment}"></th:block>
 <script th:src="@{/post/detail.js}"></script>
-<script th:src="@{/comment/comment.js}"></script>
+<script th:src="@{/comment/list.js}"></script>
 </body>
 </html> 

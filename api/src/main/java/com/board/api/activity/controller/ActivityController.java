@@ -6,6 +6,7 @@ import com.board.api.activity.service.ActivityService;
 import com.board.api.global.common.BaseExc;
 import com.board.api.global.common.BaseMsg;
 import com.board.api.global.common.BaseRes;
+import com.board.common.activity.dto.GetActivityHistoryRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,7 +45,7 @@ public class ActivityController {
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
         List<GetActivityPostRes> posts = activityService.getActivityPosts(memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.POSTS_SEARCHED, posts));
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.ACTIVITY_POSTS_SEARCHED, posts));
     }
 
     // 회원이 작성한 댓글 목록 조회
@@ -53,7 +54,7 @@ public class ActivityController {
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
         List<GetActivityCommentRes> comments = activityService.getActivityComments(memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.COMMENTS_SEARCHED, comments));
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.ACTIVITY_COMMENTS_SEARCHED, comments));
     }
 
     // 회원이 좋아요한 게시물 및 댓글 목록 조회
@@ -62,7 +63,7 @@ public class ActivityController {
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
         List<GetActivityReactRes> likes = activityService.getActivityLikes(memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.REQUEST_SUCCESS, likes));
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.ACTIVITY_LIKES_SEARCHED, likes));
     }
 
     // 회원이 싫어요한 게시물 및 댓글 목록 조회
@@ -71,7 +72,16 @@ public class ActivityController {
         @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
         
         List<GetActivityReactRes> unlikes = activityService.getActivityUnlikes(memberIdx);
-        return ResponseEntity.ok(new BaseRes<>(BaseMsg.REQUEST_SUCCESS, unlikes));
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.ACTIVITY_UNLIKES_SEARCHED, unlikes));
+    }
+
+    // 로그인 히스토리 조회
+    @GetMapping("/activity-history")
+    public ResponseEntity<BaseRes<List<GetActivityHistoryRes>>> getActivityHistory(
+        @SessionAttribute(name = "memberIdx") Long memberIdx) throws BaseExc {
+
+        List<GetActivityHistoryRes> history = activityService.getActivityHistory(memberIdx);
+        return ResponseEntity.ok(new BaseRes<>(BaseMsg.ACTIVITY_HISTORY_SEARCHED, history));
     }
 
 } 

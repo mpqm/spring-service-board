@@ -10,6 +10,7 @@ const loadActivity = (event) => {
     else if (tabId === 'comments-tab') loadActivityComments(1);
     else if (tabId === 'likes-tab') loadActivityLikes(1);
     else if (tabId === 'unlikes-tab') loadActivityUnlikes(1);
+    else if (tabId === 'history-tab') loadActivityHistory(1);
 }
 
 // 내가 작성한 게시물 로드
@@ -182,7 +183,6 @@ const displayReactions = (reactions, currentPage, type) => {
             if (reaction.postIdx) {
                 link = `/post-detail?postIdx=${reaction.postIdx}`;
             } else {
-                console.warn("댓글에 연결된 postIdx가 없습니다:", reaction);
                 link = "#";
             }
             category = "댓글";
@@ -269,5 +269,62 @@ const cancelReaction = (type, reactIdx) => {
             }
         },
         error: (e) => setInstantAlert('danger', e.responseJSON)
+    });
+};
+
+// 로그인 히스토리 로드
+const loadActivityHistory = (page) => {
+    $.ajax({
+        url: '/activity-history',
+        type: 'GET',
+        success: (res) => {
+            if (res.success) displayHistory(res.result, page);
+            else setInstantAlert('danger', res);
+        },
+        error: (e) => setInstantAlert('danger', e.responseJSON)
+    });
+};
+
+// 로그인 히스토리 표시
+const displayHistory = (history, currentPage) => {
+    const tableBody = $('#historyTableBody').empty();
+    $('#historyPagination').empty();
+    
+    if (!history || history.length === 0) {
+        $('#nohistoryMessage').removeClass('d-none');
+        return;
+    }
+    
+    $('#nohistoryMessage').addClass('d-none');
+    
+    // 페이지당 항목 수
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(history.length / itemsPerPage);
+    
+    // 현재 페이지 항목 계산
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const endIdx = Math.min(startIdx + itemsPerPage, history.length);
+    const currentPageItems = history.slice(startIdx, endIdx);
+    
+    // 테이블 행 생성
+    currentPageItems.forEach((item) => {
+        const row = `
+            <tr class="text-center align-middle">
+                <td class="small">${item.idx}</td>
+                <td class="small">${item.ipAddress || '-'}</td>
+                <td class="text-muted small">${formatDate(new Date(item.loginTime))}</td>
+            </tr>
+        `;
+        tableBody.append(row);
+    });
+    
+    // 페이지네이션 생성
+    createPagination({ 
+        containerId: 'historyPagination', 
+        pageInfo: {
+            currentPage: currentPage, 
+            totalPages: totalPages
+        }, 
+        callback: loadActivityHistory 
     });
 };

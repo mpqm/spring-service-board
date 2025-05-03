@@ -82,4 +82,16 @@
         WHERE u.member_idx = #{memberIdx}
         ORDER BY u.idx DESC
     </select>
+
+    <!-- 로그인 이력 조회 -->
+    <select id="getActivityHistory" parameterType="GetActivityHistoryReq" resultType="GetActivityHistoryRes">
+        SELECT
+        idx,
+        id,
+        ip_address AS ipAddress,
+        login_time AS loginTime
+        FROM TB_LOGIN_HISTORY
+        WHERE id = #{id}
+        ORDER BY login_time DESC
+    </select>
 </mapper> 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ public class FindMemberRes {
 
     private String id;
 
+    @JsonIgnore
     private String password;
 
     public String email;

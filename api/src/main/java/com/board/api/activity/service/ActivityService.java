@@ -3,15 +3,14 @@ package com.board.api.activity.service;
 import java.util.List;
 
 import com.board.api.global.common.BaseExc;
+import com.board.api.global.common.BaseMsg;
+import com.board.common.activity.dto.*;
+import com.board.common.member.dao.MemberDao;
+import com.board.common.member.dto.FindMemberReq;
+import com.board.common.member.dto.FindMemberRes;
 import org.springframework.stereotype.Service;
 
 import com.board.common.activity.dao.ActivityDao;
-import com.board.common.activity.dto.GetActivityCommentReq;
-import com.board.common.activity.dto.GetActivityCommentRes;
-import com.board.common.activity.dto.GetActivityPostReq;
-import com.board.common.activity.dto.GetActivityPostRes;
-import com.board.common.activity.dto.GetActivityReactReq;
-import com.board.common.activity.dto.GetActivityReactRes;
 
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ActivityService {
 
+    private final MemberDao memberDao;
     private final ActivityDao activityDao;
 
     // 회원이 작성한 게시물 목록 조회
@@ -52,6 +52,20 @@ public class ActivityService {
             .memberIdx(memberIdx)
             .build();
         return activityDao.getActivityUnlikes(getActivityReactReq);
+    }
+
+    // 로그인 히스토리 조회
+    public List<GetActivityHistoryRes> getActivityHistory(Long memberIdx) throws BaseExc {
+        FindMemberReq findMemberReq = FindMemberReq.builder()
+            .idx(memberIdx)
+            .build();
+        FindMemberRes findMemberRes = memberDao.findMember(findMemberReq)
+            .orElseThrow(() -> new BaseExc(BaseMsg.MEMBER_NOT_FOUND));
+
+        GetActivityHistoryReq getActivityHistoryReq = GetActivityHistoryReq.builder()
+            .id(findMemberRes.getId())
+            .build();
+        return activityDao.getActivityHistory(getActivityHistoryReq);
     }
 
 } 

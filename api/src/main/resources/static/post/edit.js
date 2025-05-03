@@ -13,6 +13,7 @@ $(document).ready(() => {
 
 // 게시물 상세 정보 로드 함수
 const loadPostDetail = (postIdx) => {
+    $('#pageTitle').text('게시글 수정');
     $.ajax({
         type: 'GET',
         url: `/post?postIdx=${postIdx}`,

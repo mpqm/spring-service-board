@@ -2,14 +2,8 @@ package com.board.common.activity.dao;
 
 import java.util.List;
 
+import com.board.common.activity.dto.*;
 import org.apache.ibatis.annotations.Mapper;
-
-import com.board.common.activity.dto.GetActivityCommentReq;
-import com.board.common.activity.dto.GetActivityCommentRes;
-import com.board.common.activity.dto.GetActivityPostReq;
-import com.board.common.activity.dto.GetActivityPostRes;
-import com.board.common.activity.dto.GetActivityReactReq;
-import com.board.common.activity.dto.GetActivityReactRes;
 
 @Mapper
 public interface ActivityDao {
@@ -26,4 +20,6 @@ public interface ActivityDao {
     // 회원이 싫어요한 게시물 및 댓글 목록 조회
     List<GetActivityReactRes> getActivityUnlikes(GetActivityReactReq req);
 
+    // 로그인 히스토리 조회
+    List<GetActivityHistoryRes> getActivityHistory(GetActivityHistoryReq req);
 }

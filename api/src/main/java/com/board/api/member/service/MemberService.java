@@ -64,7 +64,7 @@ public class MemberService {
         session.setAttribute("nickName", findMemberRes.getNickName());
         session.setAttribute("phoneNumber", findMemberRes.getPhoneNumber());
         session.setAttribute("profileImageUrl", findMemberRes.getProfileImageUrl());
-        session.setMaxInactiveInterval(30);
+        session.setMaxInactiveInterval(30000);
 
         // 로그인 이력 저장
         CreateLoginHistoryReq loginHistoryDto = CreateLoginHistoryReq.builder()

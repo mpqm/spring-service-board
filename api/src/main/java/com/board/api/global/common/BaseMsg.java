@@ -18,7 +18,7 @@ public enum BaseMsg {
     // ====================== 회원(Member) 관련 메시지 ======================
     MEMBER_LOGIN_SUCCESS(1006, true, "로그인에 성공했습니다."),
     MEMBER_SIGNUP_SUCCESS(1007, true, "이메일 인증을 완료해야 회원가입이 완료됩니다."),
-    MEMBER_ACTIVE_SUCCESS(1008, true, "계정이 복구하려면 이메일을 확인해주세요."),
+    MEMBER_ACTIVE_SUCCESS(1008, true, "계정을 복구하려면 이메일을 확인해주세요."),
     MEMBER_INACTIVE_SUCCESS(1009, true, "계정 탈퇴에 성공했습니다."),
     MEMBER_EDIT_PROFILE_SUCCESS(1010, true, "프로필 수정에 성공했습니다."),
     MEMBER_FIND_PW_SUCCESS(1011, true, "임시 비밀 번호를 이메일로 전송했습니다."),
@@ -64,8 +64,11 @@ public enum BaseMsg {
     LIKE_INCREASED(1040, true, "좋아요가 증가되었습니다."),
     LIKE_DECREASED(1041, true, "좋아요가 감소되었습니다."),
     LIKE_NOT_INCREASED(1042, false, "좋아요 증가에 실패했습니다."),
-    UNLIKE_INCREASED(1043, true, "싫어요가 증가되었습니다."),
-    UNLIKE_DECREASED(1044, true, "싫어요가 감소되었습니다."),
+    LIKE_NOT_DECREASED(1043, false, "좋아요 감소에 실패했습니다."),
+    UNLIKE_INCREASED(1044, true, "싫어요가 증가되었습니다."),
+    UNLIKE_DECREASED(1045, true, "싫어요가 감소되었습니다."),
+    UNLIKE_NOT_INCREASED(1046, false, "싫어요 증가에 실패했습니다."),
+    UNLIKE_NOT_DECREASED(1047, false, "싫어요 감소에 실패했습니다."),
     
     // ====================== 이미지 관련 메시지 ======================
     IMAGE_UPLOADED(1045, true, "이미지가 업로드되었습니다."),
@@ -86,8 +89,14 @@ public enum BaseMsg {
     
     // ====================== 랭킹 관련 메시지 ======================
     RANK_SEARCH_SUCCESS(1063, true, "랭크 조회에 성공했습니다."),
-    RANK_UPDATE_SUCCESS(1064, true, "랭크 갱신에 성공했습니다.");
+    RANK_UPDATE_SUCCESS(1064, true, "랭크 갱신에 성공했습니다."),
 
+    // ====================== 활동 관련 메시지 ======================
+    ACTIVITY_POSTS_SEARCHED(1065, true, "활동 게시물 목록 조회에 성공했습니다."),
+    ACTIVITY_COMMENTS_SEARCHED(1066, true, "활동 댓글 목록 조회에 성공했습니다."),
+    ACTIVITY_LIKES_SEARCHED(1067, true, "활동 좋아요 목록 조회에 성공했습니다."),
+    ACTIVITY_UNLIKES_SEARCHED(1068, true, "활동 싫어요 목록 조회에 성공했습니다."),
+    ACTIVITY_HISTORY_SEARCHED(1069, true, "활동 히스토리 목록 조회에 성공했습니다.");
     private final Integer code;
     private final Boolean success;
     private final String message;

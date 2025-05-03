@@ -45,7 +45,7 @@ public class ReactService {
                         .build();
                 Integer deleteLikeCnt = likeDao.deleteLike(deleteReactReq);
                 if(deleteLikeCnt <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_DECREASED);
+                    throw new BaseExc(BaseMsg.LIKE_NOT_DECREASED);
                 }
             }
         } else {
@@ -72,7 +72,7 @@ public class ReactService {
                         .build();
                 Integer deleteLikeCnt = likeDao.deleteLike(deleteReactReq);
                 if(deleteLikeCnt <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_DECREASED);
+                    throw new BaseExc(BaseMsg.LIKE_NOT_DECREASED);
                 }
             }
         }
@@ -95,7 +95,7 @@ public class ReactService {
                         .build();
                 Long createReactRes = unlikeDao.createUnlike(createReactReq);
                 if(createReactRes <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
+                    throw new BaseExc(BaseMsg.UNLIKE_NOT_INCREASED);
                 }
             } else {
                 flag = false;
@@ -105,7 +105,7 @@ public class ReactService {
                         .build();
                 Integer deleteReactRes = unlikeDao.deleteUnlike(deleteReactReq);
                 if(deleteReactRes <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_DECREASED);
+                    throw new BaseExc(BaseMsg.UNLIKE_NOT_DECREASED);
                 }
             }
         } else {
@@ -122,7 +122,7 @@ public class ReactService {
                         .build();
                 Long createReactRes = unlikeDao.createUnlike(createReactReq);
                 if(createReactRes <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_NOT_INCREASED);
+                    throw new BaseExc(BaseMsg.UNLIKE_NOT_INCREASED);
                 }
             } else {
                 flag = false;
@@ -132,7 +132,7 @@ public class ReactService {
                         .build();
                 Integer deleteReactRes = unlikeDao.deleteUnlike(deleteReactReq);
                 if(deleteReactRes <= 0) {
-                    throw new BaseExc(BaseMsg.LIKE_DECREASED);
+                    throw new BaseExc(BaseMsg.UNLIKE_NOT_DECREASED);
                 }
             }
         }

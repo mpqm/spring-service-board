@@ -23,6 +23,9 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="unlikes-tab" data-bs-toggle="tab" data-bs-target="#unlikes" type="button" role="tab" aria-controls="unlikes" aria-selected="false">내가 누른 싫어요</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">로그인 기록</button>
+                </li>
             </ul>
 
         </div>
@@ -137,6 +140,30 @@
                     </div>
                     <div id="noUnlikesMessage" class="text-center d-none">
                         <p class="my-3">싫어요한 항목이 없습니다.</p>
+                    </div>
+                </div>
+
+                <!-- 로그인 기록 탭 -->
+                <div class="tab-pane fade w-100" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="d-flex w-100">
+                        <table class="table table-hover border border-dark">
+                            <thead class="bg-light rounded-top">
+                            <tr class="text-center text-dark bg-white">
+                                <th scope="col" style="width: 5%">번호</th>
+                                <th scope="col" style="width: 5%">IP 주소</th>
+                                <th scope="col" style="width: 10%">로그인한 시간</th>
+                            </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            <!-- JavaScript로 동적 생성 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="historyPagination" class="d-flex justify-content-center">
+                        <!-- 페이지네이션 -->
+                    </div>
+                    <div id="nohistoryMessage" class="text-center d-none">
+                        <p class="my-3">로그인 기록이 없습니다.</p>
                     </div>
                 </div>
             </div>

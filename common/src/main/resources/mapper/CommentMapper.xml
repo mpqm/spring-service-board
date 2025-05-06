@@ -72,11 +72,11 @@
             </when>
             <!-- 좋아요순 (idx=8) -->
             <when test="orderIdx == 8 or orderIdx == '8'">
-                ORDER BY COUNT(l.idx) DESC, c.created_at DESC
+                ORDER BY COUNT(DISTINCT l.idx) DESC, c.created_at DESC
             </when>
             <!-- 싫어요순 (idx=9) -->
             <when test="orderIdx == 9 or orderIdx == '9'">
-                ORDER BY COUNT(u.idx) DESC, c.created_at DESC
+                ORDER BY COUNT(DISTINCT u.idx) DESC, c.created_at DESC
             </when>
             <!-- 대댓글순 (idx=10) -->
             <when test="orderIdx == 10 or orderIdx == '10'">

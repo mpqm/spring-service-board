@@ -54,9 +54,10 @@ const handleCommentSortChange = (event) => {
     event.preventDefault();
     const orderIdx = $(event.currentTarget).data('order-idx');
     const orderName = $(event.currentTarget).text();
+    console.log('정렬 변경:', { orderIdx, orderName });
     saveScrollPosition('comments');
     $('#commentSortDropdown').text(orderName);
-    loadCommentItems({isParent: true, itemIdx: queryParam.postIdx, page: 1, orderIdx}); // 정렬 변경 시 첫 페이지로 돌아감
+    loadCommentItems({isParent: true, itemIdx: queryParam.postIdx, page: 1, orderIdx});
 };
 
 // 현재 선택된 정렬 순서 가져오기
@@ -148,17 +149,23 @@ const handleCommentUpdate = () => {
 // 댓글/대댓글 로드 통합 함수
 const loadCommentItems = (options) => {
     const { isParent = true, itemIdx,  page = 1, orderIdx = null, size = 5 } = options;
+    console.log('댓글 로드 시작:', { isParent, itemIdx, page, orderIdx, currentOrderIdx: queryParam.comment.orderIdx });
     
     if (isParent) {
         queryParam.comment.page = page;
-        if (orderIdx !== null && orderIdx !== undefined) queryParam.comment.orderIdx = orderIdx;
+        if (orderIdx !== null && orderIdx !== undefined) {
+            queryParam.comment.orderIdx = orderIdx;
+            console.log('정렬 순서 업데이트:', orderIdx);
+        }
     } else {
         queryParam.reply.page = page;
         queryParam.reply.lastParentIdx = itemIdx;
         if (orderIdx === null || orderIdx === undefined) {
             if ($('.comment-sort-item').first().length) {
+                const defaultOrderIdx = $('.comment-sort-item').first().data('order-idx');
+                console.log('기본 정렬 순서 설정:', defaultOrderIdx);
                 $(`#replySortDropdown-${itemIdx}`).text($('.comment-sort-item').first().data('order-idx'));
-                options.orderIdx = $('.comment-sort-item').first().data('order-idx');
+                options.orderIdx = defaultOrderIdx;
             }
         }
     }
@@ -166,7 +173,10 @@ const loadCommentItems = (options) => {
         ? `/comment-list?postIdx=${itemIdx}&parentOnly=true&page=${page}&size=${size}` 
         : `/reply-list?parentCommentIdx=${itemIdx}&page=${page}&size=${size}`;
     const effectiveOrderIdx = isParent ? queryParam.comment.orderIdx : options.orderIdx;
-    if (effectiveOrderIdx !== null && effectiveOrderIdx !== undefined) url += `&orderIdx=${effectiveOrderIdx}`;
+    if (effectiveOrderIdx !== null && effectiveOrderIdx !== undefined) {
+        url += `&orderIdx=${effectiveOrderIdx}`;
+        console.log('최종 URL:', url);
+    }
     
     $.ajax({
         type: 'GET',
@@ -344,8 +354,21 @@ const deleteComment = (commentIdx, parentCommentIdx = null) => {
             url: `/comment?commentIdx=${commentIdx}`,
             success: (res) => {
                 if (res.success) {
-                    if (parentCommentIdx) loadCommentItems({ isParent: false, itemIdx: parentCommentIdx, page: queryParam.reply.page, orderIdx: orderIdx });
-                    else  loadCommentItems({ isParent: true, itemIdx: queryParam.postIdx, page: queryParam.comment.page });
+                    if (parentCommentIdx) {
+                        loadCommentItems({ 
+                            isParent: false, 
+                            itemIdx: parentCommentIdx, 
+                            page: queryParam.reply.page, 
+                            orderIdx: getSelectedSortOrder(parentCommentIdx) 
+                        });
+                    } else {
+                        loadCommentItems({ 
+                            isParent: true, 
+                            itemIdx: queryParam.postIdx, 
+                            page: queryParam.comment.page,
+                            orderIdx: queryParam.comment.orderIdx 
+                        });
+                    }
                     $(document).trigger('comment:deleted');
                     setInstantAlert('success', res);
                 } else {
@@ -366,8 +389,21 @@ const reactToComment = (type, commentIdx) => {
         url: `${url}?commentIdx=${commentIdx}`,
         success: (res) => {
             if (res.success) {
-                if (isParentComment) loadCommentItems({ isParent: true, itemIdx: queryParam.postIdx, page: queryParam.comment.page });
-                else if (queryParam.reply.lastParentIdx) loadCommentItems({ isParent: false, itemIdx: queryParam.reply.lastParentIdx, page: queryParam.reply.page, orderIdx: getSelectedSortOrder(queryParam.reply.lastParentIdx) });
+                if (isParentComment) {
+                    loadCommentItems({ 
+                        isParent: true, 
+                        itemIdx: queryParam.postIdx, 
+                        page: queryParam.comment.page,
+                        orderIdx: queryParam.comment.orderIdx 
+                    });
+                } else if (queryParam.reply.lastParentIdx) {
+                    loadCommentItems({ 
+                        isParent: false, 
+                        itemIdx: queryParam.reply.lastParentIdx, 
+                        page: queryParam.reply.page, 
+                        orderIdx: getSelectedSortOrder(queryParam.reply.lastParentIdx) 
+                    });
+                }
                 setInstantAlert('success', res);
             } else {
                 setInstantAlert('danger', res);

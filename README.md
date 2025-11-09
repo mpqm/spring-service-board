@@ -106,7 +106,7 @@
 | 🎡 ERD           | [ERD](https://github.com/mpqm/spring-service-board/wiki/01.-%F0%9F%8E%A1-ERD)                              |
 | 🎡 Architecture  | [Architecture](https://github.com/mpqm/spring-service-board/wiki/02.-%F0%9F%8E%A1-Architecture)                     |
 | ➰ 요구사항 정의서       | [요구사항 정의서](https://docs.google.com/spreadsheets/d/1OVGWt-4I3hzjtiSwc_WbZRIhS_UiKA0PsSY-jgnLu4s/edit?usp=sharing) |
-| 📃 백엔드 API 명세서   | [백엔드 API 명세서](https://www.notion.so/API-1dfa64eb8b5080e2b230fda74156cefe?pvs=4)                                                                                            |
+| 📃 백엔드 API 명세서   | [백엔드 API 명세서](https://www.notion.so/API-261a64eb8b5081e68ac3db22e029838f?source=copy_link)                                                                                            |
 | 🌱 프론트엔드 화면 설계서  | [프론트엔드 화면 설계서](https://www.figma.com/design/DSXFJXjccETjkaplS3HMq4/spring-service-board?node-id=8-2&t=lrUcyQsbjGivJr5w-1)                                                                                           |
 | 🎥 프로젝트 시연 영상    | [프로젝트 시연 영상](https://github.com/mpqm/spring-service-board/wiki/06.-%F0%9F%8E%A5-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%8B%9C%EC%97%B0-%EC%98%81%EC%83%81)                                                                                             |
 | 🔎 기능 설명 및 성능 개선 | [기능 설명 및 성능 개선](https://github.com/mpqm/spring-service-board/wiki/07.-%F0%9F%94%8E-%EA%B8%B0%EB%8A%A5-%EC%84%A4%EB%AA%85-%EB%B0%8F-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0)                                    |

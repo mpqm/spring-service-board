@@ -1,0 +1,797 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>SPRING-SERVICE-BOARD 백엔드 API 명세서</title><meta name="data-notion-page-icon" content="/icons/document_blue.svg"/><link rel="icon" href="https://app.notion.com/icons/document_blue.svg"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="261a64eb-8b50-81e6-8ac3-db22e029838f" class="page sans" data-notion-page-icon="/icons/document_blue.svg"><header><div class="page-header-icon undefined"><img class="icon notion-static-icon" src="https://app.notion.com/icons/document_blue.svg"/></div><h1 class="page-title" dir="auto">SPRING-SERVICE-BOARD 백엔드 API 명세서</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><h3 id="261a64eb-8b50-8188-a6d1-f957962b8490" class="" dir="auto"><strong>회원 기능</strong></h3><details id="261a64eb-8b50-8129-8b9c-f33bf5eb92dc" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark><strong> 회원 가입</strong></summary><div class="indented"><table id="261a64eb-8b50-81d4-8a7e-dc79eff45232" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8031-ac8f-e20372b6e940" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_001</td></tr><tr id="e8b8f865-73f6-41f1-89ff-17e4acfa9da0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 새로운 사용자가 서비스에 등록할 수 있는 기능<br/>[ 필수 항목 ] 아이디, 비밀번호, 이름, 닉네임, 이메일, 전화번호<br/>[ 구현상 필수 항목 ] 프로필 이미지 파일 (Controller의 file RequestPart는 required=true)<br/><br/>[ 제약 조건 ]<br/>1. 아이디는 중복 불가<br/>2. 이메일은 중복 불가<br/>3. 비밀번호는 암호화하여 저장<br/>4. 이메일 인증 과정 필요<br/><br/>[ 프로세스 ]<br/>1. 사용자가 회원가입 양식 작성<br/>2. 필수 항목 검증<br/>3. 이메일 중복 확인<br/>4. 아이디 중복 확인<br/>5. 비밀번호 암호화<br/>6. 프로필 이미지 업로드(필수)<br/>7. 회원 정보 저장<br/>8. 이메일 인증 링크 발송<br/>9. 이메일 인증 완료 후 계정 활성화</td></tr><tr id="7aa93f0d-befa-47d4-8e52-7c25fe4a63b9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark><strong> </strong></td></tr><tr id="3b0a64eb-8b50-8059-a53c-d56d28d9cc3e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">회원 가입</td></tr><tr id="261a64eb-8b50-8148-b1b7-eae3837013df" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">새로운 사용자가 서비스에 등록할 수 있는 기능</td></tr><tr id="261a64eb-8b50-8191-a93a-d556ce20bb96" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/signup</td></tr><tr id="261a64eb-8b50-8114-a996-dbd9e8514012" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="4f516b08-1773-43d7-8f32-d4b423d23ace" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">multipart/form-data<br/>dto: {&quot;id&quot;:&quot;test1&quot;,&quot;password&quot;:&quot;test1&quot;,&quot;email&quot;:&quot;<a href="mailto:test1@test.com">test1@test.com</a>&quot;,&quot;userName&quot;:&quot;홍길동&quot;,&quot;nickName&quot;:&quot;길동이&quot;,&quot;phoneNumber&quot;:&quot;010-1234-5678&quot;}<br/>file: 프로필 이미지 (필수)</td></tr><tr id="4f4fc3a9-aae9-4f53-8369-10a7f7d5bdf9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1007,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;이메일 인증을 완료해야 회원가입이 완료됩니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1008,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;계정을 복구하려면 이메일을 확인해주세요.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="7992c37b-1fd7-4357-b856-ea8a6dc75f76" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1046,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이미 등록된 이메일입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1021,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이메일 인증을 생성할 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1024,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이미 존재하는 계정입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1014,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원을 저장할 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8157-81c1-fca6434bb3be" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 이메일 인증</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80ea-a8cf-de835e038d0f" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-80dc-abc9-c6647a2f970d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_001</td></tr><tr id="67db227a-3f83-4d7d-9213-06dbbbc0a1b2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 비활성화된 계정을 복구하는 기능<br/><br/>[ 제약 조건 ] 이메일 인증을 통한 복구만 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 재 회원가입시 동일한 이메일 사용<br/>2. 사용자가 이메일로 받은 복구 링크 클릭<br/>3. 링크의 유효성 검증<br/>4. 계정 활성화 처리<br/>5. 로그인 페이지로 리다이렉트</td></tr><tr id="9e328ca4-910d-406f-ba77-d27dda105628" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark><strong> </strong></td></tr><tr id="3b0a64eb-8b50-80de-b3e8-c2089e192ed9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">이메일 인증</td></tr><tr id="3b0a64eb-8b50-80d6-badd-ceac02c99d60" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">회원가입 이메일 및 복구 이메일 인증</td></tr><tr id="3b0a64eb-8b50-809e-8b34-feb10b4fa82c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/email-auth</td></tr><tr id="3b0a64eb-8b50-80db-83a1-e1c5330fd7a8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="3b0a64eb-8b50-807a-9767-fb43f7d67986" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">?id=test01&amp;uuid=abcd1234&amp;isInActive=false</td></tr><tr id="3b0a64eb-8b50-80e7-ba3f-daa2682ab691" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">redirect:/login</td></tr><tr id="15f7ce92-0e7e-4ea2-85ab-9e8f2483985c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1020,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이메일 인증을 찾을 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1022,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이메일 인증을 지울 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8149-a1aa-c62960c059dc" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark> <strong>로그인</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80ac-91e7-dac09511c61a" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8095-b7d3-f361223ed96b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_002</td></tr><tr id="67c7fd0b-7008-47a2-844b-41a8e7092e4a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 등록된 사용자가 서비스에 접근할 수 있는 기능<br/>[ 필수 항목 ] 아이디, 비밀번호<br/><br/>[ 제약 조건 ]<br/>1. 이메일 인증이 완료된 계정만 로그인 가능<br/>2. 비활성화된 계정은 로그인 불가<br/><br/>[ 프로세스 ]<br/>1. 사용자가 아이디와 비밀번호 입력<br/>2. 아이디 존재 여부 확인<br/>3. 비밀번호 일치 여부 확인<br/>4. 이메일 인증 여부 확인<br/>5. 계정 활성화 여부 확인<br/>6. 로그인 성공 시 세션에 사용자 정보 저장<br/>7. 로그인 기록 저장 (IP 주소, 로그인 시간)</td></tr><tr id="2426f503-cdda-4b5d-a4a1-9e639dc2b1bf" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark></td></tr><tr id="22857b0a-34f0-4766-8b90-9c280affe19f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">로그인</td></tr><tr id="3b0a64eb-8b50-80e0-a42b-ec453e2c0daa" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">등록된 사용자가 서비스에 접근할 수 있는 기능</td></tr><tr id="3b0a64eb-8b50-8099-966f-d2770007c451" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/login</td></tr><tr id="3b0a64eb-8b50-80c0-a34b-c3b224fdb2c0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="3b0a64eb-8b50-80a5-84fe-d4c531d84324" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">{<br/>&quot;id&quot;: &quot;test1&quot;,<br/>&quot;password&quot;: &quot;test1&quot;<br/>}</td></tr><tr id="935d1e91-d6b4-44f5-90e2-42eca69923f8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1006,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;로그인에 성공했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="f7021ab9-bb5f-4a87-94c0-b1f1dbdf28d1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1016,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;비밀번호가 다릅니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1023,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;탈퇴한 계정입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1019,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;이메일 인증을 해주세요&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1017,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;로그인 이력 저장에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8142-8f1a-ee22b47cbd91" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 로그아웃</strong></summary><div class="indented"><table id="3b0a64eb-8b50-8032-99fb-f2d297efd167" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-805f-92ed-fa2a9821c2a6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_003</td></tr><tr id="e3e47eac-5a46-453d-af8e-052b38d9dd46" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인된 사용자의 세션을 종료하는 기능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 로그아웃 요청<br/>2. 세션에서 사용자 정보 제거<br/>3. 로그인 페이지로 리다이렉트</td></tr><tr id="25c74348-7c89-46da-ad40-0be0287a82e9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="36cf6330-6dac-4339-a637-03c697aaba1b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">로그아웃</td></tr><tr id="22c0f763-4528-4239-8914-79be0dbdaccd" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">현재 세션을 무효화하고 로그인 페이지로 리다이렉트하는 기능 (비로그인 요청도 허용)</td></tr><tr id="3b0a64eb-8b50-80b5-8456-e3bc94531dc4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/logout</td></tr><tr id="e46f3440-ce5a-4a7c-b2da-e120641b64fd" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="3b0a64eb-8b50-809a-bff1-e965d56ef1f5" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="3b0a64eb-8b50-806d-b466-e18c448fbee6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">redirect:/login</td></tr><tr id="3b0a64eb-8b50-8006-ad51-fa4fe18dc695" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-8139-aa24-f2cbe6495642" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark> <strong>계정 정보 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80d2-b300-d9d3fce148ad" class="simple-table" dir="ltr"><tbody><tr id="80e211e9-1a1d-4e44-932a-3560d08d5b4c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_004</td></tr><tr id="0fd074ab-0b27-4856-a395-2cd9cd13398e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인한 사용자가 자신의 계정 정보를 확인하는 기능<br/>[ 조회 항목 ] 현재 FindMemberRes 전체 필드 (password 포함: 보안 결함)<br/><br/>[ 제약 조건 ] 로그인한 사용자만 접근 가능</td></tr><tr id="32380062-f674-462c-8c54-46199f9c7d25" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px">[GET]</td></tr><tr id="0b6b58ad-f7e2-41f9-8883-7a1f0137bbe9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">계정 정보 조회</td></tr><tr id="7d4056cb-df11-414b-a812-598af2ca35ff" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">세션의 memberIdx로 현재 회원 정보를 조회</td></tr><tr id="22a912e8-443a-4a62-8103-42cb45e1d59d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/find-member</td></tr><tr id="3b0a64eb-8b50-806f-9ae9-ce36d0a25c22" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="9d708fa1-e991-4c18-8290-62d4560509b5" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">없음</td></tr><tr id="edf616a6-fffe-4683-9d35-d3a03518ad24" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1027,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;회원 정보를 가져왔습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;idx&quot;: 1,<br/> &quot;id&quot;: &quot;test1&quot;,<br/> &quot;password&quot;: &quot;[현재 소스에서 노출됨]&quot;,<br/> &quot;userName&quot;: &quot;홍길동&quot;,<br/> &quot;nickName&quot;: &quot;길동이&quot;,<br/> &quot;phoneNumber&quot;: &quot;010-1234-5678&quot;,<br/> &quot;isInActive&quot;: false,<br/> &quot;isEmailAuth&quot;: true,<br/> &quot;profileImageUrl&quot;: &quot;profile.jpg&quot;,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:00:00&quot;<br/> }<br/>}</td></tr><tr id="7a60012f-7999-4fd8-ae8b-cc2192e10a8c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1003,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;로그인이 필요합니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-819c-beed-d7bece125bf9" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 계정 비활성화</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80a6-a1f5-d303dc056e70" class="simple-table" dir="ltr"><tbody><tr id="68d1b204-a893-404d-89d3-8b888a8c2bf3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_007</td></tr><tr id="d0b7dbb3-3404-4d97-90e2-b49e25b1752a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인한 사용자가 자신의 계정을 비활성화하는 기능<br/><br/>[ 제약 조건 ] 로그인한 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 계정 비활성화 요청<br/>2. 비활성화 확인 절차<br/>3. 사용자 계정 비활성화 처리<br/>4. 이메일로 계정 복구 링크 발송<br/>5. 로그아웃 처리</td></tr><tr id="fb5adf6d-465e-4cfc-96f0-2592aed51733" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="653cdb0e-3ea6-4eee-bcfc-91c91e37685c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">계정 비활성화</td></tr><tr id="8aa5cc6a-15a0-44ea-bfe6-13f63825d32c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">로그인한 사용자의 계정을 비활성화하는 기능</td></tr><tr id="b22d966f-a102-4fa5-92a9-bf49c1025590" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/in-active</td></tr><tr id="3b0a64eb-8b50-8097-a1a4-f38f14efd17b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="537a9924-ec88-4e9f-8b37-2960eb503b7c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="0c0fd16e-47f8-45b8-8843-011ef04338ab" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1009,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;계정 탈퇴에 성공했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="0ecfab4a-3db2-4483-bc95-2cf51385f963" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1025,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;계정 소유자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8183-b9b4-c7aab7ad997e" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark><strong> 계정 정보 변경</strong></summary><div class="indented"><table id="3b0a64eb-8b50-8096-a4d4-c678313c1a18" class="simple-table" dir="ltr"><tbody><tr id="fcffab47-2fcc-40c7-874c-1b820e32ec60" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_005</td></tr><tr id="d0a2af70-7776-48fe-aa33-ed74cac77881" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인한 사용자가 자신의 계정 정보를 변경하는 기능<br/>[ 수정 가능 항목 ] 닉네임, 전화번호, 프로필 이미지<br/><br/>[ 제약 조건 ] 로그인한 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 프로필 수정 양식 접근<br/>2. 현재 사용자 정보 조회 및 표시<br/>3. 사용자가 정보 수정<br/>4. 변경된 정보 유효성 검증<br/>5. 프로필 이미지 업로드(선택)<br/>6. 변경된 정보 저장</td></tr><tr id="795b6d6b-84ab-4e58-afd6-cf883400c057" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark><strong> </strong></td></tr><tr id="0596760a-090c-44ba-94d3-19c0f260c440" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">계정 정보 변경</td></tr><tr id="9e6f99ed-1691-43bb-891f-f139257e604d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">로그인한 사용자가 자신의 계정 정보를 변경하는 기능</td></tr><tr id="a3c96835-1881-4e32-86f0-f0622978a75b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/edit-profile</td></tr><tr id="3b0a64eb-8b50-80e3-a5a8-c9832b033b43" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="4a8dc05e-4cc8-47fc-92c0-52880beea30b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">dto: {<br/>&quot;nickName&quot;: &quot;변경할닉네임&quot;,<br/>&quot;phoneNumber&quot;: &quot;변경할전화번호&quot;<br/>}<br/>file : profileImage</td></tr><tr id="786480bf-a603-4715-9f09-75598ff473e3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1010,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;프로필 수정에 성공했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="af3c8b99-fb01-4c4a-a160-f85933e26a62" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1025,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;계정 소유자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-81fd-b732-cfb787d683a3" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark><strong> 비밀번호 변경</strong></summary><div class="indented"><table id="3b0a64eb-8b50-804b-8603-c01786c9c3f6" class="simple-table" dir="ltr"><tbody><tr id="82c8c83c-2791-4833-a2c3-d97e5e0b5bbd" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">MEMBER_006</td></tr><tr id="89d7f6da-0be8-44a7-acd0-498750ff5440" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인한 사용자가 자신의 비밀번호를 변경하는 기능<br/>[ 필수 항목 ] 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인<br/><br/>[ 제약 조건 ]<br/>1. 로그인한 사용자만 접근 가능<br/>2. 기존 비밀번호 일치 여부 확인<br/>3. 새 비밀번호와 새 비밀번호 확인 일치 여부 확인<br/><br/>[ 프로세스 ]<br/>1. 사용자가 비밀번호 변경 양식 접근<br/>2. 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인 입력<br/>3. 기존 비밀번호 일치 여부 확인<br/>4. 새 비밀번호와 새 비밀번호 확인 일치 여부 확인<br/>5. 새 비밀번호 암호화<br/>6. 비밀번호 정보 갱신</td></tr><tr id="7f1c24ee-7419-4abe-a0a2-3091579b898b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark><strong> </strong></td></tr><tr id="4245686a-6cc4-458c-a723-758678bbec28" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">비밀번호 변경</td></tr><tr id="dfdbc7b9-a86e-4f09-9b7c-9765dc347aa7" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">로그인한 사용자의 기존 비밀번호를 확인하고 새 비밀번호로 변경하는 기능</td></tr><tr id="e1cf3e37-e871-4d59-99ac-920900931967" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/edit-pw</td></tr><tr id="3b0a64eb-8b50-80a0-943b-d93a2a324288" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="c58b6516-eeeb-473f-b596-312c372e5f8c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">{<br/>&quot;oldPassword&quot;: &quot;현재비밀번호&quot;,<br/>&quot;newPassword&quot;: &quot;새비밀번호&quot;<br/>}</td></tr><tr id="45852b6f-db86-4334-b527-1bc7f64feff7" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1013,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;비밀번호 변경에 성공했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="beabc956-de3b-4fb9-be9a-1c1b51e84a12" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1016,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;비밀번호가 다릅니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="e84ae0dc-1f91-4704-8b4a-d9f2fd159f02" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark><strong> 계정 ID/PW찾기</strong></summary><div class="indented"><table id="8c28cfb5-34d1-4297-a828-5b55618372f0" class="simple-table" dir="ltr"><tbody><tr id="e059bbbd-ae69-40ea-9141-2ffc7efdaa93" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="G^Zd" class="" style="width:1179px">MEMBER_009</td></tr><tr id="6e8ef847-c1bc-4f25-8f43-dc0acea0e93a" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="G^Zd" class="" style="width:1179px">[ 기능 설명 ] 아이디 또는 비밀번호를 잊은 사용자를 위한 기능<br/>[ 필수 항목 ] 이메일, 이름<br/><br/>[ 프로세스 ]<br/>1. 사용자가 아이디/비밀번호 찾기 양식 접근<br/>2. 이메일과 이름 입력<br/>3. 입력된 정보와 일치하는 계정 확인<br/>4. 아이디 찾기: 이메일로 아이디 정보 발송<br/>5. 비밀번호 찾기: 아이디 입력 후 이메일로 임시 비밀번호 또는 비밀번호 재설정 링크 발송</td></tr><tr id="29866cb0-c8a5-46ed-a2ed-6efaaa075e6f" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="G^Zd" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark><strong> </strong></td></tr><tr id="d63395e9-5133-437d-83e7-2f8a18a0bcf5" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="G^Zd" class="" style="width:1179px">계정 ID/PW찾기</td></tr><tr id="0397a98c-6801-4ce2-a81c-96cff29f3008" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="G^Zd" class="" style="width:1179px">아이디 또는 비밀번호를 잊은 사용자를 위한 기능</td></tr><tr id="c1aad30d-6d5c-4b43-941b-0b159a1311d3" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="G^Zd" class="" style="width:1179px">/find-id-pw</td></tr><tr id="b57a1f36-58fc-4067-b997-b07899fde194" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="G^Zd" class="" style="width:1179px">X</td></tr><tr id="9b4acdfb-fc1b-4047-89d0-e6b74d59e6f3" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="G^Zd" class="" style="width:1179px">application/json<br/>ID 찾기: {&quot;email&quot;: &quot;가입 이메일&quot;}<br/>PW 찾기: {&quot;id&quot;: &quot;가입 아이디&quot;}</td></tr><tr id="520d4b8d-4131-4eb1-9540-23268b9c7c33" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="G^Zd" class="" style="width:1179px">{<br/> &quot;code&quot;: 1012,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;아이디를 이메일로 전송했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1011,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;임시 비밀 번호를 이메일로 전송했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="d0918c6e-80ed-4aa6-a3fe-c8cb21b8032b" dir="ltr"><th id="MEtV" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="G^Zd" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1015,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;회원 정보 업데이트에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1002,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;요청값이 정상적이지 않습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><h3 id="261a64eb-8b50-8126-b17b-f3777edd68cd" class="" dir="auto"><strong>게시글 기능</strong></h3><details id="3b0a64eb-8b50-809a-8da4-f3c0acaedde8" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark> <strong>게시글 작성</strong></summary><div class="indented"><table id="3b0a64eb-8b50-8062-96a8-fc4d47ce5eb5" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-802e-ac36-f8c926051fe1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_001</td></tr><tr id="55b3d8e2-7980-4001-8446-7adf400fe88f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 로그인한 사용자가 새로운 게시물을 작성하는 기능<br/>[ 필수 항목 ] 제목, 내용, 카테고리, 공개 범위<br/>[ 선택 항목 ] 이미지 파일<br/><br/>[ 제약 조건 ] 로그인한 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 게시물 작성 페이지 접근<br/>2. 제목, 내용, 카테고리, 공개 범위 설정<br/>3. 이미지 파일 업로드(선택)<br/>4. 유효성 검증, 게시물 저장<br/>6. 게시물 목록 또는 상세 페이지로 리다이렉트</td></tr><tr id="0f487cdf-94a7-4b47-99ad-6a467586b2e9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px">[POST]</td></tr><tr id="3b0a64eb-8b50-8077-ab5c-c5b6b4e57fd6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">게시글 작성</td></tr><tr id="3b0a64eb-8b50-8047-8bab-c4d797650fc0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">로그인한 사용자가 새로운 게시물을 작성하는 기능</td></tr><tr id="3b0a64eb-8b50-80bb-ba2f-df0b2e02b45b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post</td></tr><tr id="3b0a64eb-8b50-8096-ab35-d5a932bb5d84" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="d73c7cba-8f2c-44f0-a181-0f4806c895e4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">multipart/form-data<br/>dto: {&quot;categoryIdx&quot;:1,&quot;rangeIdx&quot;:1,&quot;title&quot;:&quot;게시물 제목&quot;,&quot;content&quot;:&quot;게시물 내용&quot;,&quot;password&quot;:null}<br/>file: 첨부 파일 배열 (선택)</td></tr><tr id="adcc6ab1-7bb9-4c53-a7ef-f6f3c6b11fef" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1028,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;게시물이 생성되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="d002dffc-7527-45c8-9501-d99126351997" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1029,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 생성에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1038,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 이미지 저장에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-81f7-b4c8-c371f2027f24" open="" class="toggle" dir="auto"><summary><mark class="highlight-blue" data-notion-highlight="blue"><code><strong>PUT</strong></code></mark><strong> 게시글 수정</strong></summary><div class="indented"><table id="3b0a64eb-8b50-801f-9b2b-d7b7f4de8608" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-80fe-9954-cf8c84425abb" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_004</td></tr><tr id="9b2232dd-f204-49b6-9338-c62a0859e15a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 작성자가 자신의 게시물을 수정하는 기능<br/>[ 수정 가능 항목 ] 제목, 내용, 카테고리, 공개 범위, 이미지<br/><br/>[ 제약 조건 ] 게시물 작성자만 수정 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 게시물 수정 페이지 접근<br/>2. 게시물 작성자 확인<br/>3. 기존 게시물 정보 조회 및 표시<br/>4. 사용자가 정보 수정<br/>5. 이미지 파일 업로드(선택)<br/>6. 유효성 검증<br/>7. 수정된 게시물 저장<br/>8. 게시물 상세 페이지로 리다이렉트</td></tr><tr id="64ff0346-9e1e-4c71-9f09-07e4fdc76118" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-blue" data-notion-highlight="blue"><code><strong>[PUT]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-8095-89aa-f9f967bb6056" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">게시글 수정</td></tr><tr id="3b0a64eb-8b50-807d-8ea2-cdbd9a0cbb5f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">작성자가 자신의 게시물을 수정하는 기능</td></tr><tr id="3b0a64eb-8b50-80a8-94fe-e2b6daf403a4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post?postIdx=1</td></tr><tr id="3b0a64eb-8b50-8086-b754-f5cfd1def5a3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="1e0c345e-88a5-421c-807a-70c87408820e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: postIdx (필수)<br/>multipart/form-data<br/>dto: {&quot;categoryIdx&quot;:2,&quot;rangeIdx&quot;:1,&quot;title&quot;:&quot;수정된 제목&quot;,&quot;content&quot;:&quot;수정된 내용&quot;,&quot;password&quot;:null}<br/>file: 첨부 파일 배열 (선택)</td></tr><tr id="482fd8da-fd81-43bc-b22a-a65d89dc4b4d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1030,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;게시물이 수정되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="2e8bad98-5901-40aa-b9d0-a46c6e511e32" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1036,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물을 찾을 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1037,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 작성자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1031,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 수정에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1038,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 이미지 저장에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8146-8789-ed172b6b01eb" open="" class="toggle" dir="auto"><summary><mark class="highlight-red" data-notion-highlight="red"><code><strong>DELETE</strong></code></mark><strong> 게시글 삭제</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80f9-a6d2-e744e85f9f78" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8045-bc4a-fe1e11695ec3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_005</td></tr><tr id="cfbf3978-7e64-431f-9efb-42e6cff89449" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 작성자가 자신의 게시물을 삭제하는 기능<br/><br/>[ 제약 조건 ] 게시물 작성자만 삭제 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 게시물 삭제 요청<br/>2. 게시물 작성자 확인<br/>3. 삭제 확인 절차<br/>4. 게시물과 연관된 모든 정보(이미지, 댓글, 좋아요/싫어요) 삭제<br/>5. 게시물 목록 페이지로 리다이렉트</td></tr><tr id="7dacd435-8237-43fe-a226-dcceb9e3c744" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-red" data-notion-highlight="red"><code><strong>[DELETE]</strong></code></mark><strong> </strong></td></tr><tr id="3b0a64eb-8b50-8045-a6e7-ed46d20bf578" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">게시글 삭제</td></tr><tr id="3b0a64eb-8b50-805c-80a8-df32c362c723" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">작성자가 자신의 게시물을 삭제하는 기능</td></tr><tr id="3b0a64eb-8b50-80a7-9735-fca7387e17ec" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post?postIdx=1</td></tr><tr id="3b0a64eb-8b50-80e6-973f-fef7c38f2855" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-808c-80a0-f5bc63b1a501" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="ddd1d798-e37a-4fe4-a6fc-a131c2aa0c26" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1032,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;게시물이 삭제되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="281dae70-2ac6-47cd-9cb6-c4b8e88071a2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1033,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 삭제에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1037,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 작성자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1036,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물을 찾을 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-810d-a12a-dce0823e8229" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 게시글 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80ab-9f36-fbe9c26c9885" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-80f4-ad4b-e0f1a10d7de8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_002</td></tr><tr id="fea6152e-92e4-41bc-878e-4cf4d69b1525" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 게시물 상세 내용을 조회하는 기능<br/>[ 조회 항목 ] 제목, 내용, 작성자, 작성일, 수정일, 조회수, 좋아요/싫어요, 이미지, 댓글<br/><br/>[ 제약 조건 ]<br/>1. 비공개 게시물은 작성자만 조회 가능<br/>2. 보호된 게시물은 비밀번호 입력 후 조회 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 게시물 상세 페이지 접근<br/>2. 게시물 ID로 데이터 조회<br/>3. 공개 범위 확인<br/>4. 비공개/보호 게시물 권한 확인<br/>5. 조회수 증가<br/>6. 게시물 정보 표시, 관련 이미지 표시<br/>7. 댓글 보기 버튼 클릭시 댓글 목록 표시</td></tr><tr id="d05958d4-6fa3-4b26-bdc3-2ded091e3190" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark><strong> </strong></td></tr><tr id="3b0a64eb-8b50-805d-8ba4-ed1481a424e6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">게시글 조회</td></tr><tr id="af202647-8171-4b73-bdb6-1afd8a0fd17d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">게시물 상세 정보 조회. 세션이 있으면 현재 사용자의 좋아요/싫어요 상태를 함께 계산</td></tr><tr id="3b0a64eb-8b50-8025-b062-fe314f929f4b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post?postIdx=1</td></tr><tr id="3b0a64eb-8b50-8085-afad-e3feb193514c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">optional</td></tr><tr id="f087fbea-a8b0-44e2-a0af-951989fa72f5" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: postIdx (필수)</td></tr><tr id="067643ee-bfca-4d62-ab22-e6f74a97cb13" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1034,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;게시물 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;idx&quot;: 1,<br/> &quot;memberIdx&quot;: 1,<br/> &quot;categoryIdx&quot;: 1,<br/> &quot;categoryName&quot;: &quot;카테고리명&quot;,<br/> &quot;rangeIdx&quot;: 1,<br/> &quot;rangeName&quot;: &quot;전체 공개&quot;,<br/> &quot;nickName&quot;: &quot;작성자&quot;,<br/> &quot;title&quot;: &quot;게시물 제목&quot;,<br/> &quot;content&quot;: &quot;게시물 내용&quot;,<br/> &quot;viewCount&quot;: 10,<br/> &quot;likeCount&quot;: 5,<br/> &quot;unlikeCount&quot;: 1,<br/> &quot;commentCount&quot;: 2,<br/> &quot;isLiked&quot;: false,<br/> &quot;isUnliked&quot;: false,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;postImages&quot;: [<br/> {<br/> &quot;idx&quot;: 1,<br/> &quot;postIdx&quot;: 1,<br/> &quot;imageUrl&quot;: &quot;image.jpg&quot;<br/> }<br/> ],<br/> &quot;password&quot;: null<br/> }<br/>}</td></tr><tr id="1ca72fc0-c952-421f-8210-36f3facdcf5b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1036,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물을 찾을 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1059,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;접근 권한이 없는 게시물입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1039,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 조회수 증가에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-816d-b5bb-d666ea26c635" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 게시글 목록 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-807a-942f-efb5b4e42485" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8071-b97e-e25c0c35602e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_003</td></tr><tr id="ae77e4a9-7ac2-4215-a24f-ac78e215fb56" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 다양한 조건으로 게시물 목록을 조회하는 기능<br/>[ 조회 조건 ]<br/>1. 카테고리<br/>2. 검색어(제목, 작성자, 내용)<br/>3. 정렬 기준(최신순, 오래된순, 조회수순, 좋아요순, 싫어요순, 댓글수순)<br/>4. 페이지네이션: 페이지당 고정된 수의 게시물 표시<br/><br/>[ 프로세스 ]<br/>1. 사용자가 게시물 목록 페이지 접근<br/>2. 카테고리, 검색어, 정렬 기준 설정<br/>3. 조건에 맞는 게시물 목록 조회<br/>4. 페이지네이션 처리<br/>5. 게시물 목록 표시</td></tr><tr id="56cc9717-7977-49af-a5ab-ce90a808b6cf" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-8048-83e5-e79cdf28979c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">게시글 목록 조회</td></tr><tr id="3b0a64eb-8b50-80f9-ac4d-f96588ad64b4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">다양한 조건으로 게시물 목록을 조회하는 기능</td></tr><tr id="d4ba4850-20b3-4ae2-b406-38ea5a5b2dc9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post-list?categoryIdx=1&amp;searchIdx=1&amp;orderIdx=1&amp;keyword=검색어&amp;page=1&amp;size=10</td></tr><tr id="590011a9-03d4-4e50-9fb3-6e78881908e0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="88f01285-9f73-410f-80d1-07d0b22c5f5e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query (모두 선택): title, content, nickName, categoryIdx, searchIdx, orderIdx, keyword, startDate, endDate, page(기본 1), size(기본 10)</td></tr><tr id="34fed694-6efd-47e9-b3cf-66ba4f9239c9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1035,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;게시물 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;totalElements&quot;: 100,<br/> &quot;totalPages&quot;: 10,<br/> &quot;currentPage&quot;: 1,<br/> &quot;pageSize&quot;: 10,<br/> &quot;data&quot;: [<br/> {<br/> &quot;idx&quot;: 1,<br/> &quot;memberIdx&quot;: 1,<br/> &quot;categoryIdx&quot;: 1,<br/> &quot;categoryName&quot;: &quot;카테고리명&quot;,<br/> &quot;rangeIdx&quot;: 1,<br/> &quot;rangeName&quot;: &quot;전체 공개&quot;,<br/> &quot;nickName&quot;: &quot;작성자&quot;,<br/> &quot;title&quot;: &quot;게시물 제목&quot;,<br/> &quot;content&quot;: &quot;게시물 내용&quot;,<br/> &quot;viewCount&quot;: 10,<br/> &quot;likeCount&quot;: 5,<br/> &quot;unlikeCount&quot;: 1,<br/> &quot;commentCount&quot;: 2,<br/> &quot;isLiked&quot;: false,<br/> &quot;isUnliked&quot;: false,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;postImages&quot;: [],<br/> &quot;password&quot;: null<br/> }<br/> ]<br/> }<br/>}</td></tr><tr id="3b0a64eb-8b50-807e-aa6a-d60fa4ebdcc9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-8185-82b6-cf3f994d20f3" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 보호된 게시물 인증</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80b1-833a-e23526ccd5f2" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-80ee-9c4c-cd135812a892" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_007</td></tr><tr id="5c38ee6c-8d48-4628-863c-fc4a50763fba" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 비밀번호로 보호된 게시물에 접근하기 위한 기능<br/>[ 필수 항목 ] 게시물 비밀번호<br/><br/>[ 프로세스 ]<br/>1. 사용자가 보호된 게시물 접근 시도<br/>2. 비밀번호 입력 요청<br/>3. 비밀번호 일치 여부 확인<br/>4. 비밀번호 일치 시 게시물 내용 표시</td></tr><tr id="51862ef5-84e4-4abf-aea2-6102d2819a41" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80a8-8f06-e787e5e04844" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">보호된 게시물 인증</td></tr><tr id="836f3a0d-111b-4593-afc4-2d3253bd3879" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">보호된 게시물의 비밀번호 일치 여부를 확인하는 기능</td></tr><tr id="07710e48-b5a8-425b-89b9-bd34e2cdbca8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/post-auth?postIdx=1&amp;password=1234</td></tr><tr id="3b0a64eb-8b50-809b-af4d-f4de04ee7246" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="e0dbc8cf-bbfa-40a3-bed7-21533f285d99" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: postIdx, password (모두 필수)</td></tr><tr id="4441aca8-35ae-4cec-a2ce-b17cfb0e923e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1062,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;비밀번호 인증이 완료되었습니다.&quot;,<br/> &quot;result&quot;: true<br/>}</td></tr><tr id="20d87fc3-1d7d-44ab-951d-25e2fae65850" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1036,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물을 찾을 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1060,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;보호된 게시물이 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1061,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;게시물 비밀번호가 설정되지 않았습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-81ab-bdd0-d44879fb1442" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark> <strong>Summernote 이미지 업로드</strong></summary><div class="indented"><table id="3b0a64eb-8b50-8090-aa90-dc5c7b37cf0b" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8037-bc3b-f2c513c00bc3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">POST_006</td></tr><tr id="59ad118b-947f-460f-8d52-217f83c7a3c1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 게시물 작성/수정 시 이미지를 업로드하는 기능<br/><br/>[ 제약 조건 ]<br/>1. 지원 파일 형식: 일반적인 이미지 포맷(JPG, PNG, GIF 등)<br/>2. 최대 파일 크기 제한, 최대 업로드 가능 이미지 수 제한<br/><br/>[ 프로세스 ]<br/>1. 사용자가 이미지 파일 선택 (Summernote)<br/>2. 파일 형식 및 크기 검증<br/>3. 이미지 파일 서버에 업로드<br/>4. 업로드된 이미지의 URL 반환<br/>5. 게시물과 이미지 연결 정보 저장</td></tr><tr id="8ad7cbba-a774-495f-9ee1-0f80f8b0dabc" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px">[POST]</td></tr><tr id="142eb440-e4bb-42fa-88a9-347d1796facc" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">Summernote 이미지 업로드</td></tr><tr id="668d758f-f973-4fa3-ad3e-7780202f3719" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">Summernote 편집기에서 전달한 이미지 파일을 업로드하고 저장 파일명을 반환</td></tr><tr id="d5de28c7-8e35-45a7-8ffe-09a36dec9b5b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/upload-image</td></tr><tr id="c50736aa-51aa-4a71-bf89-19590b0c3762" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="d1d9208a-4b7a-4e6e-94b3-16a2b9388885" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">multipart/form-data<br/>file: 이미지 파일 (필수)</td></tr><tr id="9b801357-a92d-4661-955e-571a168861e4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1045,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;이미지가 업로드되었습니다.&quot;,<br/> &quot;result&quot;: &quot;업로드된_이미지_파일명.jpg&quot;<br/>}</td></tr><tr id="3b0a64eb-8b50-80d2-ab4a-ffc616365810" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><h3 id="261a64eb-8b50-81f5-97ba-c6ebae5ba1df" class="" dir="auto"><strong>댓글 기능</strong></h3><details id="261a64eb-8b50-8195-8dee-c71af8957a5d" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 댓글 목록 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80c1-8092-e9593dbdef39" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8076-92d4-dc2958e6aa6a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">COMMENT_002</td></tr><tr id="1fa2899b-daa8-4753-8329-f61ee9c20b2d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 게시물에 달린 댓글을 조회하는 기능<br/>[ 조회 항목 ] 내용, 작성자, 작성일, 수정일, 좋아요/싫어요<br/>[ 조회 조건 ] 게시물 식별자<br/>[ 정렬 기준 ] 최신순, 오래된순<br/><br/>[ 프로세스 ]<br/>1. 게시물 상세 페이지 접근<br/>2. 게시물 식별자로 댓글 목록 조회<br/>3. 댓글 목록 표시</td></tr><tr id="0f07fb9b-8e5c-4a13-8e27-d82c3b2f29c1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80c7-b032-db541a8196c0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">댓글 목록 조회</td></tr><tr id="3b0a64eb-8b50-805d-a9c1-d883cea46dfe" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">게시물에 달린 댓글을 조회하는 기능</td></tr><tr id="96275e7e-19c8-4d6e-b716-4792567fc68a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/comment-list?postIdx=1&amp;page=1&amp;size=10&amp;sortBy=createdAt&amp;orderIdx=1</td></tr><tr id="3b0a64eb-8b50-8056-a758-f7d18155dae1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">optional</td></tr><tr id="13b80ed4-9e29-4c7f-bd67-bde949662f64" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: postIdx, page(기본 1), size(기본 10), sortBy, orderIdx</td></tr><tr id="f9eaf05c-0289-4a9e-86a2-2f3375ec3003" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1055,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;댓글 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;totalElements&quot;: 50,<br/> &quot;currentPage&quot;: 1,<br/> &quot;pageSize&quot;: 10,<br/> &quot;totalPages&quot;: 5,<br/> &quot;data&quot;: [<br/> {<br/> &quot;idx&quot;: 1,<br/> &quot;parentCommentIdx&quot;: null,<br/> &quot;postIdx&quot;: 1,<br/> &quot;memberIdx&quot;: 1,<br/> &quot;content&quot;: &quot;댓글 내용&quot;,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;nickName&quot;: &quot;작성자&quot;,<br/> &quot;profileImageUrl&quot;: &quot;profile.jpg&quot;,<br/> &quot;likeCount&quot;: 5,<br/> &quot;unlikeCount&quot;: 1,<br/> &quot;isLiked&quot;: false,<br/> &quot;isUnliked&quot;: false,<br/> &quot;replyCount&quot;: 2<br/> }<br/> ]<br/> }<br/>}</td></tr><tr id="3b0a64eb-8b50-8077-a6d1-eae008fc2416" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-81f4-af0e-f9d353c495e0" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 대댓글 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80fd-8969-cc53b4d88aa0" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-809c-a91f-efc31dfee380" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">COMMENT_003</td></tr><tr id="be1a6d09-d97f-48a8-bbc3-0954658b046d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 특정 댓글에 대한 대댓글을 조회하는 기능<br/>[ 조회 항목 ] 내용, 작성자, 작성일, 수정일, 좋아요/싫어요<br/>[ 조회 조건 ] 부모 댓글 식별자<br/>[ 정렬 기준 ] 최신순, 오래된순<br/><br/>[ 프로세스 ]<br/>1. 댓글 목록에서 대댓글 표시 요청<br/>2. 부모 댓글 식별자로 대댓글 목록 조회<br/>3. 대댓글 목록 표시</td></tr><tr id="03b4507f-eb7b-4a5d-88ff-9869a92baff5" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark><strong> </strong></td></tr><tr id="3b0a64eb-8b50-800b-9b98-fbd58266b212" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">대댓글 조회</td></tr><tr id="3b0a64eb-8b50-8010-be1b-e699252e4072" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">특정 댓글에 대한 대댓글을 조회하는 기능</td></tr><tr id="555b0878-10bf-4c83-b358-3ed235aed888" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/reply-list?parentCommentIdx=1&amp;page=1&amp;size=10&amp;sortBy=createdAt&amp;orderIdx=1</td></tr><tr id="3b0a64eb-8b50-8055-bdfa-dc1ba11763e8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">optional</td></tr><tr id="0b1d6836-23ba-4d3c-9c3a-5b86da08dbb8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: parentCommentIdx, page(기본 1), size(기본 10), sortBy, orderIdx</td></tr><tr id="06a5734e-5356-44c4-a7f6-4e5244fcf986" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1058,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;대댓글 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;totalElements&quot;: 15,<br/> &quot;currentPage&quot;: 1,<br/> &quot;pageSize&quot;: 10,<br/> &quot;totalPages&quot;: 2,<br/> &quot;data&quot;: [<br/> {<br/> &quot;idx&quot;: 3,<br/> &quot;parentCommentIdx&quot;: 1,<br/> &quot;postIdx&quot;: 1,<br/> &quot;memberIdx&quot;: 1,<br/> &quot;content&quot;: &quot;대댓글 내용&quot;,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:10:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:10:00&quot;,<br/> &quot;nickName&quot;: &quot;작성자&quot;,<br/> &quot;profileImageUrl&quot;: &quot;profile.jpg&quot;,<br/> &quot;likeCount&quot;: 2,<br/> &quot;unlikeCount&quot;: 0,<br/> &quot;isLiked&quot;: false,<br/> &quot;isUnliked&quot;: false,<br/> &quot;replyCount&quot;: 0<br/> }<br/> ]<br/> }<br/>}</td></tr><tr id="3b0a64eb-8b50-800d-831b-e011998c9e68" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-819f-995c-ebe2438cac38" open="" class="toggle" dir="auto"><summary><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>POST</strong></code></mark><strong> 댓글 등록</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80b5-be2b-e2a26504628c" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8063-b8ae-fd1646517d25" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">COMMENT_001</td></tr><tr id="913782ce-c155-4626-a37e-9bd34e0a0b0a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 게시물에 대한 댓글을 작성하는 기능<br/>[ 필수 항목 ] 댓글 내용<br/>[ 선택 항목 ] 부모 댓글 식별자(대댓글의 경우)<br/><br/>[ 제약 조건 ] 로그인한 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 댓글 작성 양식 접근<br/>2. 댓글 내용 입력<br/>3. 유효성 검증<br/>4. 댓글 저장<br/>5. 댓글 목록 갱신</td></tr><tr id="43ea90f6-3299-438f-adbd-f80edc297dc6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-yellow" data-notion-highlight="yellow"><code><strong>[POST]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80d7-b008-c30a465ea17d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px"><strong>댓글 등록</strong></td></tr><tr id="3b0a64eb-8b50-8059-ac25-facfce64e1e6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">게시물에 대한 댓글을 작성하는 기능</td></tr><tr id="3b0a64eb-8b50-8014-95ec-ffaf0c6eb28f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/comment</td></tr><tr id="3b0a64eb-8b50-80f3-a14e-dc5263ee41c1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="4bb57387-f7ec-408a-bc4c-a564c07d7581" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">application/json<br/>{&quot;postIdx&quot;:1,&quot;parentCommentIdx&quot;:null,&quot;content&quot;:&quot;댓글 내용&quot;}</td></tr><tr id="b1d3832b-1ce8-464d-a3fa-0a53ebcc007b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1047,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;댓글이 생성되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="feaf6a30-61ee-410a-95b5-9fb1273429d8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1048,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 작성에 실패했습니다. 로그인 후 작성해주세요.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1054,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 댓글입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1057,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;대댓글은 댓글에 달 수 없습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1049,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 생성에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-8183-83e8-f827d2179270" open="" class="toggle" dir="auto"><summary><mark class="highlight-blue" data-notion-highlight="blue"><code><strong>PUT</strong></code></mark><strong> 댓글 수정</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80a1-ab83-cd03baaf0f0f" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8051-8756-fee93156f0d8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">COMMENT_004</td></tr><tr id="272607a7-7137-4ec4-aaec-305f22b74d65" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 작성자가 자신의 댓글을 수정하는 기능<br/>[ 수정 가능 항목 ] 댓글 내용<br/><br/>[ 제약 조건 ] 댓글 작성자만 수정 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 댓글 수정 요청<br/>2. 댓글 작성자 확인<br/>3. 댓글 수정 양식 표시<br/>4. 수정된 내용 입, 유효성 검증<br/>5. 수정된 댓글 저장<br/>6. 댓글 목록 갱신</td></tr><tr id="84dd8e56-2c11-4e27-be3d-4000aba3f738" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-blue" data-notion-highlight="blue"><code><strong>[PUT]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80ec-b3da-f74d202e8fa1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">댓글 수정</td></tr><tr id="3b0a64eb-8b50-8094-bc57-c7c1ceae5011" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">작성자가 자신의 댓글을 수정하는 기능</td></tr><tr id="3b0a64eb-8b50-8091-ab3b-c0ecc73c8739" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/comment?commentIdx=1</td></tr><tr id="3b0a64eb-8b50-80eb-a2e8-d6f9a74da857" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-8032-9f4b-fc5a79926473" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">{<br/>&quot;content&quot;: &quot;수정된 댓글 내용&quot;<br/>}</td></tr><tr id="ea17b733-a7eb-4eb9-ae1b-83d0152f02f0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1050,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;댓글이 수정되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="18603ead-7ef1-466a-b7ed-be801cf2ca14" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1051,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 수정에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1054,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 댓글입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1056,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 작성자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="261a64eb-8b50-819d-bec7-e0c94966ec42" open="" class="toggle" dir="auto"><summary><mark class="highlight-red" data-notion-highlight="red"><code><strong>DELETE</strong></code></mark><strong> 댓글 삭제</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80f3-8005-ede4b7296b4a" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-802c-97ed-c417fa1296b2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">COMMENT_005</td></tr><tr id="42a5e3e9-268f-4f5b-adb6-c186b413dbf2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 작성자가 자신의 댓글을 삭제하는 기능<br/><br/>[ 제약 조건 ] 댓글 작성자만 삭제 가능<br/><br/>[ 프로세스 ]<br/>1. 사용자가 댓글 삭제 요청<br/>2. 댓글 작성자 확인<br/>3. 삭제 확인 절차<br/>4. 댓글과 연관된 정보(좋아요/싫어요) 삭제<br/>5. 대댓글이 있는 경우 해당 대댓글도 모두 삭제<br/>6. 댓글 목록 갱신</td></tr><tr id="34a02963-b48c-4f93-9149-de930db60939" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-red" data-notion-highlight="red"><code><strong>[DELETE]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80e6-8648-c636d294fcf2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">댓글 삭제</td></tr><tr id="3b0a64eb-8b50-806d-8ef1-f8d4ab119036" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">작성자가 자신의 댓글을 삭제하는 기능</td></tr><tr id="3b0a64eb-8b50-80bc-9afd-f049ee5e1a16" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/comment?commentIdx=1</td></tr><tr id="3b0a64eb-8b50-80e5-8b72-d8e9405aa5e7" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-804c-b4d1-e37df3a0ac17" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="a180036c-01cb-4b8b-86f7-9a721e86fa54" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1052,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;댓글이 삭제되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="b957c97a-b204-4e2d-a5da-ae48959186a3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1053,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 삭제에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1054,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 댓글입니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1056,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;댓글 작성자가 아닙니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><h3 id="261a64eb-8b50-81ec-a245-e715da92cb36" class="" dir="auto"><strong>랭킹 기능</strong></h3><details id="261a64eb-8b50-81ea-98ad-d9f5eb506a16" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 랭킹 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80c8-8311-f1b880d6988b" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8097-bfc9-ead1a9ac7433" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">RANK_001, 002</td></tr><tr id="d1ce823e-a219-4eb7-b359-318c74e6dd22" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 다양한 기준으로 인기 게시물 랭킹을 조회하는 기능<br/>[ 랭킹 기준 ] 조회수, 좋아요수, 싫어요수, 댓글수 기준 랭킹<br/>[ 갱신 주기 ] 배치 작업으로 주기적 갱신 (1시간마다)<br/>[ 조회 항목 ] 순위, 제목, 작성자, 해당 기준 수치(조회수, 좋아요수 등)<br/><br/>[ 프로세스 ]<br/>1. 스프링 배치 랭킹 갱신 프로세스 실행<br/>2. 각 기준별 상위 게시물 조회<br/>3. SortedSet을 이용해 100청크마다 처리<br/>4. 랭킹 테이블 업데이트<br/>5. 랭킹 정보 표시</td></tr><tr id="9fb59a80-0219-4c23-90f5-6789e495c37a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80cf-bf55-c29032526ff1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">랭킹 조회</td></tr><tr id="3b0a64eb-8b50-80d1-bbae-fbc8bc42f477" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">다양한 기준으로 인기 게시물 랭킹을 조회하는 기능</td></tr><tr id="3b0a64eb-8b50-806d-93ce-cac5b10dd8b3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/rank-list</td></tr><tr id="3b0a64eb-8b50-8008-8edf-dbf5ae71e347" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">X</td></tr><tr id="3b0a64eb-8b50-8008-815b-f21f8e2b147a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="be433ca9-f5d1-4790-934b-203b2a320198" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1063,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;랭크 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: {<br/> &quot;viewRanks&quot;: [<br/> {<br/> &quot;idx&quot;: 1,<br/> &quot;ranking&quot;: 1,<br/> &quot;flag&quot;: &quot;VIEW&quot;,<br/> &quot;title&quot;: &quot;조회수 1위 게시물&quot;,<br/> &quot;postIdx&quot;: 1,<br/> &quot;viewCount&quot;: 1000,<br/> &quot;likeCount&quot;: 50,<br/> &quot;unlikeCount&quot;: 10,<br/> &quot;commentCount&quot;: 30<br/> }<br/> ],<br/> &quot;likeRanks&quot;: [],<br/> &quot;unlikeRanks&quot;: [],<br/> &quot;commentRanks&quot;: []<br/> }<br/>}</td></tr><tr id="3b0a64eb-8b50-806f-a968-ccb5f9bb327d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><h3 id="261a64eb-8b50-8108-9515-e15b1e9cbbb2" class="" dir="auto"><strong>활동 기능</strong></h3><details id="261a64eb-8b50-81b7-bc10-d618fa740fd3" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 내가 쓴 게시물 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80af-8cf3-c662d0d6d846" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8034-bdda-c9441ca1e227" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">ACTIVITY_001</td></tr><tr id="da4cfb70-7ba4-444b-93e9-ca30a6c8f6a8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 사용자의 활동을 기록하고 관리하는 기능<br/><br/>[ 제약 조건 ] 멤버 인덱스를 통해 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 내가 쓴 게시물 조회<br/>2. 내가 쓴 댓글 조회<br/>3. 내가 누른 좋아요 조회<br/>4. 내가 누른 싫어요 조회<br/>5. 로그인 기록 조회</td></tr><tr id="3c1acced-6b4d-4434-be7b-c185bc5d2822" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-8008-bfcb-eed3a29f14e5" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">내가 쓴 게시물 조회</td></tr><tr id="3b0a64eb-8b50-808a-ac07-e3e176d224ed" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">내가 쓴 게시물 조회</td></tr><tr id="3b0a64eb-8b50-8086-b097-c0891660ffae" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/activity-posts</td></tr><tr id="3b0a64eb-8b50-8051-8a83-f80b33b932b3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-80f2-9996-e90626ba3db3" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="de3b7248-40c4-4e68-b44f-b46ee2402dc1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1065,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;활동 게시물 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: [<br/> {<br/> &quot;postIdx&quot;: 1,<br/> &quot;categoryIdx&quot;: 1,<br/> &quot;categoryName&quot;: &quot;카테고리명&quot;,<br/> &quot;rangeIdx&quot;: 1,<br/> &quot;rangeName&quot;: &quot;전체 공개&quot;,<br/> &quot;title&quot;: &quot;게시물 제목&quot;,<br/> &quot;content&quot;: &quot;게시물 내용&quot;,<br/> &quot;viewCount&quot;: 100,<br/> &quot;likeCount&quot;: 10,<br/> &quot;unlikeCount&quot;: 2,<br/> &quot;commentCount&quot;: 15,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:00:00&quot;<br/> }<br/> ]<br/>}</td></tr><tr id="3b0a64eb-8b50-80be-9281-cc5cf251c8ca" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-81f5-828f-f843d9689458" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 내가 쓴 댓글 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80ef-b19f-e845958e3375" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-805b-90de-ead04e53b762" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">ACTIVITY_001</td></tr><tr id="2022aec9-8d92-4b5f-b7a1-bbcae7c83a7e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 사용자의 활동을 기록하고 관리하는 기능<br/><br/>[ 제약 조건 ] 멤버 인덱스를 통해 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 내가 쓴 게시물 조회<br/>2. 내가 쓴 댓글 조회<br/>3. 내가 누른 좋아요 조회<br/>4. 내가 누른 싫어요 조회<br/>5. 로그인 기록 조회</td></tr><tr id="2177268c-e555-4c97-b3a0-93f68850756b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-80a2-a9c7-e4a9acea9306" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">내가 쓴 댓글 조회</td></tr><tr id="3b0a64eb-8b50-800d-a16b-f9fad45124ed" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">내가 쓴 댓글 조회</td></tr><tr id="3b0a64eb-8b50-80d0-90d3-e28bf146ba21" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/activity-comments</td></tr><tr id="3b0a64eb-8b50-80ac-99ab-e98d169bed79" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-801a-997d-c83cca2b7bee" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="06843dc9-51ea-4f68-b6c4-f353c7a3c95d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1066,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;활동 댓글 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: [<br/> {<br/> &quot;commentIdx&quot;: 1,<br/> &quot;postIdx&quot;: 1,<br/> &quot;postTitle&quot;: &quot;게시물 제목&quot;,<br/> &quot;parentCommentIdx&quot;: null,<br/> &quot;content&quot;: &quot;댓글 내용&quot;,<br/> &quot;likeCount&quot;: 5,<br/> &quot;unlikeCount&quot;: 1,<br/> &quot;createdAt&quot;: &quot;2023-01-01T12:10:00&quot;,<br/> &quot;updatedAt&quot;: &quot;2023-01-01T12:10:00&quot;<br/> }<br/> ]<br/>}</td></tr><tr id="3b0a64eb-8b50-80cc-82d6-fca3a892a3e2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-81b4-bb91-db6202136ce2" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 내가 누른 좋아요 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-8071-afbe-ff3258d6d625" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8064-aa48-c71d6ba380f6" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">ACTIVITY_001</td></tr><tr id="a0bad8ec-0009-475a-87b8-e99be649d7f1" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 사용자의 활동을 기록하고 관리하는 기능<br/><br/>[ 제약 조건 ] 멤버 인덱스를 통해 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 내가 쓴 게시물 조회<br/>2. 내가 쓴 댓글 조회<br/>3. 내가 누른 좋아요 조회<br/>4. 내가 누른 싫어요 조회<br/>5. 로그인 기록 조회</td></tr><tr id="9cdd51cf-e81e-4753-a8ee-27b1f2ba9ac4" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-8068-8e22-c5c39ee10ea9" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">내가 누른 좋아요 조회</td></tr><tr id="3b0a64eb-8b50-80ef-9305-e69413531b90" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">내가 누른 좋아요 조회</td></tr><tr id="3b0a64eb-8b50-8078-b45c-c224dc1632a0" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/activity-likes</td></tr><tr id="3b0a64eb-8b50-80ec-8679-db27cc00f596" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-80bc-a640-ea210beddf28" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="83ef0c96-e835-4af9-abc9-69846cac634c" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1067,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;활동 좋아요 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: [<br/> {<br/> &quot;reactIdx&quot;: 1,<br/> &quot;reactType&quot;: &quot;like&quot;,<br/> &quot;postIdx&quot;: 1,<br/> &quot;postTitle&quot;: &quot;게시물 제목&quot;,<br/> &quot;postCreatedAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;commentIdx&quot;: null,<br/> &quot;commentContent&quot;: null,<br/> &quot;commentCreatedAt&quot;: null<br/> }<br/> ]<br/>}</td></tr><tr id="3b0a64eb-8b50-802b-8960-fece4475d31f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-816f-b7fc-eb640acca12b" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 내가 누른 싫어요 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80e0-8dd9-f097678068be" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-8048-9f62-c6815803cebd" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">ACTIVITY_001</td></tr><tr id="1290f6ea-5eab-4dd1-a614-1de85a5eb6a7" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 사용자의 활동을 기록하고 관리하는 기능<br/><br/>[ 제약 조건 ] 멤버 인덱스를 통해 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 내가 쓴 게시물 조회<br/>2. 내가 쓴 댓글 조회<br/>3. 내가 누른 좋아요 조회<br/>4. 내가 누른 싫어요 조회<br/>5. 로그인 기록 조회</td></tr><tr id="5ecc47c6-ca99-4ba0-bf59-19fbb73fa83a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-8068-9e16-e28b93cc0b83" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">내가 누른 싫어요 조회</td></tr><tr id="3b0a64eb-8b50-80af-869c-d8ab96d8531f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">내가 누른 싫어요 조회</td></tr><tr id="3b0a64eb-8b50-8045-a2ee-f0f7b790419a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/activity-unlikes</td></tr><tr id="3b0a64eb-8b50-80b6-99a7-f3950114fb16" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-80ea-8ec9-d24973df0958" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="7f65c76d-ab04-4a11-a33d-c00097da43ee" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1068,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;활동 싫어요 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: [<br/> {<br/> &quot;reactIdx&quot;: 1,<br/> &quot;reactType&quot;: &quot;unlike&quot;,<br/> &quot;postIdx&quot;: 1,<br/> &quot;postTitle&quot;: &quot;게시물 제목&quot;,<br/> &quot;postCreatedAt&quot;: &quot;2023-01-01T12:00:00&quot;,<br/> &quot;commentIdx&quot;: null,<br/> &quot;commentContent&quot;: null,<br/> &quot;commentCreatedAt&quot;: null<br/> }<br/> ]<br/>}</td></tr><tr id="3b0a64eb-8b50-8059-a5a4-f2268b044c5f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px"></td></tr></tbody></table></div></details><details id="261a64eb-8b50-81e4-8a03-ca461c9726f6" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 로그인 기록 조회</strong></summary><div class="indented"><table id="3b0a64eb-8b50-806a-9ac1-f73c523ef509" class="simple-table" dir="ltr"><tbody><tr id="3b0a64eb-8b50-80f9-bd4a-edc36088253b" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">ACTIVITY_001</td></tr><tr id="467a4b6c-f144-496a-9316-611348449b19" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 사용자의 활동을 기록하고 관리하는 기능<br/><br/>[ 제약 조건 ] 멤버 인덱스를 통해 사용자만 접근 가능<br/><br/>[ 프로세스 ]<br/>1. 내가 쓴 게시물 조회<br/>2. 내가 쓴 댓글 조회<br/>3. 내가 누른 좋아요 조회<br/>4. 내가 누른 싫어요 조회<br/>5. 로그인 기록 조회</td></tr><tr id="0d58b6f6-1f0a-4b12-ae76-c94a4df39d97" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="3b0a64eb-8b50-802f-b22b-e7373e8a0c8e" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">로그인 기록 조회</td></tr><tr id="3b0a64eb-8b50-8006-8e2a-d83e44c06241" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">로그인 기록 조회</td></tr><tr id="3b0a64eb-8b50-809a-8ed3-ea4c8b30a914" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/activity-history</td></tr><tr id="3b0a64eb-8b50-8013-9c39-eea27c25ba3d" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="3b0a64eb-8b50-8033-b971-c57076aa5b11" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px"></td></tr><tr id="58eea38d-10eb-490b-99d2-92b7d23d17f8" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1069,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;활동 히스토리 목록 조회에 성공했습니다.&quot;,<br/> &quot;result&quot;: [<br/> {<br/> &quot;idx&quot;: 1,<br/> &quot;id&quot;: &quot;사용자아이디&quot;,<br/> &quot;ipAddress&quot;: &quot;127.0.0.1&quot;,<br/> &quot;loginTime&quot;: &quot;2023-01-01T12:00:00&quot;<br/> }<br/> ]<br/>}</td></tr><tr id="d25855f7-0e3b-4776-9761-c04efa88a3c2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1018,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;존재하지 않는 계정 입니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><h3 id="261a64eb-8b50-81d1-9b83-d15623245344" class="" dir="auto"><strong>반응 기능</strong></h3><details id="261a64eb-8b50-81c3-bff9-c81bfa32f737" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 좋아요 증가/감소</strong></summary><div class="indented"><table id="3b0a64eb-8b50-80cb-8853-eef3dca41af8" class="simple-table" dir="ltr"><tbody><tr id="7409697a-19fb-4b1a-ab98-e9f497b32f61" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="^oWA" class="" style="width:1179px">REACT_001</td></tr><tr id="a391980f-03f2-46ff-95cb-deda652fc8bf" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="^oWA" class="" style="width:1179px">[ 기능 설명 ] 게시물이나 댓글에 좋아요를 표시하는 기능<br/><br/>[ 제약 조건 ]<br/>1. 로그인한 사용자만 접근 가능<br/>2. 동일 사용자가 같은 대상에 중복 좋아요 불가<br/>3. 이미 좋아요한 대상에 다시 좋아요 시 취소 처리<br/>4. 이미 싫어요한 대상에 좋아요 시 싫어요 취소 후 좋아요 처리<br/><br/>[ 프로세스 ]<br/>1. 사용자가 좋아요 버튼 클릭<br/>2. 이미 좋아요한 경우 취소 처리<br/>3. 이미 싫어요한 경우 싫어요 취소 후 좋아요 처리<br/>4. 좋아요 정보 저장, 좋아요 카운트 갱신</td></tr><tr id="be7eebb0-9511-4919-9290-5121c3b37549" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="^oWA" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="b002510d-63c1-4e78-8d16-99507c9a145f" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="^oWA" class="" style="width:1179px">좋아요 증가/감소</td></tr><tr id="46e8e453-3f0a-497f-a623-3cdd2373fe8a" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="^oWA" class="" style="width:1179px">게시물이나 댓글에 좋아요를 표시하는 기능</td></tr><tr id="21e36c55-6109-486f-8136-c834e4f5d806" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="^oWA" class="" style="width:1179px">/react-like?postIdx=1 or /react-like?commentIdx=1</td></tr><tr id="3b0a64eb-8b50-80e1-a5db-f9513e1933f2" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="^oWA" class="" style="width:1179px">O</td></tr><tr id="1c618c70-fe5b-403b-b6e6-bbe4b42c8f02" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="^oWA" class="" style="width:1179px">Query: postIdx 또는 commentIdx 중 하나</td></tr><tr id="572a0320-f530-4001-9fd4-19030976d6ee" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1040,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;좋아요가 증가되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1041,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;좋아요가 감소되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="f27b7fde-b783-4212-82fc-162dcf2dfbd7" dir="ltr"><th id="P]ID" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="^oWA" class="" style="width:1179px">{<br/> &quot;code&quot;: 1042,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;좋아요 증가에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1043,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;좋아요 감소에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details><details id="3b0a64eb-8b50-80d9-b107-c4fe0261ab5a" open="" class="toggle" dir="auto"><summary><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>GET</strong></code></mark><strong> 싫어요 증가/감소</strong></summary><div class="indented"><table id="8b4c2590-9307-49e0-bc90-fe9f42793619" class="simple-table" dir="ltr"><tbody><tr id="61bef5ab-ddce-40ad-a5ac-d758dc916ea0" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 ID</th><td id="k}La" class="" style="width:1179px">REACT_002</td></tr><tr id="9a5bf0be-23a8-4e7f-8e2d-f3a63e62d778" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">요구사항 상세</th><td id="k}La" class="" style="width:1179px">[ 기능 설명 ] 게시물이나 댓글에 싫어요를 표시하는 기능<br/><br/>[ 제약 조건 ]<br/>1. 로그인한 사용자만 접근 가능<br/>2. 동일 사용자가 같은 대상에 중복 싫어요 불가<br/>3. 이미 싫어요한 대상에 다시 싫어요 시 취소 처리<br/>4. 이미 좋아요한 대상에 싫어요 시 좋아요 취소 후 싫어요 처리<br/><br/>[ 프로세스 ]<br/>1. 사용자가 싫어요 버튼 클릭<br/>2. 이미 싫어요한 경우 취소 처리<br/>3. 이미 좋아요한 경우 좋아요 취소 후 싫어요 처리<br/>4. 싫어요 정보 저장, 싫어요 카운트 갱신</td></tr><tr id="99dd82ff-af95-4ee5-a1a5-d7a6b68c417d" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">HTTP Method</th><td id="k}La" class="" style="width:1179px"><mark class="highlight-teal" data-notion-highlight="teal"><code><strong>[GET]</strong></code></mark></td></tr><tr id="5680451f-cab0-4fbb-92f5-06ba3d922240" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">기능</th><td id="k}La" class="" style="width:1179px">싫어요 증가/감소</td></tr><tr id="3e8491e5-c0cd-49f9-a5ec-8361ff7b7b54" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">설명</th><td id="k}La" class="" style="width:1179px">게시물이나 댓글에 싫어요를 표시하는 기능</td></tr><tr id="b2da1b93-0d21-4925-8abd-27a0bebbd93b" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">URL</th><td id="k}La" class="" style="width:1179px">/react-unlike?postIdx=1 or /react-unlike?commentIdx=1</td></tr><tr id="df47d5b1-8fc5-4afb-b8c0-446b694a3f8c" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">Auth Required</th><td id="k}La" class="" style="width:1179px">O</td></tr><tr id="b9b67a9a-3ab3-46eb-9592-1f6aa04e1160" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">Body Params</th><td id="k}La" class="" style="width:1179px">Query: postIdx 또는 commentIdx 중 하나</td></tr><tr id="69beb0cc-1d47-49aa-ac5d-af59fb309036" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px"><strong>✅ 성공 응답 </strong></th><td id="k}La" class="" style="width:1179px">{<br/> &quot;code&quot;: 1044,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;싫어요가 증가되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1045,<br/> &quot;success&quot;: true,<br/> &quot;message&quot;: &quot;싫어요가 감소되었습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr><tr id="0e9bea11-6395-482c-aba9-47e0f485cd77" dir="ltr"><th id="{xxN" class="simple-table-header-color simple-table-header" style="width:139px">❌<strong> 실패 응답</strong></th><td id="k}La" class="" style="width:1179px">{<br/> &quot;code&quot;: 1046,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;싫어요 증가에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}<br/><br/>{<br/> &quot;code&quot;: 1047,<br/> &quot;success&quot;: false,<br/> &quot;message&quot;: &quot;싫어요 감소에 실패했습니다.&quot;,<br/> &quot;result&quot;: null<br/>}</td></tr></tbody></table></div></details></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

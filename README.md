@@ -2,9 +2,6 @@
 <div align="center">
     <img src="./meta/image/image3.png">
 </div>
-<div align=center>
-	<h3>  <a href="">🌐시연영상</a> </h3>
-</div>
 
 <br>
 

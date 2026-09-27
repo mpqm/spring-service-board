@@ -100,9 +100,9 @@
 
 | **프로젝트 개발 산출물**  | **링크**                                                                                                           |
 |------------------|------------------------------------------------------------------------------------------------------------------|
-| 🎡 ERD           | [ERD](https://github.com/mpqm/spring-service-board/wiki/01.-%F0%9F%8E%A1-ERD)                              |
-| 🎡 Architecture  | [Architecture](https://github.com/mpqm/spring-service-board/wiki/02.-%F0%9F%8E%A1-Architecture)                     |
-| ➰ 요구사항 정의서       | [요구사항 정의서](https://docs.google.com/spreadsheets/d/1OVGWt-4I3hzjtiSwc_WbZRIhS_UiKA0PsSY-jgnLu4s/edit?usp=sharing) |
+| 🎡 ERD           | [ERD](./meta/docs/board-erd.png)                              |
+| 🎡 Architecture  | [Architecture](./meta/docs/board-architecture.png)                     |
+| ➰ 요구사항 정의서       | [요구사항 정의서](https://docs.google.com/spreadsheets/d/1itMJajSWX2cDNIkfp8aqmRhAJps_nZwI/edit?usp=sharing&ouid=117935972514311680024&rtpof=true&sd=true) |
 | 📃 백엔드 API 명세서   | [백엔드 API 명세서](https://app.notion.com/p/SPRING-SERVICE-BOARD-API-261a64eb8b5081e68ac3db22e029838f?source=copy_link)                                                                                            |
 | 🌱 프론트엔드 화면 설계서  | [프론트엔드 화면 설계서](https://www.figma.com/design/DSXFJXjccETjkaplS3HMq4/spring-service-board?node-id=8-2&t=lrUcyQsbjGivJr5w-1)                                                                                           |
 | 🎥 프로젝트 시연 영상    | [프로젝트 시연 영상](./meta/docs/board-프로젝트%20시연%20영상.md)                                                                                             |
